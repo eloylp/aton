@@ -36,7 +36,7 @@ test-bench:
 	go test -v -bench=. ./...
 build: clean
 	mkdir -p $(DIST_FOLDER)
-	CGO_ENABLED=0 go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
+	go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
 	@echo "Binary output at $(BINARY_OUTPUT)"
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
