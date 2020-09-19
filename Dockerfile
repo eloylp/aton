@@ -11,6 +11,7 @@ COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /src/dist/aton /app/
 COPY --from=build /src/models /app/models
+COPY --from=build /src/images /app/images
 EXPOSE 8080
 USER aton
 WORKDIR /app
