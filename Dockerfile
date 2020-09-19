@@ -1,4 +1,5 @@
 FROM golang:1.15.1 AS build
+RUN apt-get update && apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
 WORKDIR /src
 COPY . .
 RUN useradd -u 10001 aton
