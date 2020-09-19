@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/Kagami/go-face"
 	"log"
 	"path/filepath"
+	"time"
+
+	"github.com/Kagami/go-face"
 )
 
 // Path to directory with models and test images. Here it's assumed it
@@ -54,19 +56,22 @@ func main() {
 	// Pass samples to the recognizer.
 	rec.SetSamples(samples, cats)
 
-	// Now let's try to classify some not yet known image.
-	testImageNayoung := filepath.Join(imagesDir, "nayoung.jpg")
-	nayoungFace, err := rec.RecognizeSingleFile(testImageNayoung)
-	if err != nil {
-		log.Fatalf("Can't recognize: %v", err)
+	for i := 0; i < 10; i++ {
+		start := time.Now()
+		// Now let's try to classify some not yet known image.
+		testImageNayoung := filepath.Join(imagesDir, "nayoung.jpg")
+		nayoungFace, err := rec.RecognizeSingleFile(testImageNayoung)
+		if err != nil {
+			log.Fatalf("Can't recognize: %v", err)
+		}
+		if nayoungFace == nil {
+			log.Fatalf("Not a single face on the image")
+		}
+		catID := rec.Classify(nayoungFace.Descriptor)
+		if catID < 0 {
+			log.Fatalf("Can't classify")
+		}
+		// Finally print the classified label. It should be "Nayoung".
+		fmt.Println(labels[catID], "took: ", time.Since(start).String())
 	}
-	if nayoungFace == nil {
-		log.Fatalf("Not a single face on the image")
-	}
-	catID := rec.Classify(nayoungFace.Descriptor)
-	if catID < 0 {
-		log.Fatalf("Can't classify")
-	}
-	// Finally print the classified label. It should be "Nayoung".
-	fmt.Println(labels[catID])
 }
