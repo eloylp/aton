@@ -1,0 +1,38 @@
+# This is a sample Dockerfile you can modify to deploy your own app based on face_recognition on the GPU
+# In order to run Docker in the GPU you will need to install Nvidia-Docker: https://github.com/NVIDIA/nvidia-docker
+
+FROM nvidia/cuda:10.1-cudnn7-devel
+
+# Install face recognition dependencies
+
+RUN apt update -y; apt install -y \
+git \
+cmake \
+libsm6 \
+libxext6 \
+libxrender-dev
+
+#RUN apt update && apt install -y software-properties-common
+#RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt update -y; apt install -y libblas-dev liblapack-dev libjpeg-turbo8-dev wget
+#RUN apt-get install -y --no-install-recommends cmake
+
+#Install dlib
+
+RUN git clone -b 'v19.21' --single-branch https://github.com/davisking/dlib.git
+RUN mkdir -p /dlib/build
+
+RUN cmake -H/dlib -B/dlib/build -DDLIB_USE_CUDA=1 -DUSE_AVX_INSTRUCTIONS=1
+RUN cmake --build /dlib/build
+RUN cd /dlib/build && make install && cd ../..
+
+RUN wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz -O golang.tar.gz \
+&& tar -C /usr/local -xzf golang.tar.gz \
+&& mkdir /app && cd /app && rm -rf /tmp/*
+WORKDIR /app
+COPY . .
+RUN useradd -u 10001 aton
+RUN export PATH=$PATH:/usr/local/go/bin && make build-cuda
+EXPOSE 8080
+USER aton
+CMD ["./aton"]

@@ -38,7 +38,13 @@ build: clean
 	mkdir -p $(DIST_FOLDER)
 	go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
 	@echo "Binary output at $(BINARY_OUTPUT)"
+build-cuda: clean
+	mkdir -p $(DIST_FOLDER)
+	CGO_LDFLAGS="-L/usr/local/cuda/lib64 -lcudnn -lpthread -lcuda -lcudart -lcublas -lcurand -lcusolver" go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
+	@echo "Binary output at $(BINARY_OUTPUT)"
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
+docker-cuda:
+	docker build -t ghcr.io/eloylp/aton:$(BUILD) -f Dockerfile.gpu .
 clean:
 	rm -rf $(DIST_FOLDER)
