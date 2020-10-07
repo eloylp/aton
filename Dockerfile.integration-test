@@ -1,0 +1,8 @@
+FROM golang:1.15.1
+ARG uid
+ARG uname
+RUN apt-get update && apt-get install \
+-y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+RUN useradd -m -u ${uid} ${uname}
+USER ${uname}
+WORKDIR /home/${uname}/app

@@ -27,6 +27,11 @@ test: test-unit test-integration test-racy test-bench
 test-unit:
 	go test -v --tags="unit" ./...
 test-integration:
+	docker run -u $(shell id -u) --rm \
+	-v $(shell pwd):/home/$(shell id -u -n)/app \
+	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
+	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
+	ghcr.io/eloylp/aton-test \
 	go test -v --tags="integration" ./...
 test-e2e:
 	go test -v --tags="e2e" ./...
@@ -42,6 +47,10 @@ build-cuda: clean
 	mkdir -p $(DIST_FOLDER)
 	CGO_LDFLAGS="-L/usr/local/cuda/lib64 -lcudnn -lpthread -lcuda -lcudart -lcublas -lcurand -lcusolver" go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
 	@echo "Binary output at $(BINARY_OUTPUT)"
+docker-test:
+	docker build --build-arg uid=$(shell id -u) \
+	--build-arg uname=$(shell id -u -n) \
+	-t ghcr.io/eloylp/aton-test -f Dockerfile.integration-test .
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
 docker-cuda:
