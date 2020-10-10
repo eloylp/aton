@@ -9,7 +9,7 @@ import (
 )
 
 type Facial interface {
-	SaveFace(string, []byte) error
+	SaveFaces([]string, []byte) error
 	FindFaces([]byte) ([]string, error)
 }
 
@@ -32,13 +32,18 @@ func NewDLIBFaceDetector(modelsDir string) (*GoFace, error) {
 	return d, nil
 }
 
-func (d *GoFace) SaveFace(name string, bytes []byte) error {
-	f, err := d.rec.Recognize(bytes)
+func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
+	faces, err := d.rec.Recognize(bytes)
 	if err != nil {
 		return err
 	}
-	descriptors := []face.Descriptor{f[0].Descriptor}
-	d.rec.SetSamples(descriptors, []int32{d.categoryFromName(name)})
+	descriptors := make([]face.Descriptor, len(faces))
+	categories := make([]int32, len(faces))
+	for i, f := range faces {
+		descriptors[i] = f.Descriptor
+		categories[i] = d.categoryFromName(names[i])
+	}
+	d.rec.SetSamples(descriptors, categories)
 	return nil
 }
 
