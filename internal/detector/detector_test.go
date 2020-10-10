@@ -26,10 +26,10 @@ func TestFaceDetectors(t *testing.T) {
 	faceDetector, err := detector.NewDLIBFaceDetector(ModelsDir)
 	assert.NoError(t, err)
 	t.Run("Testing GoFace face detector",
-		AssertFacialDetection(faceDetector))
+		AssertSingleFaceDetection(faceDetector))
 }
 
-func AssertFacialDetection(d detector.Facial) func(t *testing.T) {
+func AssertSingleFaceDetection(d detector.Facial) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveFace("bona", readFile(t, faceBona1))
 		assert.NoError(t, err)
