@@ -22,7 +22,7 @@ type GoFace struct {
 func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
 	rec, err := face.NewRecognizer(modelsDir)
 	if err != nil {
-		return nil, fmt.Errorf("dlibfacerecognizer: can't init face recognizer: %w", err)
+		return nil, fmt.Errorf("gofacedetector: can't init face recognizer: %w", err)
 	}
 	d := &GoFace{
 		rec: rec,
@@ -35,7 +35,7 @@ func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
 func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
 	faces, err := d.rec.Recognize(bytes)
 	if err != nil {
-		return err
+		return fmt.Errorf("gofacedetector: can't recognize samples: %w", err)
 	}
 	if len(faces) != len(names) {
 		return fmt.Errorf("gofacedetector: passed faces number (%v) not match with recognized (%v)", len(names), len(faces))
@@ -67,7 +67,7 @@ func (d *GoFace) catExists(cat int32) bool {
 func (d *GoFace) FindFaces(input []byte) ([]string, error) {
 	faces, err := d.rec.Recognize(input)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("gofacedetector: can't recognize input: %w", err)
 	}
 	var results []string
 	done := map[string]bool{}
