@@ -25,12 +25,21 @@ var (
 func TestFaceDetectors(t *testing.T) {
 	faceDetector, err := detector.NewGoFaceDetector(ModelsDir)
 	assert.NoError(t, err)
+	t.Run("Testing GoFace face detector, error on initial samples and names number mismatch",
+		AssertErrorIfNotAllFacesRecognized(faceDetector))
 	t.Run("Testing GoFace face detector",
 		AssertSingleFaceDetection(faceDetector))
 	t.Run("Testing GoFace face detector with group",
 		AssertSingleFaceDetectionInGroup(faceDetector))
 	t.Run("Testing GoFace multiple face detector with group",
 		AssertMultipleFacesDetectionInGroup(faceDetector))
+}
+
+func AssertErrorIfNotAllFacesRecognized(d detector.Facial) func(t *testing.T) {
+	return func(t *testing.T) {
+		err := d.SaveFaces([]string{"bona", "EXTRA_NON_EXISTENT_FACE"}, readFile(t, faceBona1))
+		assert.Errorf(t, err, "gofacedetector: passed faces number (2) not match with recognized (1)")
+	}
 }
 
 func AssertSingleFaceDetection(d detector.Facial) func(t *testing.T) {

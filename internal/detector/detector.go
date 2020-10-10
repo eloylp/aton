@@ -37,6 +37,9 @@ func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
 	if err != nil {
 		return err
 	}
+	if len(faces) != len(names) {
+		return fmt.Errorf("gofacedetector: passed faces number (%v) not match with recognized (%v)", len(names), len(faces))
+	}
 	descriptors := make([]face.Descriptor, len(faces))
 	categories := make([]int32, len(faces))
 	for i, f := range faces {
