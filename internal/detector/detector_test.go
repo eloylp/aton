@@ -23,7 +23,7 @@ var (
 )
 
 func TestFaceDetectors(t *testing.T) {
-	faceDetector, err := detector.NewDLIBFaceDetector(ModelsDir)
+	faceDetector, err := detector.NewGoFaceDetector(ModelsDir)
 	assert.NoError(t, err)
 	t.Run("Testing GoFace face detector",
 		AssertSingleFaceDetection(faceDetector))

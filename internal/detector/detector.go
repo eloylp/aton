@@ -19,7 +19,7 @@ type GoFace struct {
 	r   *rand.Rand
 }
 
-func NewDLIBFaceDetector(modelsDir string) (*GoFace, error) {
+func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
 	rec, err := face.NewRecognizer(modelsDir)
 	if err != nil {
 		return nil, fmt.Errorf("dlibfacerecognizer: can't init face recognizer: %w", err)
