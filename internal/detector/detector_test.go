@@ -25,7 +25,7 @@ var (
 func TestFaceDetectors(t *testing.T) {
 	faceDetector, err := detector.NewDLIBFaceDetector(ModelsDir)
 	assert.NoError(t, err)
-	t.Run("Testing DLIB face detector",
+	t.Run("Testing GoFace face detector",
 		AssertFacialDetection(faceDetector))
 }
 

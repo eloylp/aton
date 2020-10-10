@@ -14,18 +14,18 @@ type Facial interface {
 	FindFace([]byte) (string, error)
 }
 
-type DLIBFaceDetector struct {
+type GoFace struct {
 	rec *face.Recognizer
 	cat map[int32]string
 	r   *rand.Rand
 }
 
-func NewDLIBFaceDetector(modelsDir string) (*DLIBFaceDetector, error) {
+func NewDLIBFaceDetector(modelsDir string) (*GoFace, error) {
 	rec, err := face.NewRecognizer(modelsDir)
 	if err != nil {
 		return nil, fmt.Errorf("dlibfacerecognizer: can't init face recognizer: %w", err)
 	}
-	d := &DLIBFaceDetector{
+	d := &GoFace{
 		rec: rec,
 		cat: map[int32]string{},
 		r:   rand.New(rand.NewSource(time.Now().UnixNano())), //nolint:gosec
@@ -33,7 +33,7 @@ func NewDLIBFaceDetector(modelsDir string) (*DLIBFaceDetector, error) {
 	return d, nil
 }
 
-func (d *DLIBFaceDetector) SaveFace(name string, bytes []byte) error {
+func (d *GoFace) SaveFace(name string, bytes []byte) error {
 	f, err := d.rec.Recognize(bytes)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (d *DLIBFaceDetector) SaveFace(name string, bytes []byte) error {
 	return nil
 }
 
-func (d *DLIBFaceDetector) categoryFromName(name string) int32 {
+func (d *GoFace) categoryFromName(name string) int32 {
 	var cat int32
 	for cat == 0 || d.catExists(cat) {
 		cat = d.r.Int31()
@@ -52,12 +52,12 @@ func (d *DLIBFaceDetector) categoryFromName(name string) int32 {
 	return cat
 }
 
-func (d *DLIBFaceDetector) catExists(cat int32) bool {
+func (d *GoFace) catExists(cat int32) bool {
 	_, ok := d.cat[cat]
 	return ok
 }
 
-func (d *DLIBFaceDetector) FindFace(input []byte) (string, error) {
+func (d *GoFace) FindFace(input []byte) (string, error) {
 	f, err := d.rec.RecognizeSingle(input)
 	if err != nil {
 		return "", err
