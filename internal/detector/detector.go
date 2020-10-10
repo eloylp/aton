@@ -53,12 +53,8 @@ func (d *DLIBFaceDetector) categoryFromName(name string) int32 {
 }
 
 func (d *DLIBFaceDetector) catExists(cat int32) bool {
-	for k := range d.cat {
-		if cat == k {
-			return true
-		}
-	}
-	return false
+	_, ok := d.cat[cat]
+	return ok
 }
 
 func (d *DLIBFaceDetector) FindFace(input []byte) (string, error) {
