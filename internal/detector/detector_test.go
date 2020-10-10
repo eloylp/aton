@@ -14,12 +14,13 @@ import (
 )
 
 var (
-	ModelsDir = "../../models"
-	imagesDir = "../../images"
-	faceBona1 = filepath.Join(imagesDir, "bona.jpg")
-	faceBona2 = filepath.Join(imagesDir, "bona2.jpg")
-	faceBona3 = filepath.Join(imagesDir, "bona3.jpg")
-	faceBona4 = filepath.Join(imagesDir, "bona4.jpg")
+	ModelsDir  = "../../models"
+	imagesDir  = "../../images"
+	groupFaces = filepath.Join(imagesDir, "pristin.jpg")
+	faceBona1  = filepath.Join(imagesDir, "bona.jpg")
+	faceBona2  = filepath.Join(imagesDir, "bona2.jpg")
+	faceBona3  = filepath.Join(imagesDir, "bona3.jpg")
+	faceBona4  = filepath.Join(imagesDir, "bona4.jpg")
 )
 
 func TestFaceDetectors(t *testing.T) {
@@ -27,6 +28,8 @@ func TestFaceDetectors(t *testing.T) {
 	assert.NoError(t, err)
 	t.Run("Testing GoFace face detector",
 		AssertSingleFaceDetection(faceDetector))
+	t.Run("Testing GoFace face detector with group",
+		AssertSingleFaceDetectionInGroup(faceDetector))
 }
 
 func AssertSingleFaceDetection(d detector.Facial) func(t *testing.T) {
@@ -34,10 +37,20 @@ func AssertSingleFaceDetection(d detector.Facial) func(t *testing.T) {
 		err := d.SaveFace("bona", readFile(t, faceBona1))
 		assert.NoError(t, err)
 		for _, c := range []string{faceBona2, faceBona3, faceBona4} {
-			face, err := d.FindFace(readFile(t, c))
+			faces, err := d.FindFaces(readFile(t, c))
 			assert.NoError(t, err)
-			assert.Equal(t, "bona", face)
+			assert.Equal(t, []string{"bona"}, faces)
 		}
+	}
+}
+
+func AssertSingleFaceDetectionInGroup(d detector.Facial) func(t *testing.T) {
+	return func(t *testing.T) {
+		err := d.SaveFace("bona", readFile(t, faceBona1))
+		assert.NoError(t, err)
+		faces, err := d.FindFaces(readFile(t, groupFaces))
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"bona"}, faces)
 	}
 }
 

@@ -1,7 +1,6 @@
 package detector
 
 import (
-	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -11,7 +10,7 @@ import (
 
 type Facial interface {
 	SaveFace(string, []byte) error
-	FindFace([]byte) (string, error)
+	FindFaces([]byte) ([]string, error)
 }
 
 type GoFace struct {
@@ -57,15 +56,21 @@ func (d *GoFace) catExists(cat int32) bool {
 	return ok
 }
 
-func (d *GoFace) FindFace(input []byte) (string, error) {
-	f, err := d.rec.RecognizeSingle(input)
+func (d *GoFace) FindFaces(input []byte) ([]string, error) {
+	faces, err := d.rec.Recognize(input)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	i := d.rec.Classify(f.Descriptor)
-	catName, ok := d.cat[int32(i)]
-	if !ok {
-		return "", errors.New("dlibfacerecognizer: Recognized face not in internal map")
+	var results []string
+	done := map[string]bool{}
+	for _, f := range faces {
+		catN := d.rec.Classify(f.Descriptor)
+		catName, ok := d.cat[int32(catN)]
+		_, duplicated := done[catName]
+		if ok && !duplicated {
+			results = append(results, catName)
+			done[catName] = true
+		}
 	}
-	return catName, nil
+	return results, nil
 }
