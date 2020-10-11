@@ -22,7 +22,7 @@ var (
 	groupBonaAndLuda = filepath.Join(imagesDir, "bonaAndLuda.jpg")
 )
 
-func TestFaceDetectors(t *testing.T) {
+func TestGoFaceDetector(t *testing.T) {
 	faceDetector, err := detector.NewGoFaceDetector(ModelsDir)
 	assert.NoError(t, err)
 	t.Run("Testing GoFace face detector, error on initial samples and names number mismatch",
