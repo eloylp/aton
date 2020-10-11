@@ -49,7 +49,7 @@ func AssertErrorIfDuplicatedNames(d detector.Facial) func(t *testing.T) {
 func AssertErrorIfNotAllFacesRecognized(d detector.Facial) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveFaces([]string{"bona", "EXTRA_NON_EXISTENT_FACE"}, readFile(t, faceBona1))
-		assert.Errorf(t, err, "gofacedetector: passed faces number (2) not match with recognized (1)")
+		assert.EqualError(t, err, "gofacedetector: passed faces number (2) not match with recognized (1)")
 	}
 }
 
