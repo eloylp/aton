@@ -3,6 +3,7 @@ package detector
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/Kagami/go-face"
@@ -33,6 +34,10 @@ func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
 }
 
 func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
+	dup := duplicates(names)
+	if len(dup) > 0 {
+		return fmt.Errorf("gofacedetector: duplicated names: %s", strings.Join(dup, ","))
+	}
 	faces, err := d.rec.Recognize(bytes)
 	if err != nil {
 		return fmt.Errorf("gofacedetector: can't recognize samples: %w", err)
@@ -48,6 +53,19 @@ func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
 	}
 	d.rec.SetSamples(descriptors, categories)
 	return nil
+}
+
+func duplicates(names []string) []string {
+	m := map[string]struct{}{}
+	var duplicates []string
+	for i := 0; i < len(names); i++ {
+		name := names[i]
+		if _, ok := m[name]; ok {
+			duplicates = append(duplicates, name)
+		}
+		m[name] = struct{}{}
+	}
+	return duplicates
 }
 
 func (d *GoFace) categoryFromName(name string) int32 {
