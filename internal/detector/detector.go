@@ -42,8 +42,8 @@ func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
 	}
 	descriptors := make([]face.Descriptor, len(faces))
 	categories := make([]int32, len(faces))
-	for i, f := range faces {
-		descriptors[i] = f.Descriptor
+	for i := 0; i < len(faces); i++ {
+		descriptors[i] = faces[i].Descriptor
 		categories[i] = d.categoryFromName(names[i])
 	}
 	d.rec.SetSamples(descriptors, categories)
@@ -71,8 +71,8 @@ func (d *GoFace) FindFaces(input []byte) ([]string, error) {
 	}
 	var results []string
 	done := map[string]bool{}
-	for _, f := range faces {
-		catN := d.rec.Classify(f.Descriptor)
+	for i := 0; i < len(faces); i++ {
+		catN := d.rec.Classify(faces[i].Descriptor)
 		catName, ok := d.cat[int32(catN)]
 		_, duplicated := done[catName]
 		if ok && !duplicated {
