@@ -1,4 +1,4 @@
-// +build integration
+// +build detector
 
 package detector_test
 
