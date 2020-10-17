@@ -25,7 +25,8 @@ func TestCapture(t *testing.T) {
 	vs := videoStream(t, pictures, "/")
 	defer vs.Close()
 	maxFrameBuffer := 100
-	vc := video.NewMJPEGStreamCapturer(vs.URL, maxFrameBuffer)
+	vc, err := video.NewMJPEGStreamCapturer(vs.URL, maxFrameBuffer)
+	assert.NoError(t, err)
 	go vc.Start()
 	output := vc.Output()
 	time.AfterFunc(500*time.Millisecond, func() {
@@ -38,4 +39,9 @@ func TestCapture(t *testing.T) {
 		assert.Equal(t, expected, got, "Image no %v does not match", i)
 		i++
 	}
+}
+
+func TestNonSupportedURLScheme(t *testing.T) {
+	_, err := video.NewMJPEGStreamCapturer("tcp://127.0.0.1:8080", 5)
+	assert.EqualError(t, err, "capturer (tcp://127.0.0.1:8080): only http or https scheme supported")
 }

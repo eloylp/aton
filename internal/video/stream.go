@@ -2,12 +2,15 @@ package video
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
+	"net/url"
+	"regexp"
 	"time"
 )
 
@@ -17,21 +20,28 @@ type Capture struct {
 }
 
 type MJPEGStreamCapturer struct {
-	URL    string
+	URL    *url.URL
 	output chan *Capture
 	close  chan struct{}
 }
 
-func NewMJPEGStreamCapturer(url string, maxFrameBuffer int) *MJPEGStreamCapturer {
+func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int) (*MJPEGStreamCapturer, error) {
+	captURL, err := url.Parse(rawURL)
+	if err != nil {
+		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
+	}
+	if !regexp.MustCompile("http|https").MatchString(captURL.Scheme) {
+		return nil, fmt.Errorf("capturer (%s): only http or https scheme supported", rawURL)
+	}
 	return &MJPEGStreamCapturer{
-		URL:    url,
+		URL:    captURL,
 		output: make(chan *Capture, maxFrameBuffer),
 		close:  make(chan struct{}, 1),
-	}
+	}, nil
 }
 
 func (m *MJPEGStreamCapturer) Start() {
-	resp, err := http.Get(m.URL)
+	resp, err := http.Get(m.URL.String())
 	if err != nil {
 		log.Println(err)
 		return
