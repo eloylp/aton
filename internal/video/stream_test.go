@@ -3,11 +3,13 @@
 package video_test
 
 import (
-	"github.com/eloylp/aton/internal/video"
-	"github.com/stretchr/testify/assert"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/eloylp/aton/internal/video"
 )
 
 var (
