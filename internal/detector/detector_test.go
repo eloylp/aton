@@ -26,15 +26,15 @@ var (
 func TestGoFaceDetector(t *testing.T) {
 	faceDetector, err := detector.NewGoFaceDetector(ModelsDir)
 	assert.NoError(t, err)
-	t.Run("Testing GoFace face detector, error on duplicated names",
+	t.Run("Error if duplicated names",
 		AssertErrorIfDuplicatedNames(faceDetector))
-	t.Run("Testing GoFace face detector, error on initial samples and names number mismatch",
+	t.Run("Error if initial samples and names number mismatch",
 		AssertErrorIfNotAllFacesRecognized(faceDetector))
-	t.Run("Testing GoFace face detector",
+	t.Run("Detect one face",
 		AssertSingleFaceDetection(faceDetector))
-	t.Run("Testing GoFace face detector with group",
+	t.Run("Detect single face in group",
 		AssertSingleFaceDetectionInGroup(faceDetector))
-	t.Run("Testing GoFace multiple face detector with group",
+	t.Run("Detect multiple faces within group",
 		AssertMultipleFacesDetectionInGroup(faceDetector))
 }
 
