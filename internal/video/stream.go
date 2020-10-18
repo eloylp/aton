@@ -50,17 +50,17 @@ func (m *MJPEGStreamCapturer) Start() {
 		return
 	}
 	defer resp.Body.Close()
-loop:
+mainLoop:
 	for {
 		select {
 		case <-m.close:
 			close(m.output)
-			break loop
+			break mainLoop
 		default:
 			_, param, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 			if err != nil {
 				m.logger.Error(err)
-				break loop
+				break mainLoop
 			}
 			mr := multipart.NewReader(resp.Body, param["boundary"])
 			for {
