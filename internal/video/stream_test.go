@@ -45,3 +45,16 @@ func TestNonSupportedURLScheme(t *testing.T) {
 	_, err := video.NewMJPEGStreamCapturer("tcp://127.0.0.1:8080", 5)
 	assert.EqualError(t, err, "capturer (tcp://127.0.0.1:8080): only http or https scheme supported")
 }
+
+func TestOnCloseOutputChannelIsClosed(t *testing.T) {
+	pictures := []string{faceBona1}
+	vs := videoStream(t, pictures, "/")
+	defer vs.Close()
+	vc, err := video.NewMJPEGStreamCapturer(vs.URL, 1)
+	assert.NoError(t, err)
+	go vc.Start()
+	time.Sleep(time.Second)
+	vc.Close()
+	_, closed := <-vc.Output()
+	assert.True(t, closed)
+}
