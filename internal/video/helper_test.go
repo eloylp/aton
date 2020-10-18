@@ -39,7 +39,8 @@ func videoStream(t *testing.T, picturesPaths []string, servingPath string) *http
 				t.Fatal(err)
 			}
 			if _, err := mw.Write(pictures[i]); err != nil {
-				t.Fatal(err)
+				t.Log(err)
+				return
 			}
 		}
 	})
