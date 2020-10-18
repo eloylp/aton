@@ -3,12 +3,14 @@
 package video_test
 
 import (
+	"bytes"
 	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/video"
 )
 
@@ -25,7 +27,8 @@ func TestCapture(t *testing.T) {
 	vs := videoStream(t, pictures, "/")
 	defer vs.Close()
 	maxFrameBuffer := 100
-	vc, err := video.NewMJPEGStreamCapturer(vs.URL, maxFrameBuffer)
+	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
+	vc, err := video.NewMJPEGStreamCapturer(vs.URL, maxFrameBuffer, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	output := vc.Output()
@@ -42,7 +45,8 @@ func TestCapture(t *testing.T) {
 }
 
 func TestNonSupportedURLScheme(t *testing.T) {
-	_, err := video.NewMJPEGStreamCapturer("tcp://127.0.0.1:8080", 5)
+	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
+	_, err := video.NewMJPEGStreamCapturer("tcp://127.0.0.1:8080", 5, logger)
 	assert.EqualError(t, err, "capturer (tcp://127.0.0.1:8080): only http or https scheme supported")
 }
 
@@ -50,11 +54,24 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 	pictures := []string{faceBona1}
 	vs := videoStream(t, pictures, "/")
 	defer vs.Close()
-	vc, err := video.NewMJPEGStreamCapturer(vs.URL, 1)
+	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
+	vc, err := video.NewMJPEGStreamCapturer(vs.URL, 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(time.Second)
 	vc.Close()
 	_, closed := <-vc.Output()
 	assert.True(t, closed)
+}
+
+func TestErrorConnectionRefusedLogged(t *testing.T) {
+	w := bytes.NewBuffer(nil)
+	logger := logging.NewBasicLogger(w)
+	vc, err := video.NewMJPEGStreamCapturer("http://127.0.0.2", 1, logger)
+	assert.NoError(t, err)
+	go vc.Start()
+	time.Sleep(100 * time.Millisecond)
+	assert.NoError(t, err)
+	assert.Contains(t, w.String(), "capturer: ")
+	assert.Contains(t, w.String(), "connect: connection refused")
 }

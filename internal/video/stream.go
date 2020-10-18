@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"regexp"
 	"time"
+
+	"github.com/eloylp/aton/internal/logging"
 )
 
 type Capture struct {
@@ -23,9 +24,10 @@ type MJPEGStreamCapturer struct {
 	URL    *url.URL
 	output chan *Capture
 	close  chan struct{}
+	logger logging.Logger
 }
 
-func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int) (*MJPEGStreamCapturer, error) {
+func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGStreamCapturer, error) {
 	captURL, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
@@ -37,13 +39,14 @@ func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int) (*MJPEGStreamCapt
 		URL:    captURL,
 		output: make(chan *Capture, maxFrameBuffer),
 		close:  make(chan struct{}, 1),
+		logger: logger,
 	}, nil
 }
 
 func (m *MJPEGStreamCapturer) Start() {
 	resp, err := http.Get(m.URL.String())
 	if err != nil {
-		log.Println(err)
+		m.logger.Error(fmt.Errorf("capturer: %w", err))
 		return
 	}
 	defer resp.Body.Close()
@@ -56,22 +59,22 @@ loop:
 		default:
 			_, param, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 			if err != nil {
-				log.Fatal(err)
+				m.logger.Error(err)
 			}
 			mr := multipart.NewReader(resp.Body, param["boundary"])
 			for {
 				p, err := mr.NextPart()
 				if errors.Is(err, io.EOF) {
-					log.Println(err)
+					m.logger.Info(fmt.Errorf("capturer: %w", err))
 					break
 				}
 				if err != nil {
-					log.Println(err) // todo optimize this
+					m.logger.Error(fmt.Errorf("capturer: %w", err))
 					break
 				}
 				data, err := ioutil.ReadAll(p)
 				if err != nil {
-					log.Fatal(err)
+					m.logger.Error(fmt.Errorf("capturer: %w", err))
 				}
 				p.Close()
 				m.output <- &Capture{data, time.Now()}
