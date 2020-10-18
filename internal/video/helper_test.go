@@ -9,7 +9,6 @@ import (
 	"net/textproto"
 	"strconv"
 	"testing"
-	"time"
 )
 
 func videoStream(t *testing.T, picturesPaths []string, servingPath string) *httptest.Server {
@@ -42,7 +41,6 @@ func videoStream(t *testing.T, picturesPaths []string, servingPath string) *http
 			if _, err := mw.Write(pictures[i]); err != nil {
 				t.Fatal(err)
 			}
-			time.Sleep(1 * time.Second)
 		}
 	})
 	return httptest.NewServer(mux)
