@@ -75,3 +75,24 @@ func TestErrorConnectionRefusedLogged(t *testing.T) {
 	assert.Contains(t, w.String(), "capturer: ")
 	assert.Contains(t, w.String(), "connect: connection refused")
 }
+
+func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
+	framesInFlight := 1000
+	pictures := make([]string, framesInFlight)
+	for i := 0; i < framesInFlight; i++ {
+		pictures[i] = faceBona1
+	}
+	vs := videoStream(t, pictures, "/")
+	defer vs.Close()
+	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
+	vc, err := video.NewMJPEGStreamCapturer(vs.URL, framesInFlight, logger)
+	assert.NoError(t, err)
+	go vc.Start()
+	time.Sleep(500 * time.Millisecond)
+	vc.Close()
+	time.Sleep(50 * time.Millisecond)
+	_, closed := <-vc.Output()
+	assert.True(t, closed)
+	assert.True(t, len(vc.Output()) > 0, "output channel needs to have residual frames")
+	t.Logf("Output channel residual length: %v", len(vc.Output()))
+}

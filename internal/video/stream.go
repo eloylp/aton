@@ -68,6 +68,13 @@ mainLoop:
 					m.logger.Error(err)
 					break
 				}
+				select {
+				case <-m.close:
+					close(m.output)
+					break mainLoop
+				default:
+					continue
+				}
 			}
 		}
 	}
