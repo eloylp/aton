@@ -60,27 +60,33 @@ loop:
 			_, param, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 			if err != nil {
 				m.logger.Error(err)
+				break loop
 			}
 			mr := multipart.NewReader(resp.Body, param["boundary"])
 			for {
-				p, err := mr.NextPart()
-				if errors.Is(err, io.EOF) {
-					m.logger.Info(fmt.Errorf("capturer: %w", err))
+				if err := m.processNextPart(mr); err != nil {
+					m.logger.Error(err)
 					break
 				}
-				if err != nil {
-					m.logger.Error(fmt.Errorf("capturer: %w", err))
-					break
-				}
-				data, err := ioutil.ReadAll(p)
-				if err != nil {
-					m.logger.Error(fmt.Errorf("capturer: %w", err))
-				}
-				p.Close()
-				m.output <- &Capture{data, time.Now()}
 			}
 		}
 	}
+}
+
+func (m *MJPEGStreamCapturer) processNextPart(mr *multipart.Reader) error {
+	p, err := mr.NextPart()
+	if errors.Is(err, io.EOF) {
+		return fmt.Errorf("capturer: %w", err)
+	}
+	if err != nil {
+		return fmt.Errorf("capturer: %w", err)
+	}
+	data, err := ioutil.ReadAll(p)
+	if err != nil {
+		return fmt.Errorf("capturer: %w", err)
+	}
+	m.output <- &Capture{data, time.Now()}
+	return nil
 }
 
 func (m *MJPEGStreamCapturer) Output() <-chan *Capture {
