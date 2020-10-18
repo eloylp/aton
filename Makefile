@@ -25,9 +25,9 @@ all: lint test build
 test: test-unit test-integration test-racy test-bench
 
 test-unit:
-	go test -v --tags="unit" ./...
+	go test -v --tags="unit" $(shell go list ./... | grep -v detector)
 test-integration:
-	go test -v --tags="integration" ./...
+	go test -v --tags="integration" $(shell go list ./... | grep -v detector)
 test-detector:
 	docker run -u $(shell id -u) --rm \
 	-v $(shell pwd):/home/$(shell id -u -n)/app \
@@ -36,11 +36,11 @@ test-detector:
 	ghcr.io/eloylp/aton-test \
 	go test -v --tags="detector" ./...
 test-e2e:
-	go test -v --tags="e2e" ./...
+	go test -v --tags="e2e" $(shell go list ./... | grep -v detector)
 test-racy:
-	go test -race -v --tags="racy" ./...
+	go test -race -v --tags="racy" $(shell go list ./... | grep -v detector)
 test-bench:
-	go test -v -bench=. ./...
+	go test -v -bench=. $(shell go list ./... | grep -v detector)
 build: clean
 	mkdir -p $(DIST_FOLDER)
 	go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
