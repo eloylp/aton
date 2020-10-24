@@ -20,14 +20,14 @@ type Capture struct {
 	Timestamp time.Time
 }
 
-type MJPEGStreamCapturer struct {
+type MJPEGCapturer struct {
 	URL    *url.URL
 	output chan *Capture
 	close  chan struct{}
 	logger logging.Logger
 }
 
-func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGStreamCapturer, error) {
+func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
 	captURL, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
@@ -35,7 +35,7 @@ func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int, logger logging.Lo
 	if !regexp.MustCompile("http|https").MatchString(captURL.Scheme) {
 		return nil, fmt.Errorf("capturer (%s): only http or https scheme supported", rawURL)
 	}
-	return &MJPEGStreamCapturer{
+	return &MJPEGCapturer{
 		URL:    captURL,
 		output: make(chan *Capture, maxFrameBuffer),
 		close:  make(chan struct{}, 1),
@@ -43,7 +43,7 @@ func NewMJPEGStreamCapturer(rawURL string, maxFrameBuffer int, logger logging.Lo
 	}, nil
 }
 
-func (m *MJPEGStreamCapturer) Start() {
+func (m *MJPEGCapturer) Start() {
 	resp, err := http.Get(m.URL.String())
 	if err != nil {
 		m.logger.Error(fmt.Errorf("capturer: %w", err))
@@ -80,7 +80,7 @@ mainLoop:
 	}
 }
 
-func (m *MJPEGStreamCapturer) processNextPart(mr *multipart.Reader) error {
+func (m *MJPEGCapturer) processNextPart(mr *multipart.Reader) error {
 	p, err := mr.NextPart()
 	if errors.Is(err, io.EOF) {
 		return fmt.Errorf("capturer: %w", err)
@@ -96,10 +96,10 @@ func (m *MJPEGStreamCapturer) processNextPart(mr *multipart.Reader) error {
 	return nil
 }
 
-func (m *MJPEGStreamCapturer) Output() <-chan *Capture {
+func (m *MJPEGCapturer) Output() <-chan *Capture {
 	return m.output
 }
 
-func (m *MJPEGStreamCapturer) Close() {
+func (m *MJPEGCapturer) Close() {
 	close(m.close)
 }

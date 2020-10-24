@@ -28,7 +28,7 @@ func TestCapture(t *testing.T) {
 	defer vs.Close()
 	maxFrameBuffer := 100
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGStreamCapturer(vs.URL, maxFrameBuffer, logger)
+	vc, err := video.NewMJPEGCapturer(vs.URL, maxFrameBuffer, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	output := vc.Output()
@@ -46,7 +46,7 @@ func TestCapture(t *testing.T) {
 
 func TestNonSupportedURLScheme(t *testing.T) {
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	_, err := video.NewMJPEGStreamCapturer("tcp://127.0.0.1:8080", 5, logger)
+	_, err := video.NewMJPEGCapturer("tcp://127.0.0.1:8080", 5, logger)
 	assert.EqualError(t, err, "capturer (tcp://127.0.0.1:8080): only http or https scheme supported")
 }
 
@@ -55,7 +55,7 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 	vs := videoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGStreamCapturer(vs.URL, 1, logger)
+	vc, err := video.NewMJPEGCapturer(vs.URL, 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(time.Second)
@@ -67,7 +67,7 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 func TestErrorConnectionRefusedLogged(t *testing.T) {
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
-	vc, err := video.NewMJPEGStreamCapturer("http://127.0.0.2", 1, logger)
+	vc, err := video.NewMJPEGCapturer("http://127.0.0.2", 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(100 * time.Millisecond)
@@ -85,7 +85,7 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 	vs := videoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGStreamCapturer(vs.URL, framesInFlight, logger)
+	vc, err := video.NewMJPEGCapturer(vs.URL, framesInFlight, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(500 * time.Millisecond)
