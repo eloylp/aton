@@ -70,6 +70,7 @@ func TestErrorConnectionRefusedLogged(t *testing.T) {
 	vc, err := video.NewMJPEGCapturer("http://127.0.0.2", 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
+	defer vc.Close()
 	time.Sleep(100 * time.Millisecond)
 	assert.NoError(t, err)
 	assert.Contains(t, w.String(), "capturer: ")
