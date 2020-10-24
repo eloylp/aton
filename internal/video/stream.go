@@ -15,6 +15,10 @@ import (
 	"github.com/eloylp/aton/internal/logging"
 )
 
+const (
+	StatusNotRunning = "NOT_RUNNING"
+)
+
 type Capture struct {
 	Data      []byte
 	Timestamp time.Time
@@ -25,6 +29,7 @@ type MJPEGCapturer struct {
 	output chan *Capture
 	close  chan struct{}
 	logger logging.Logger
+	status string
 }
 
 func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
@@ -40,6 +45,7 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 		output: make(chan *Capture, maxFrameBuffer),
 		close:  make(chan struct{}, 1),
 		logger: logger,
+		status: StatusNotRunning,
 	}, nil
 }
 
@@ -102,4 +108,8 @@ func (m *MJPEGCapturer) Output() <-chan *Capture {
 
 func (m *MJPEGCapturer) Close() {
 	close(m.close)
+}
+
+func (m *MJPEGCapturer) Status() string {
+	return m.status
 }

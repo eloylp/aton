@@ -96,3 +96,11 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 	assert.True(t, len(vc.Output()) > 0, "output channel needs to have residual frames")
 	t.Logf("Output channel residual length: %v", len(vc.Output()))
 }
+
+func TestInitialState(t *testing.T) {
+	w := bytes.NewBuffer(nil)
+	logger := logging.NewBasicLogger(w)
+	vc, err := video.NewMJPEGCapturer("http://localhost:9999", 10, logger)
+	assert.NoError(t, err)
+	assert.Equal(t, video.StatusNotRunning, vc.Status(), "Init state must be %s", video.StatusNotRunning)
+}
