@@ -105,3 +105,17 @@ func TestInitialState(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, video.StatusNotRunning, vc.Status(), "Init state must be %s", video.StatusNotRunning)
 }
+
+func TestRunningState(t *testing.T) {
+	pictures := []string{faceBona1, faceBona2, faceBona3, faceBona4}
+	vs := videoStream(t, pictures, "/")
+	defer vs.Close()
+	w := bytes.NewBuffer(nil)
+	logger := logging.NewBasicLogger(w)
+	vc, err := video.NewMJPEGCapturer(vs.URL, 10, logger)
+	assert.NoError(t, err)
+	go vc.Start()
+	defer vc.Close()
+	time.Sleep(50 * time.Millisecond)
+	assert.Equal(t, video.StatusRunning, vc.Status(), "Running state must be %s", video.StatusRunning)
+}

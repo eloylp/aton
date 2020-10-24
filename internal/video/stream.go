@@ -17,6 +17,7 @@ import (
 
 const (
 	StatusNotRunning = "NOT_RUNNING"
+	StatusRunning    = "RUNNING"
 )
 
 type Capture struct {
@@ -50,6 +51,7 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 }
 
 func (m *MJPEGCapturer) Start() {
+	m.status = StatusRunning
 	resp, err := http.Get(m.URL.String())
 	if err != nil {
 		m.logger.Error(fmt.Errorf("capturer: %w", err))
