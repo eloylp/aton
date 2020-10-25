@@ -4,11 +4,15 @@ import (
 	"io/ioutil"
 	"log"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/textproto"
 	"strconv"
 	"testing"
+	"time"
+
+	"golang.org/x/net/nettest"
 )
 
 func videoStream(t *testing.T, picturesPaths []string, servingPath string) *httptest.Server {
@@ -54,4 +58,33 @@ func readFile(t *testing.T, file string) []byte {
 		log.Fatal(err)
 	}
 	return data
+}
+
+func netConnection(t *testing.T, expected int) (net.Listener, chan time.Time) {
+	s, err := nettest.NewLocalListener("tcp")
+	if err != nil {
+		t.Fatal(err)
+	}
+	m := make(chan time.Time, expected)
+	go func() {
+		var accepted int
+		for {
+			if accepted == expected {
+				close(m)
+				break
+			}
+			c, err := s.Accept()
+			if err != nil {
+				close(m)
+				t.Log(err)
+				break
+			}
+			accepted++
+			m <- time.Now()
+			if c.Close() != nil {
+				t.Log(err)
+			}
+		}
+	}()
+	return s, m
 }

@@ -119,3 +119,30 @@ func TestRunningState(t *testing.T) {
 	time.Sleep(50 * time.Millisecond)
 	assert.Equal(t, video.StatusRunning, vc.Status(), "Running state must be %s", video.StatusRunning)
 }
+
+func TestExpBackoffReconnectPeriods(t *testing.T) {
+	w := bytes.NewBuffer(nil)
+	logger := logging.NewBasicLogger(w)
+	expectedConnections := 5
+	netListener, netConnections := netConnection(t, expectedConnections)
+	defer netListener.Close()
+	vc, err := video.NewMJPEGCapturer("http://"+netListener.Addr().String(), 10, logger)
+	assert.NoError(t, err)
+	startTime := time.Now()
+	go vc.Start()
+	time.Sleep(40 * time.Second)
+	vc.Close()
+	resultConnections := make([]time.Time, expectedConnections)
+	assert.Len(t, netConnections, expectedConnections)
+	var i int
+	for connTime := range netConnections {
+		resultConnections[i] = connTime
+		i++
+	}
+	marginErr := 50 * time.Millisecond
+	assert.WithinDuration(t, startTime, resultConnections[0], marginErr)
+	assert.WithinDuration(t, startTime.Add(2*time.Second), resultConnections[1], marginErr)
+	assert.WithinDuration(t, startTime.Add(6*time.Second), resultConnections[2], marginErr)
+	assert.WithinDuration(t, startTime.Add(14*time.Second), resultConnections[3], marginErr)
+	assert.WithinDuration(t, startTime.Add(30*time.Second), resultConnections[4], marginErr)
+}

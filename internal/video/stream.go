@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"mime"
 	"mime/multipart"
 	"net/http"
@@ -52,9 +53,9 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 
 func (m *MJPEGCapturer) Start() {
 	m.status = StatusRunning
-	resp, err := http.Get(m.URL.String())
+	resp, err := m.connect()
 	if err != nil {
-		m.logger.Error(fmt.Errorf("capturer: %w", err))
+		m.logger.Error(err)
 		return
 	}
 	defer resp.Body.Close()
@@ -86,6 +87,31 @@ mainLoop:
 			}
 		}
 	}
+}
+
+func (m *MJPEGCapturer) connect() (resp *http.Response, err error) {
+	var backoff float64 = 1
+	var sleepTime time.Duration
+	for {
+		time.Sleep(sleepTime * time.Second)
+		resp, err = http.Get(m.URL.String())
+		if err != nil {
+			select {
+			case <-m.close:
+				close(m.output)
+				return
+			default:
+				if backoff < 16 {
+					sleepTime = time.Duration(math.Pow(2, backoff))
+					backoff++
+				}
+				m.logger.Error(fmt.Errorf("capturer: %w", err))
+				continue
+			}
+		}
+		break
+	}
+	return
 }
 
 func (m *MJPEGCapturer) processNextPart(mr *multipart.Reader) error {
