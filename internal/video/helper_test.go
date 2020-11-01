@@ -71,6 +71,7 @@ func netConnection(t *testing.T, expected int) (net.Listener, chan time.Time) {
 		for {
 			if accepted == expected {
 				close(m)
+				s.Close()
 				break
 			}
 			c, err := s.Accept()
