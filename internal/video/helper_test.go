@@ -60,7 +60,7 @@ func readFile(t *testing.T, file string) []byte {
 	return data
 }
 
-func netConnection(t *testing.T, expected int) (net.Listener, chan time.Time) {
+func netCloserServer(t *testing.T, expected int) (net.Listener, chan time.Time) {
 	s, err := nettest.NewLocalListener("tcp")
 	if err != nil {
 		t.Fatal(err)

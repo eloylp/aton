@@ -124,7 +124,7 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
 	expectedConnections := 5
-	netListener, netConnections := netConnection(t, expectedConnections)
+	netListener, netServer := netCloserServer(t, expectedConnections)
 	defer netListener.Close()
 	vc, err := video.NewMJPEGCapturer("http://"+netListener.Addr().String(), 10, logger)
 	assert.NoError(t, err)
@@ -133,9 +133,9 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 	time.Sleep(40 * time.Second)
 	vc.Close()
 	resultConnections := make([]time.Time, expectedConnections)
-	assert.Len(t, netConnections, expectedConnections)
+	assert.Len(t, netServer, expectedConnections)
 	var i int
-	for connTime := range netConnections {
+	for connTime := range netServer {
 		resultConnections[i] = connTime
 		i++
 	}
