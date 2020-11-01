@@ -121,6 +121,7 @@ func TestRunningState(t *testing.T) {
 }
 
 func TestExpBackoffReconnectPeriods(t *testing.T) {
+	t.Parallel()
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
 	expectedConnections := 5
