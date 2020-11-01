@@ -80,8 +80,8 @@ func netConnection(t *testing.T, expected int) (net.Listener, chan time.Time) {
 				t.Log(err)
 				break
 			}
-			accepted++
 			m <- time.Now()
+			accepted++
 			if c.Close() != nil {
 				t.Log(err)
 			}
