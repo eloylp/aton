@@ -14,6 +14,11 @@ import (
 	"github.com/eloylp/aton/internal/video"
 )
 
+// TODO. this is the beginning of the implementation of the video
+// TODO. capturer. The below tests must be decoupled from implementation
+// TODO. via interface, but since we still dont know if the current
+// TODO. interface is the final one, we are delaying this refactor.
+
 var (
 	imagesDir = "../../images"
 	faceBona1 = filepath.Join(imagesDir, "bona.jpg")
