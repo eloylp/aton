@@ -1,0 +1,35 @@
+syntax = "proto3";
+package detector;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/eloylp/aton/internal/detector";
+
+service Detector {
+  rpc LoadCategories(LoadCategoriesRequest) returns (LoadCategoriesResponse);
+  rpc Recognize(stream RecognizeRequest) returns (stream RecognizeResponse);
+}
+
+message LoadCategoriesRequest {
+  repeated string categories = 1;
+  bytes image = 2;
+}
+
+message LoadCategoriesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RecognizeRequest {
+  bytes image = 1;
+  google.protobuf.Timestamp created_at = 2;
+}
+
+message RecognizeResponse {
+  repeated string names = 1;
+  bool success = 2;
+  string message = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp recognized_at = 5;
+}
+
