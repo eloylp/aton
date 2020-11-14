@@ -33,13 +33,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	detector.RegisterDetectorServer(s, detector.NewServer(faceDetector, logger, time.Now))
-	go func() {
-		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
-		recvSig := <-ch
-		logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
-		s.GracefulStop()
-	}()
+	go watchForOSSignals(logger, s)
 	if err := s.Serve(lis); err != nil {
 		terminateAbnormally(logger, err)
 	}
@@ -49,4 +43,14 @@ func main() {
 func terminateAbnormally(logger logging.Logger, err error) {
 	logger.Error(err)
 	os.Exit(1)
+}
+
+func watchForOSSignals(logger *logging.BasicLogger, s *grpc.Server) {
+	func() {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
+		recvSig := <-ch
+		logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
+		s.GracefulStop()
+	}()
 }
