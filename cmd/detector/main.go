@@ -15,7 +15,7 @@ import (
 
 func main() {
 	address := os.Getenv("DETECTOR_ADDR")
-	modelDir := os.Getenv("DETECTOR_MODELS_DIR")
+	modelDir := os.Getenv("DETECTOR_MODEL_DIR")
 	logger := logging.NewBasicLogger(os.Stdout)
 	faceDetector, err := detector.NewGoFaceDetector(modelDir)
 	if err != nil {
