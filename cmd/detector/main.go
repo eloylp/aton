@@ -13,9 +13,14 @@ import (
 	"github.com/eloylp/aton/internal/logging"
 )
 
+const (
+	DetectorListenAddress = "DETECTOR_ADDR"
+	DetectorModelDir      = "DETECTOR_MODEL_DIR"
+)
+
 func main() {
-	address := os.Getenv("DETECTOR_ADDR")
-	modelDir := os.Getenv("DETECTOR_MODEL_DIR")
+	address := os.Getenv(DetectorListenAddress)
+	modelDir := os.Getenv(DetectorModelDir)
 	logger := logging.NewBasicLogger(os.Stdout)
 	faceDetector, err := detector.NewGoFaceDetector(modelDir)
 	if err != nil {
