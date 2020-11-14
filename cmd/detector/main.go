@@ -24,14 +24,12 @@ func main() {
 	logger := logging.NewBasicLogger(os.Stdout)
 	faceDetector, err := detector.NewGoFaceDetector(modelDir)
 	if err != nil {
-		logger.Error(err)
-		os.Exit(1)
+		terminateAbnormally(logger, err)
 	}
 	logger.Infof("Starting detector service at %s", address)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
-		logger.Error(err)
-		os.Exit(1)
+		terminateAbnormally(logger, err)
 	}
 	s := grpc.NewServer()
 	detector.RegisterDetectorServer(s, detector.NewServer(faceDetector, logger, time.Now))
@@ -43,8 +41,12 @@ func main() {
 		s.GracefulStop()
 	}()
 	if err := s.Serve(lis); err != nil {
-		logger.Error(err)
-		os.Exit(1)
+		terminateAbnormally(logger, err)
 	}
 	logger.Infof("Stopped detector service at %s", address)
+}
+
+func terminateAbnormally(logger logging.Logger, err error) {
+	logger.Error(err)
+	os.Exit(1)
 }
