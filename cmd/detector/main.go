@@ -3,6 +3,8 @@ package main
 import (
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"google.golang.org/grpc"
@@ -20,6 +22,7 @@ func main() {
 		logger.Error(err)
 		os.Exit(1)
 	}
+	logger.Infof("Starting detector service at %s", address)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		logger.Error(err)
@@ -31,4 +34,5 @@ func main() {
 		logger.Error(err)
 		os.Exit(1)
 	}
+	logger.Infof("Stopped detector service at %s", address)
 }
