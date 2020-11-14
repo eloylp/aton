@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		terminateAbnormally(logger, err)
 	}
-	logger.Infof("Starting detector service at %s", address)
+	logger.Infof("starting detector service at %s", address)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		terminateAbnormally(logger, err)
@@ -37,7 +37,7 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		terminateAbnormally(logger, err)
 	}
-	logger.Infof("Stopped detector service at %s", address)
+	logger.Infof("stopped detector service at %s", address)
 }
 
 func terminateAbnormally(logger logging.Logger, err error) {
