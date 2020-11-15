@@ -32,7 +32,7 @@ func main() {
 		terminateAbnormally(logger, err)
 	}
 	s := grpc.NewServer()
-	detector.RegisterDetectorServer(s, detector.NewServer(faceDetector, logger, time.Now))
+	detector.RegisterDetectorServer(s, detector.NewGRPCService(faceDetector, logger, time.Now))
 	go watchForOSSignals(logger, s)
 	if err := s.Serve(lis); err != nil {
 		terminateAbnormally(logger, err)
