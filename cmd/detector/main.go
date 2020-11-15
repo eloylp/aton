@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,18 +25,11 @@ func main() {
 	if err != nil {
 		terminateAbnormally(logger, err)
 	}
-	logger.Infof("starting detector service at %s", address)
-	lis, err := net.Listen("tcp", address)
-	if err != nil {
+	service := detector.NewGRPCService(faceDetector, logger, time.Now)
+	server := detector.NewGRPCServer(service, logger, address)
+	if err := server.Start(); err != nil {
 		terminateAbnormally(logger, err)
 	}
-	s := grpc.NewServer()
-	detector.RegisterDetectorServer(s, detector.NewGRPCService(faceDetector, logger, time.Now))
-	go watchForOSSignals(logger, s)
-	if err := s.Serve(lis); err != nil {
-		terminateAbnormally(logger, err)
-	}
-	logger.Infof("stopped detector service at %s", address)
 }
 
 func terminateAbnormally(logger logging.Logger, err error) {
