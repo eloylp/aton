@@ -1,4 +1,4 @@
-package detector
+package grpc
 
 import (
 	"context"
@@ -7,30 +7,32 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/eloylp/aton/internal/detector"
+	"github.com/eloylp/aton/internal/detector/proto"
 	"github.com/eloylp/aton/internal/logging"
 )
 
-type GRPCService struct {
-	detector Facial
+type Service struct {
+	detector detector.Facial
 	logging.Logger
 	timeNow func() time.Time
 }
 
-func NewGRPCService(detector Facial, logger logging.Logger, timeNow func() time.Time) *GRPCService {
-	return &GRPCService{detector: detector, Logger: logger, timeNow: timeNow}
+func NewService(d detector.Facial, logger logging.Logger, timeNow func() time.Time) *Service {
+	return &Service{detector: d, Logger: logger, timeNow: timeNow}
 }
 
-func (s *GRPCService) LoadCategories(_ context.Context, r *LoadCategoriesRequest) (*LoadCategoriesResponse, error) {
+func (s *Service) LoadCategories(_ context.Context, r *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
 	if err := s.detector.SaveFaces(r.Categories, r.Image); err != nil {
 		return nil, err
 	}
-	return &LoadCategoriesResponse{
+	return &proto.LoadCategoriesResponse{
 		Success: true,
 		Message: "categories loaded",
 	}, nil
 }
 
-func (s *GRPCService) Recognize(server Detector_RecognizeServer) error {
+func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 	for {
 		req, err := server.Recv()
 		if err == io.EOF {
@@ -41,7 +43,7 @@ func (s *GRPCService) Recognize(server Detector_RecognizeServer) error {
 			s.Logger.Error(err)
 			return err
 		}
-		var resp *RecognizeResponse
+		var resp *proto.RecognizeResponse
 		resp.CreatedAt = req.CreatedAt
 		resp.Success = true
 		cats, err := s.detector.FindFaces(req.Image)

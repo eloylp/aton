@@ -1,9 +1,9 @@
 syntax = "proto3";
-package detector;
+package proto;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/eloylp/aton/internal/detector";
+option go_package = "github.com/eloylp/aton/internal/detector/proto";
 
 service Detector {
   rpc LoadCategories(LoadCategoriesRequest) returns (LoadCategoriesResponse);

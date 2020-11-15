@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/eloylp/aton/internal/detector"
+	"github.com/eloylp/aton/internal/detector/grpc"
 	"github.com/eloylp/aton/internal/logging"
 )
 
@@ -21,8 +22,8 @@ func main() {
 	if err != nil {
 		terminateAbnormally(logger, err)
 	}
-	service := detector.NewGRPCService(faceDetector, logger, time.Now)
-	server := detector.NewGRPCServer(service, logger, address)
+	service := grpc.NewService(faceDetector, logger, time.Now)
+	server := grpc.NewServer(service, logger, address)
 	if err := server.Start(); err != nil {
 		terminateAbnormally(logger, err)
 	}

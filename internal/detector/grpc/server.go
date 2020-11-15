@@ -1,4 +1,4 @@
-package detector
+package grpc
 
 import (
 	"net"
@@ -8,28 +8,29 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/eloylp/aton/internal/detector/proto"
 	"github.com/eloylp/aton/internal/logging"
 )
 
-type GRPCServer struct {
-	service    DetectorServer
+type Server struct {
+	service    proto.DetectorServer
 	logger     logging.Logger
 	s          *grpc.Server
 	listenAddr string
 }
 
-func NewGRPCServer(service DetectorServer, logger logging.Logger, listenAddr string) *GRPCServer {
-	s := &GRPCServer{
+func NewServer(service proto.DetectorServer, logger logging.Logger, listenAddr string) *Server {
+	s := &Server{
 		service:    service,
 		logger:     logger,
 		listenAddr: listenAddr,
 		s:          grpc.NewServer(),
 	}
-	RegisterDetectorServer(s.s, s.service)
+	proto.RegisterDetectorServer(s.s, s.service)
 	return s
 }
 
-func (gs *GRPCServer) Start() error {
+func (gs *Server) Start() error {
 	gs.logger.Infof("starting detector service at %s", gs.listenAddr)
 	lis, err := net.Listen("tcp", gs.listenAddr)
 	if err != nil {
@@ -39,7 +40,7 @@ func (gs *GRPCServer) Start() error {
 	return gs.s.Serve(lis)
 }
 
-func (gs *GRPCServer) watchForOSSignals() {
+func (gs *Server) watchForOSSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 	recvSig := <-ch
@@ -47,7 +48,7 @@ func (gs *GRPCServer) watchForOSSignals() {
 	gs.Shutdown()
 }
 
-func (gs *GRPCServer) Shutdown() {
+func (gs *Server) Shutdown() {
 	gs.s.GracefulStop()
 	gs.logger.Infof("stopped detector service at %s", gs.listenAddr)
 }
