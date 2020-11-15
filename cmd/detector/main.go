@@ -46,11 +46,9 @@ func terminateAbnormally(logger logging.Logger, err error) {
 }
 
 func watchForOSSignals(logger *logging.BasicLogger, s *grpc.Server) {
-	func() {
-		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
-		recvSig := <-ch
-		logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
-		s.GracefulStop()
-	}()
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
+	recvSig := <-ch
+	logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
+	s.GracefulStop()
 }
