@@ -2,11 +2,7 @@ package main
 
 import (
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
-
-	"google.golang.org/grpc"
 
 	"github.com/eloylp/aton/internal/detector"
 	"github.com/eloylp/aton/internal/logging"
@@ -35,12 +31,4 @@ func main() {
 func terminateAbnormally(logger logging.Logger, err error) {
 	logger.Error(err)
 	os.Exit(1)
-}
-
-func watchForOSSignals(logger *logging.BasicLogger, s *grpc.Server) {
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
-	recvSig := <-ch
-	logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
-	s.GracefulStop()
 }
