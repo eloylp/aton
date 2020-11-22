@@ -15,7 +15,7 @@ import (
 
 var (
 	ModelsDir        = "../../models"
-	imagesDir        = "../../images"
+	imagesDir        = "../../testdata/images"
 	groupFaces       = filepath.Join(imagesDir, "pristin.jpg")
 	faceBona1        = filepath.Join(imagesDir, "bona.jpg")
 	faceBona2        = filepath.Join(imagesDir, "bona2.jpg")
