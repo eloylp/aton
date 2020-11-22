@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/eloylp/aton.svg?branch=master)](https://travis-ci.com/eloylp/aton)
+
 # Aton
 
 
