@@ -12,6 +12,7 @@ import (
 
 	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/video"
+	"github.com/eloylp/aton/pkg/test/helper"
 )
 
 // TODO. this is the beginning of the implementation of the video
@@ -29,7 +30,7 @@ var (
 
 func TestCapture(t *testing.T) {
 	pictures := []string{faceBona1, faceBona2, faceBona3, faceBona4}
-	vs := videoStream(t, pictures, "/")
+	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	maxFrameBuffer := 100
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
@@ -42,7 +43,7 @@ func TestCapture(t *testing.T) {
 	})
 	var i int
 	for k := range output {
-		expected := readFile(t, pictures[i])
+		expected := helper.ReadFile(t, pictures[i])
 		got := k.Data
 		assert.Equal(t, expected, got, "Image no %v does not match", i)
 		i++
@@ -57,7 +58,7 @@ func TestNonSupportedURLScheme(t *testing.T) {
 
 func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 	pictures := []string{faceBona1}
-	vs := videoStream(t, pictures, "/")
+	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
 	vc, err := video.NewMJPEGCapturer(vs.URL, 1, logger)
@@ -88,7 +89,7 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 	for i := 0; i < framesInFlight; i++ {
 		pictures[i] = faceBona1
 	}
-	vs := videoStream(t, pictures, "/")
+	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
 	vc, err := video.NewMJPEGCapturer(vs.URL, framesInFlight, logger)
@@ -113,7 +114,7 @@ func TestInitialState(t *testing.T) {
 
 func TestRunningState(t *testing.T) {
 	pictures := []string{faceBona1, faceBona2, faceBona3, faceBona4}
-	vs := videoStream(t, pictures, "/")
+	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
@@ -130,7 +131,7 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
 	expectedConnections := 5
-	netListener, netServer := netCloserServer(t, expectedConnections)
+	netListener, netServer := helper.NetCloserServer(t, expectedConnections)
 	defer netListener.Close()
 	vc, err := video.NewMJPEGCapturer("http://"+netListener.Addr().String(), 10, logger)
 	assert.NoError(t, err)
