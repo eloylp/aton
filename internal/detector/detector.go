@@ -9,9 +9,9 @@ import (
 	"github.com/Kagami/go-face"
 )
 
-type Facial interface {
-	SaveFaces([]string, []byte) error
-	FindFaces([]byte) ([]string, error)
+type Classifier interface {
+	SaveCategories([]string, []byte) error
+	FindCategories([]byte) ([]string, error)
 }
 
 type GoFace struct {
@@ -33,7 +33,7 @@ func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
 	return d, nil
 }
 
-func (d *GoFace) SaveFaces(names []string, bytes []byte) error {
+func (d *GoFace) SaveCategories(names []string, bytes []byte) error {
 	dup := duplicates(names)
 	if len(dup) > 0 {
 		return fmt.Errorf("gofacedetector: duplicated names: %s", strings.Join(dup, ","))
@@ -82,7 +82,7 @@ func (d *GoFace) catExists(cat int32) bool {
 	return ok
 }
 
-func (d *GoFace) FindFaces(input []byte) ([]string, error) {
+func (d *GoFace) FindCategories(input []byte) ([]string, error) {
 	faces, err := d.rec.Recognize(input)
 	if err != nil {
 		return nil, fmt.Errorf("gofacedetector: can't recognize input: %w", err)

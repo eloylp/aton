@@ -13,17 +13,17 @@ import (
 )
 
 type Service struct {
-	detector detector.Facial
+	detector detector.Classifier
 	logging.Logger
 	timeNow func() time.Time
 }
 
-func NewService(d detector.Facial, logger logging.Logger, timeNow func() time.Time) *Service {
+func NewService(d detector.Classifier, logger logging.Logger, timeNow func() time.Time) *Service {
 	return &Service{detector: d, Logger: logger, timeNow: timeNow}
 }
 
 func (s *Service) LoadCategories(_ context.Context, r *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
-	if err := s.detector.SaveFaces(r.Categories, r.Image); err != nil {
+	if err := s.detector.SaveCategories(r.Categories, r.Image); err != nil {
 		return nil, err
 	}
 	return &proto.LoadCategoriesResponse{
@@ -46,7 +46,7 @@ func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 		var resp *proto.RecognizeResponse
 		resp.CreatedAt = req.CreatedAt
 		resp.Success = true
-		cats, err := s.detector.FindFaces(req.Image)
+		cats, err := s.detector.FindCategories(req.Image)
 		resp.RecognizedAt = timestamppb.Now()
 		if err != nil {
 			resp.Success = false
