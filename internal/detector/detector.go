@@ -88,14 +88,14 @@ func (d *GoFace) FindCategories(input []byte) ([]string, error) {
 		return nil, fmt.Errorf("gofacedetector: can't recognize input: %w", err)
 	}
 	var results []string
-	done := map[string]bool{}
+	done := map[string]struct{}{}
 	for i := 0; i < len(faces); i++ {
 		catN := d.rec.Classify(faces[i].Descriptor)
 		catName, ok := d.cat[int32(catN)]
 		_, duplicated := done[catName]
 		if ok && !duplicated {
 			results = append(results, catName)
-			done[catName] = true
+			done[catName] = struct{}{}
 		}
 	}
 	return results, nil
