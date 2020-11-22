@@ -1,0 +1,31 @@
+language: go
+go:
+  - 1.15.5
+
+jobs:
+  include:
+
+    - name: "Unit tests"
+      stage: test
+      script: make test-unit
+
+    - name: "Integration tests"
+      stage: integration-test
+      script: make test-integration
+
+    - name: "Detector tests"
+      stage: integration-test
+      script: make test-detector
+      services: docker
+
+    - name: "Racy tests"
+      stage: integration-test
+      script: make test-racy
+
+    - name: "End to End tests"
+      stage: integration-test
+      script: make test-racy
+
+stages:
+  - unit-test
+  - integration-test
