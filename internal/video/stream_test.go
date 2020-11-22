@@ -21,7 +21,7 @@ import (
 // TODO. interface is the final one, we are delaying this refactor.
 
 var (
-	imagesDir = "../../images"
+	imagesDir = "../../../testdata/images"
 	faceBona1 = filepath.Join(imagesDir, "bona.jpg")
 	faceBona2 = filepath.Join(imagesDir, "bona2.jpg")
 	faceBona3 = filepath.Join(imagesDir, "bona3.jpg")
