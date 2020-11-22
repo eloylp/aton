@@ -6,7 +6,7 @@ jobs:
   include:
 
     - name: "Unit tests"
-      stage: test
+      stage: unit-test
       script: make test-unit
 
     - name: "Integration tests"
@@ -15,6 +15,7 @@ jobs:
 
     - name: "Detector tests"
       stage: integration-test
+      before_script: make docker-test
       script: make test-detector
       services: docker
 
