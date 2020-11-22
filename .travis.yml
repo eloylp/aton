@@ -11,20 +11,32 @@ jobs:
 
     - name: "Integration tests"
       stage: integration-test
+      branches:
+        only:
+          - master
       script: make test-integration
 
     - name: "Detector tests"
       stage: integration-test
+      branches:
+        only:
+          - master
       before_script: make docker-test
       script: make test-detector
       services: docker
 
     - name: "Racy tests"
       stage: integration-test
+      branches:
+        only:
+          - master
       script: make test-racy
 
     - name: "End to End tests"
       stage: integration-test
+      branches:
+        only:
+          - master
       script: make test-racy
 
 stages:
