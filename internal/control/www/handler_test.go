@@ -1,16 +1,17 @@
-package handler_test
+package www_test
 
 import (
 	"net/http"
 	"testing"
 
-	"github.com/eloylp/aton/internal/handler"
 	"github.com/eloylp/kit/test/check"
-	handlertest "github.com/eloylp/kit/test/handler"
+	"github.com/eloylp/kit/test/handler"
+
+	"github.com/eloylp/aton/internal/control/www"
 )
 
 func TestHandlers(t *testing.T) {
-	cases := []handlertest.Case{
+	cases := []handler.Case{
 		{
 			Case:     "Status is showing correctly",
 			Path:     "/status",
@@ -18,5 +19,5 @@ func TestHandlers(t *testing.T) {
 			Checkers: []check.Function{check.HasStatus(http.StatusOK), check.ContainsJSON(`{"status":"ok"}`)},
 		},
 	}
-	t.Run("Running handler tests ...", handlertest.Tester(cases, handler.Router(), nil, nil))
+	t.Run("Running handler tests ...", handler.Tester(cases, www.Router(), nil, nil))
 }
