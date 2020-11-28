@@ -111,4 +111,4 @@ issues:
 run:
   timeout: 3m
 service:
-  golangci-lint-version: 1.31.0 # use the fixed version to not introduce new linters unexpectedly
+  golangci-lint-version: 1.33.0 # use the fixed version to not introduce new linters unexpectedly
