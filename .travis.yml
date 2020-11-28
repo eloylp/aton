@@ -4,6 +4,9 @@ go:
 
 jobs:
   include:
+    - name: "Linter"
+      stage: linter
+      script: make lint
 
     - name: "Unit tests"
       stage: unit-test
@@ -40,5 +43,6 @@ jobs:
       script: make test-racy
 
 stages:
+  - linter
   - unit-test
   - integration-test
