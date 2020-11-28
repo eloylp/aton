@@ -1,7 +1,10 @@
 language: go
 go:
   - 1.15.5
-
+dist: focal
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg-dev
 jobs:
   include:
     - name: "Linter"
