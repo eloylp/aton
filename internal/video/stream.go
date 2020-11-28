@@ -28,11 +28,12 @@ type Capture struct {
 }
 
 type MJPEGCapturer struct {
-	URL    *url.URL
-	output chan *Capture
-	close  chan struct{}
-	logger logging.Logger
-	status string
+	URL        *url.URL
+	output     chan *Capture
+	close      chan struct{}
+	logger     logging.Logger
+	status     string
+	maxBackOff float64
 }
 
 func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
@@ -43,12 +44,14 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 	if !regexp.MustCompile("https?").MatchString(captURL.Scheme) {
 		return nil, fmt.Errorf("capturer (%s): only http or https scheme supported", rawURL)
 	}
+	var maxBackOff float64 = 16
 	return &MJPEGCapturer{
-		URL:    captURL,
-		output: make(chan *Capture, maxFrameBuffer),
-		close:  make(chan struct{}, 1),
-		logger: logger,
-		status: StatusNotRunning,
+		URL:        captURL,
+		output:     make(chan *Capture, maxFrameBuffer),
+		close:      make(chan struct{}, 1),
+		logger:     logger,
+		status:     StatusNotRunning,
+		maxBackOff: maxBackOff, // Todo think about extracting to a client.
 	}, nil
 }
 
@@ -108,8 +111,8 @@ func (m *MJPEGCapturer) connect() (resp *http.Response, err error) {
 				close(m.output)
 				return
 			default:
-				if backoff < 16 {
-					sleepTime = time.Duration(math.Pow(2, backoff))
+				if backoff < m.maxBackOff {
+					sleepTime = time.Duration(math.Exp2(backoff))
 					backoff++
 				}
 				m.logger.Error(fmt.Errorf("capturer: %w", err))
