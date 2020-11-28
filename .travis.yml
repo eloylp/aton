@@ -6,7 +6,9 @@ jobs:
   include:
     - name: "Linter"
       stage: linter
-      script: make lint
+      script:
+        - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
+        - make lint
 
     - name: "Unit tests"
       stage: unit-test
