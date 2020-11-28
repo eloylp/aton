@@ -1,6 +1,7 @@
 package video
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -94,7 +95,13 @@ func (m *MJPEGCapturer) connect() (resp *http.Response, err error) {
 	var sleepTime time.Duration
 	for {
 		time.Sleep(sleepTime * time.Second)
-		resp, err = http.Get(m.URL.String())
+		var req *http.Request
+		req, err = http.NewRequestWithContext(context.TODO(), http.MethodGet, m.URL.String(), nil)
+		if err != nil {
+			return nil, err
+		}
+		client := &http.Client{} // TODO think about transport, timeouts and further configuration
+		resp, err = client.Do(req)
 		if err != nil {
 			select {
 			case <-m.close:
