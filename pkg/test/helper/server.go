@@ -8,32 +8,33 @@ import (
 	"golang.org/x/net/nettest"
 )
 
-func NetCloserServer(t *testing.T, expected int) (net.Listener, chan time.Time) {
-	s, err := nettest.NewLocalListener("tcp")
+func NetCloserServer(t *testing.T, expected int) (listener net.Listener, result chan time.Time) {
+	var err error
+	listener, err = nettest.NewLocalListener("tcp")
 	if err != nil {
 		t.Fatal(err)
 	}
-	m := make(chan time.Time, expected)
+	result = make(chan time.Time, expected)
 	go func() {
 		var accepted int
 		for {
 			if accepted == expected {
-				close(m)
-				s.Close()
+				close(result)
+				listener.Close()
 				break
 			}
-			c, err := s.Accept()
+			c, err := listener.Accept()
 			if err != nil {
-				close(m)
+				close(result)
 				t.Log(err)
 				break
 			}
-			m <- time.Now()
+			result <- time.Now()
 			accepted++
 			if c.Close() != nil {
 				t.Log(err)
 			}
 		}
 	}()
-	return s, m
+	return
 }
