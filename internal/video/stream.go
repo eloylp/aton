@@ -39,7 +39,7 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
 	}
-	if !regexp.MustCompile("http|https").MatchString(captURL.Scheme) {
+	if !regexp.MustCompile("https?").MatchString(captURL.Scheme) {
 		return nil, fmt.Errorf("capturer (%s): only http or https scheme supported", rawURL)
 	}
 	return &MJPEGCapturer{
