@@ -3,7 +3,7 @@ package proto;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/eloylp/aton/internal/detector/proto";
+option go_package = "github.com/eloylp/aton/internal/proto";
 
 service Detector {
   rpc LoadCategories(LoadCategoriesRequest) returns (LoadCategoriesResponse);

@@ -8,8 +8,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/eloylp/aton/internal/detector/proto"
 	"github.com/eloylp/aton/internal/logging"
+	"github.com/eloylp/aton/internal/proto"
 )
 
 type Server struct {

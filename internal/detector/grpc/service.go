@@ -8,8 +8,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/eloylp/aton/internal/detector"
-	"github.com/eloylp/aton/internal/detector/proto"
 	"github.com/eloylp/aton/internal/logging"
+	"github.com/eloylp/aton/internal/proto"
 )
 
 type Service struct {
