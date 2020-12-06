@@ -7,7 +7,7 @@ import (
 	"github.com/eloylp/kit/test/check"
 	"github.com/eloylp/kit/test/handler"
 
-	"github.com/eloylp/aton/internal/control/www"
+	"github.com/eloylp/aton/internal/ctl/www"
 )
 
 func TestHandlers(t *testing.T) {
