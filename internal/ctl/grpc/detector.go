@@ -22,6 +22,10 @@ type DetectorClient struct {
 	logger          logging.Logger
 }
 
+func NewDetectorClient(addr string, wg *sync.WaitGroup, logger logging.Logger) *DetectorClient {
+	return &DetectorClient{addr: addr, wg: wg, logger: logger}
+}
+
 func (c *DetectorClient) Connect() error {
 	grpcClientConn, err := grpc.Dial(c.addr, grpc.WithInsecure())
 	if err != nil {
