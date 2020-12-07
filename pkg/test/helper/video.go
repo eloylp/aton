@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -14,11 +13,7 @@ func VideoStream(t *testing.T, picturesPaths []string, servingPath string) *http
 	t.Helper()
 	pictures := make([][]byte, len(picturesPaths))
 	for i := 0; i < len(picturesPaths); i++ {
-		data, err := ioutil.ReadFile(picturesPaths[i])
-		if err != nil {
-			t.Fatal(err)
-		}
-		pictures[i] = data
+		pictures[i] = ReadFile(t, picturesPaths[i])
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc(servingPath, func(w http.ResponseWriter, r *http.Request) {
