@@ -39,12 +39,15 @@ func (c *DetectorClient) LoadCategories(ctx context.Context, request *proto.Load
 	return c.client.LoadCategories(ctx, request)
 }
 
-func (c *DetectorClient) Recognize(ctx context.Context) (chan<- *proto.RecognizeRequest, <-chan *proto.RecognizeResponse, error) {
+//nolint: gocritic
+func (c *DetectorClient) Recognize(ctx context.Context) (
+	chan<- *proto.RecognizeRequest,
+	<-chan *proto.RecognizeResponse, error) {
 	gClient, err := c.client.Recognize(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("detectorclient: recognize: %w", err)
 	}
-	c.wg.Add(2)
+	c.wg.Add(2) //nolint: gomnd
 	go func() {
 		defer func() {
 			close(c.detectionOutput)
