@@ -22,6 +22,8 @@ steps:
       - linter
       - unit-tests
     commands:
+      - sudo apt-get update
+      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-integration
     when:
       branch:
@@ -49,7 +51,7 @@ steps:
       - unit-tests
     commands:
       - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg-dev
+      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-racy
     when:
       branch:
@@ -63,7 +65,7 @@ steps:
       - unit-tests
     commands:
       - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg-dev
+      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-e2e
     when:
       branch:
