@@ -73,8 +73,8 @@ steps:
       branch:
         include:
           - master
-
-  - name: notify
+pipeline:
+  notify:
     image: drillster/drone-email
     when:
       status: [changed, failure]
