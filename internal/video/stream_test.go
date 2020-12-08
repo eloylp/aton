@@ -4,7 +4,6 @@ package video_test
 
 import (
 	"bytes"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -22,8 +21,7 @@ import (
 // TODO. interface is the final one, we are delaying this refactor.
 
 var (
-	here, _   = os.Getwd()
-	imagesDir = filepath.Join(here, "/../../samples/images")
+	imagesDir = "../../samples/images"
 	faceBona1 = filepath.Join(imagesDir, "bona.jpg")
 	faceBona2 = filepath.Join(imagesDir, "bona2.jpg")
 	faceBona3 = filepath.Join(imagesDir, "bona3.jpg")

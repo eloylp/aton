@@ -4,7 +4,6 @@ package detector_test
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -15,9 +14,8 @@ import (
 )
 
 var (
-	here, _          = os.Getwd()
-	ModelsDir        = filepath.Join(here, "/../../models")
-	imagesDir        = filepath.Join(here, "/../../samples/images")
+	ModelsDir        = "../../models"
+	imagesDir        = "../../samples/images"
 	groupFaces       = filepath.Join(imagesDir, "pristin.jpg")
 	faceBona1        = filepath.Join(imagesDir, "bona.jpg")
 	faceBona2        = filepath.Join(imagesDir, "bona2.jpg")
