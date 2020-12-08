@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/eloylp/aton.svg?branch=master)](https://travis-ci.com/eloylp/aton)
+[![Build Status](https://ci.xeito.dev/api/badges/eloylp/aton/status.svg)](https://ci.xeito.dev/eloylp/aton)
 
 # Aton
 
