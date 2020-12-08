@@ -24,7 +24,8 @@ jobs:
         only:
           - master
       script:
-      - ls -l testdata/images
+      - pwd
+      - find / -name "images" -type d
       - make test-integration
 
     - name: "Detector tests"
