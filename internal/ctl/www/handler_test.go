@@ -14,7 +14,7 @@ func TestHandlers(t *testing.T) {
 	cases := []handler.Case{
 		{
 			Case:     "Status is showing correctly",
-			Path:     "/status",
+			Path:     "/statuss",
 			Method:   http.MethodGet,
 			Checkers: []check.Function{check.HasStatus(http.StatusOK), check.ContainsJSON(`{"status":"ok"}`)},
 		},
