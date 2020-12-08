@@ -81,14 +81,10 @@ name: Notify
 steps:
   - name: notify
     image: drillster/drone-email
-    depends_on:
-      - linter
-      - unit-tests
-      - integration-tests
-      - detector-tests
-      - racy-tests
-      - e2e-tests
     when:
       status: [ changed, failure ]
     settings:
       secrets: [ email_host, email_port, email_username, email_password ]
+
+depends_on:
+  - Aton
