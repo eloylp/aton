@@ -7,8 +7,8 @@ steps:
   - name: linter
     image: golang:1.15.6
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+      - apt-get update
+      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
       - go get ./...
       - make lint
@@ -24,8 +24,8 @@ steps:
       - linter
       - unit-tests
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+      - apt-get update
+      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-integration
     when:
       branch:
@@ -38,8 +38,8 @@ steps:
       - linter
       - unit-tests
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+      - apt-get update
+      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-detector
     when:
       branch:
@@ -52,8 +52,8 @@ steps:
       - linter
       - unit-tests
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+      - apt-get update
+      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-racy
     when:
       branch:
@@ -66,8 +66,8 @@ steps:
       - linter
       - unit-tests
     commands:
-      - sudo apt-get update
-      - sudo apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+      - apt-get update
+      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
       - make test-e2e
     when:
       branch:
