@@ -28,12 +28,15 @@ test-unit:
 	go test -v --tags="unit" $(shell go list ./... | grep -v detector)
 test-integration:
 	go test -v --tags="integration" $(shell go list ./... | grep -v detector)
-test-detector:
+test-detector-docker:
 	docker run -u $(shell id -u) --rm \
 	-v $(shell pwd):/home/$(shell id -u -n)/app \
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
 	ghcr.io/eloylp/aton-test \
+	go test -v --tags="detector" ./...
+# The CI build image must be prepared with deps apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+test-detector:
 	go test -v --tags="detector" ./...
 test-e2e:
 	go test -v --tags="e2e" $(shell go list ./... | grep -v detector)
