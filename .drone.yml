@@ -88,3 +88,7 @@ steps:
 
 depends_on:
   - Aton
+trigger:
+  status:
+    - success
+    - failure
