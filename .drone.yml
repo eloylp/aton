@@ -76,11 +76,18 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
-name: default
+name: Notify
 
 steps:
   - name: notify
     image: drillster/drone-email
+    depends_on:
+      - linter
+      - unit-tests
+      - integration-tests
+      - detector-tests
+      - racy-tests
+      - e2e-tests
     when:
       status: [ changed, failure ]
     settings:
