@@ -23,7 +23,9 @@ jobs:
       branches:
         only:
           - master
-      script: make test-integration
+      script:
+      - ls -l testdata/images
+      - make test-integration
 
     - name: "Detector tests"
       stage: integration-test
