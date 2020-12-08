@@ -73,3 +73,11 @@ steps:
       branch:
         include:
           - master
+
+  - name: notify
+    image: drillster/drone-email
+    when:
+      status: [changed, failure]
+    settings:
+      host: ssl0.ovh.net
+      secrets: [email_username, email_password]
