@@ -84,4 +84,12 @@ steps:
     when:
       status: [ success, failure ]
     settings:
-      secrets: [ EMAIL_HOST, EMAIL_PORT, EMAIL_USERNAME, EMAIL_PASSWORD ]
+      repo: eloylp/aton
+      email_host:
+        from_secret: email_host
+      email_port:
+        from_secret: email_port,
+      email_username:
+        from_secret: email_username
+      email_password:
+        from_secret: email_password
