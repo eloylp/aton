@@ -83,13 +83,12 @@ steps:
 #      - e2e-tests
     when:
       status: [ success, failure ]
-    settings:
-      repo: eloylp/aton
-      email_host:
+    environment:
+      EMAIL_HOST:
         from_secret: email_host
-      email_port:
+      EMAIL_PORT:
         from_secret: email_port
-      email_username:
+      EMAIL_USERNAME:
         from_secret: email_username
-      email_password:
+      EMAIL_PASSWORD:
         from_secret: email_password
