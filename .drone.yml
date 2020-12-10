@@ -4,75 +4,75 @@ type: kubernetes
 name: Aton
 
 steps:
-  - name: linter
-    image: golang:1.15.6
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
-      - go get ./...
-      - make lint
-
-  - name: unit-tests
-    image: golang:1.15.6
-    commands:
-      - make test-unit
-
-  - name: integration-tests
-    image: golang:1.15.6
-    depends_on:
-      - linter
-      - unit-tests
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-integration
-    when:
-      branch:
-        include:
-          - master
-
-  - name: detector-tests
-    image: golang:1.15.6
-    depends_on:
-      - linter
-      - unit-tests
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-detector
-    when:
-      branch:
-        include:
-          - master
-
-  - name: racy-tests
-    image: golang:1.15.6
-    depends_on:
-      - linter
-      - unit-tests
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-racy
-    when:
-      branch:
-        include:
-          - master
-
-  - name: e2e-tests
-    image: golang:1.15.6
-    depends_on:
-      - linter
-      - unit-tests
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-e2e
-    when:
-      branch:
-        include:
-          - master
+#  - name: linter
+#    image: golang:1.15.6
+#    commands:
+#      - apt-get update
+#      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+#      - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
+#      - go get ./...
+#      - make lint
+#
+#  - name: unit-tests
+#    image: golang:1.15.6
+#    commands:
+#      - make test-unit
+#
+#  - name: integration-tests
+#    image: golang:1.15.6
+#    depends_on:
+#      - linter
+#      - unit-tests
+#    commands:
+#      - apt-get update
+#      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+#      - make test-integration
+#    when:
+#      branch:
+#        include:
+#          - master
+#
+#  - name: detector-tests
+#    image: golang:1.15.6
+#    depends_on:
+#      - linter
+#      - unit-tests
+#    commands:
+#      - apt-get update
+#      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+#      - make test-detector
+#    when:
+#      branch:
+#        include:
+#          - master
+#
+#  - name: racy-tests
+#    image: golang:1.15.6
+#    depends_on:
+#      - linter
+#      - unit-tests
+#    commands:
+#      - apt-get update
+#      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+#      - make test-racy
+#    when:
+#      branch:
+#        include:
+#          - master
+#
+#  - name: e2e-tests
+#    image: golang:1.15.6
+#    depends_on:
+#      - linter
+#      - unit-tests
+#    commands:
+#      - apt-get update
+#      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+#      - make test-e2e
+#    when:
+#      branch:
+#        include:
+#          - master
 
   - name: notify
     image: drillster/drone-email
@@ -84,4 +84,4 @@ steps:
     when:
       status: [ success, failure ]
     settings:
-      secrets: [ email_host, email_port, email_username, email_password ]
+      secrets: [ EMAIL_HOST, EMAIL_PORT, EMAIL_USERNAME, EMAIL_PASSWORD ]
