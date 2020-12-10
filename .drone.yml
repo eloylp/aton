@@ -76,11 +76,11 @@ steps:
 
   - name: notify
     image: drillster/drone-email
-    depends_on:
-      - integration-tests
-      - detector-tests
-      - racy-tests
-      - e2e-tests
+#    depends_on:
+#      - integration-tests
+#      - detector-tests
+#      - racy-tests
+#      - e2e-tests
     when:
       status: [ success, failure ]
     settings:
