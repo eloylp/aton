@@ -88,7 +88,7 @@ steps:
       email_host:
         from_secret: email_host
       email_port:
-        from_secret: email_port,
+        from_secret: email_port
       email_username:
         from_secret: email_username
       email_password:
