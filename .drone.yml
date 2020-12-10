@@ -84,6 +84,8 @@ steps:
     when:
       status: [ success, failure ]
     environment:
+      PLUGIN_FROM:
+        from_secret: email_username
       EMAIL_HOST:
         from_secret: email_host
       EMAIL_PORT:
