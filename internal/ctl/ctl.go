@@ -120,7 +120,6 @@ func (c *Ctl) Shutdown() {
 	for _, capt := range c.capturers {
 		capt.Close()
 	}
-
 	// Close detectors client
 	if err := c.detectorClient.Shutdown(); err != nil {
 		c.logger.Errorf("ctl: shutdown: %w", err)
