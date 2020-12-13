@@ -32,7 +32,8 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	var loggerOutput bytes.Buffer
 	dc := newFakeDetectorClient(25)
 	dc.On("Connect").Return(nil)
-	dc.On("Recognize", mock.Anything).Return(nil)
+	dc.On("StartRecognize", mock.Anything).Return(nil)
+	dc.On("SendToRecognize", mock.Anything).Return(nil)
 	dc.On("Shutdown").Return(nil)
 	sutCTL := ctl.New(
 		dc,
@@ -63,8 +64,9 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	assert.Equal(t, int64(1), sutCTL.Stats().ProcessedFailed(), "Unexpected failed processed frames number")
 
 	assert.Contains(t, loggerOutput.String(), "detected: bona")
+	assert.NotContains(t, loggerOutput.String(), "level=error")
 
-	err = sutCTL.Shutdown()
+	sutCTL.Shutdown()
 	assert.NoError(t, err)
 	dc.AssertExpectations(t)
 }

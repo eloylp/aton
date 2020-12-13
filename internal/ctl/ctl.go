@@ -2,6 +2,7 @@ package ctl
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"strings"
 	"sync"
@@ -19,8 +20,6 @@ type CapturerRegistry map[string]Capturer
 type Ctl struct {
 	cfg            *config.Config
 	detectorClient DetectorClient
-	detectorIn     chan<- *proto.RecognizeRequest
-	detectorOut    <-chan *proto.RecognizeResponse
 	capturers      CapturerRegistry
 	stats          *Stats
 	api            *http.Server
@@ -82,9 +81,7 @@ func (c *Ctl) initializeDetectorClient() error {
 	if err := c.detectorClient.Connect(); err != nil {
 		return err
 	}
-	var err error
-	c.detectorIn, c.detectorOut, err = c.detectorClient.Recognize(context.TODO())
-	if err != nil {
+	if err := c.detectorClient.StartRecognize(context.TODO()); err != nil {
 		return err
 	}
 	return nil
@@ -93,7 +90,15 @@ func (c *Ctl) initializeDetectorClient() error {
 func (c *Ctl) initializeResultProcessor() {
 	c.wg.Add(1)
 	go func() {
-		for resp := range c.detectorOut {
+		for {
+			resp, err := c.detectorClient.NextRecognizeResponse()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				c.logger.Errorf("ctl: processor: %w", err)
+				continue
+			}
 			if resp.Success {
 				c.stats.IncSuccess()
 			} else {
@@ -105,17 +110,20 @@ func (c *Ctl) initializeResultProcessor() {
 	}()
 }
 
-func (c *Ctl) Shutdown() error {
+func (c *Ctl) Shutdown() {
 	// Close api server
-	err := c.api.Shutdown(context.TODO())
+	if err := c.api.Shutdown(context.TODO()); err != nil {
+		c.logger.Errorf("ctl: shutdown: %w", err)
+	}
 	// Close capturers. Stop receiving more data to the system.
 	for _, capt := range c.capturers {
 		capt.Close()
 	}
 	// Close detectors client
-	c.detectorClient.Shutdown()
+	if err := c.detectorClient.Shutdown(); err != nil {
+		c.logger.Errorf("ctl: shutdown: %w", err)
+	}
 	c.wg.Wait()
-	return err
 }
 
 func (c *Ctl) Stats() *Stats {
@@ -135,9 +143,11 @@ func (c *Ctl) initializeCapturer(capt Capturer) {
 	go func(capturer Capturer) {
 		go capturer.Start()
 		for fr := range capturer.Output() {
-			c.detectorIn <- &proto.RecognizeRequest{
+			if err := c.detectorClient.SendToRecognize(&proto.RecognizeRequest{
 				Image:     fr.Data,
 				CreatedAt: timestamppb.New(fr.Timestamp),
+			}); err != nil {
+				c.logger.Error("ctl: capturer: %w", err)
 			}
 		}
 		c.wg.Done()

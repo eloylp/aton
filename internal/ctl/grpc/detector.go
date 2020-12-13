@@ -3,8 +3,6 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"io"
-	"sync"
 
 	"google.golang.org/grpc"
 
@@ -13,17 +11,14 @@ import (
 )
 
 type DetectorClient struct {
-	addr            string
-	client          proto.DetectorClient
-	wg              *sync.WaitGroup
-	shutdown        chan struct{}
-	detectionInput  chan *proto.RecognizeRequest
-	detectionOutput chan *proto.RecognizeResponse
-	logger          logging.Logger
+	addr           string
+	client         proto.DetectorClient
+	internalClient proto.Detector_RecognizeClient
+	logger         logging.Logger
 }
 
-func NewDetectorClient(addr string, wg *sync.WaitGroup, logger logging.Logger) *DetectorClient {
-	return &DetectorClient{addr: addr, wg: wg, logger: logger}
+func NewDetectorClient(addr string, logger logging.Logger) *DetectorClient {
+	return &DetectorClient{addr: addr, logger: logger}
 }
 
 func (c *DetectorClient) Connect() error {
@@ -39,59 +34,33 @@ func (c *DetectorClient) LoadCategories(ctx context.Context, request *proto.Load
 	return c.client.LoadCategories(ctx, request)
 }
 
-//nolint: gocritic
-func (c *DetectorClient) Recognize(ctx context.Context) (
-	chan<- *proto.RecognizeRequest,
-	<-chan *proto.RecognizeResponse, error) {
-	gClient, err := c.client.Recognize(ctx)
-	if err != nil {
-		return nil, nil, fmt.Errorf("detectorclient: recognize: %w", err)
+func (c *DetectorClient) SendToRecognize(req *proto.RecognizeRequest) error {
+	if err := c.internalClient.Send(req); err != nil {
+		return fmt.Errorf("detectorclient: recognize: send: %w", err)
 	}
-	c.wg.Add(2) //nolint: gomnd
-	go func() {
-		defer func() {
-			close(c.detectionOutput)
-			c.wg.Done()
-		}()
-	main:
-		for {
-			select {
-			case <-c.shutdown:
-				if err := gClient.CloseSend(); err != nil {
-					c.logger.Error(fmt.Errorf("detectorclient: closing error: %w", err))
-				}
-				close(c.detectionOutput)
-				break main
-			case request := <-c.detectionInput:
-				if err := gClient.Send(request); err != nil {
-					c.logger.Error(fmt.Errorf("detectorclient: requesting: %w", err))
-				}
-			}
-		}
-	}()
-	go func() {
-		defer func() {
-			close(c.detectionOutput)
-			c.wg.Done()
-		}()
-		for {
-			resp, err := gClient.Recv()
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				c.logger.Error(fmt.Errorf("detectorclient: response: %w", err))
-			}
-			c.detectionOutput <- resp
-			if _, ok := <-c.shutdown; !ok {
-				break
-			}
-		}
-	}()
-	return c.detectionInput, c.detectionOutput, nil
+	return nil
 }
 
-func (c *DetectorClient) Shutdown() {
-	c.shutdown <- struct{}{}
-	close(c.shutdown)
+func (c *DetectorClient) NextRecognizeResponse() (*proto.RecognizeResponse, error) {
+	resp, err := c.internalClient.Recv()
+	if err != nil {
+		return nil, fmt.Errorf("detectorclient: recognize: next: %w", err)
+	}
+	return resp, nil
+}
+
+func (c *DetectorClient) StartRecognize(ctx context.Context) error {
+	var err error
+	c.internalClient, err = c.client.Recognize(ctx)
+	if err != nil {
+		return fmt.Errorf("detectorclient: recognize: %w", err)
+	}
+	return nil
+}
+
+func (c *DetectorClient) Shutdown() error {
+	if err := c.internalClient.CloseSend(); err != nil {
+		return fmt.Errorf("detectorclient: shutdown: %w", err)
+	}
+	return nil
 }

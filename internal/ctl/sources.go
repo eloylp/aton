@@ -18,6 +18,8 @@ type Capturer interface {
 type DetectorClient interface {
 	Connect() error
 	LoadCategories(ctx context.Context, request *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error)
-	Recognize(ctx context.Context) (chan<- *proto.RecognizeRequest, <-chan *proto.RecognizeResponse, error)
-	Shutdown()
+	SendToRecognize(req *proto.RecognizeRequest) error
+	NextRecognizeResponse() (*proto.RecognizeResponse, error)
+	StartRecognize(ctx context.Context) error
+	Shutdown() error
 }

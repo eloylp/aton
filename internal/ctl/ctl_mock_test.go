@@ -4,6 +4,7 @@ package ctl_test
 
 import (
 	"context"
+	"io"
 	"testing"
 	"time"
 
@@ -23,28 +24,20 @@ type fakeDetectorClient struct {
 	processedFailed  float32
 }
 
-func newFakeDetectorClient(errPercent float32) *fakeDetectorClient {
-	return &fakeDetectorClient{
-		recognizeReq:  make(chan *proto.RecognizeRequest, 10),
-		recognizeResp: make(chan *proto.RecognizeResponse, 10),
-		errPercent:    errPercent,
+func (f *fakeDetectorClient) SendToRecognize(req *proto.RecognizeRequest) error {
+	f.recognizeReq <- req
+	return f.Called(req).Error(0)
+}
+
+func (f *fakeDetectorClient) NextRecognizeResponse() (*proto.RecognizeResponse, error) {
+	resp, ok := <-f.recognizeResp
+	if !ok {
+		return nil, io.EOF
 	}
+	return resp, nil
 }
 
-func (f *fakeDetectorClient) Connect() error {
-	args := f.Called()
-	return args.Error(0)
-}
-
-func (f *fakeDetectorClient) LoadCategories(
-	ctx context.Context,
-	request *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
-	args := f.Called(ctx, request)
-	return args.Get(0).(*proto.LoadCategoriesResponse), args.Error(1)
-}
-
-func (f *fakeDetectorClient) Recognize(ctx context.Context) (chan<- *proto.RecognizeRequest, <-chan *proto.RecognizeResponse, error) { //nolint: gocritic
-
+func (f *fakeDetectorClient) StartRecognize(ctx context.Context) error {
 	args := f.Called(ctx)
 	go func() {
 		for req := range f.recognizeReq {
@@ -67,13 +60,33 @@ func (f *fakeDetectorClient) Recognize(ctx context.Context) (chan<- *proto.Recog
 			f.processedSuccess++
 		}
 	}()
-	return f.recognizeReq, f.recognizeResp, args.Error(0)
+	return args.Error(0)
 }
 
-func (f *fakeDetectorClient) Shutdown() {
+func newFakeDetectorClient(errPercent float32) *fakeDetectorClient {
+	return &fakeDetectorClient{
+		recognizeReq:  make(chan *proto.RecognizeRequest, 10),
+		recognizeResp: make(chan *proto.RecognizeResponse, 10),
+		errPercent:    errPercent,
+	}
+}
+
+func (f *fakeDetectorClient) Connect() error {
+	args := f.Called()
+	return args.Error(0)
+}
+
+func (f *fakeDetectorClient) LoadCategories(
+	ctx context.Context,
+	request *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
+	args := f.Called(ctx, request)
+	return args.Get(0).(*proto.LoadCategoriesResponse), args.Error(1)
+}
+
+func (f *fakeDetectorClient) Shutdown() error {
 	close(f.recognizeReq)
 	close(f.recognizeResp)
-	f.Called()
+	return f.Called().Error(0)
 }
 
 type fakeCapturer struct {
