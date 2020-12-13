@@ -37,7 +37,7 @@ type MJPEGCapturer struct {
 	maxBackOff float64
 }
 
-func NewMJPEGCapturer(uuid string, rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
+func NewMJPEGCapturer(uuid, rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
 	captURL, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
