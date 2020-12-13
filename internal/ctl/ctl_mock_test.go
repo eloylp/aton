@@ -117,8 +117,12 @@ func (f *fakeCapturer) Start() {
 	f.Called()
 }
 
-func (f *fakeCapturer) Output() <-chan *video.Capture {
-	return f.stream
+func (f *fakeCapturer) NextOutput() (*video.Capture, error) {
+	capt, ok := <-f.stream
+	if !ok {
+		return nil, io.EOF
+	}
+	return capt, nil
 }
 
 func (f *fakeCapturer) Close() {

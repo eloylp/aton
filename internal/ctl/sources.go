@@ -9,7 +9,7 @@ import (
 
 type Capturer interface {
 	Start()
-	Output() <-chan *video.Capture
+	NextOutput() (*video.Capture, error)
 	Close()
 	Status() string
 	UUID() string

@@ -4,6 +4,7 @@ package video_test
 
 import (
 	"bytes"
+	"io"
 	"path/filepath"
 	"testing"
 	"time"
@@ -37,12 +38,15 @@ func TestCapture(t *testing.T) {
 	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, maxFrameBuffer, logger)
 	assert.NoError(t, err)
 	go vc.Start()
-	output := vc.Output()
 	time.AfterFunc(500*time.Millisecond, func() {
 		vc.Close()
 	})
 	var i int
-	for k := range output {
+	for {
+		k, err := vc.NextOutput()
+		if err != nil {
+			break
+		}
 		expected := helper.ReadFile(t, pictures[i])
 		got := k.Data
 		assert.Equal(t, expected, got, "Image no %v does not match", i)
@@ -66,8 +70,9 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 	go vc.Start()
 	time.Sleep(time.Second)
 	vc.Close()
-	_, closed := <-vc.Output()
-	assert.True(t, closed)
+	_, _ = vc.NextOutput()   // exhaust
+	_, err = vc.NextOutput() // exhaust
+	assert.EqualError(t, err, io.EOF.Error())
 }
 
 func TestErrorConnectionRefusedLogged(t *testing.T) {
@@ -98,10 +103,17 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 	time.Sleep(500 * time.Millisecond)
 	vc.Close()
 	time.Sleep(50 * time.Millisecond)
-	_, closed := <-vc.Output()
-	assert.True(t, closed)
-	assert.True(t, len(vc.Output()) > 0, "output channel needs to have residual frames")
-	t.Logf("Output channel residual length: %v", len(vc.Output()))
+	_, err = vc.NextOutput()
+	assert.NoError(t, err, "output channel needs to have residual frames")
+	count := 0
+	for {
+		_, err := vc.NextOutput()
+		if err == io.EOF {
+			break
+		}
+		count++
+	}
+	t.Logf("Output channel residual length: %v", count)
 }
 
 func TestInitialState(t *testing.T) {

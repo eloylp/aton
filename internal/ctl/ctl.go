@@ -119,6 +119,7 @@ func (c *Ctl) Shutdown() {
 	for _, capt := range c.capturers {
 		capt.Close()
 	}
+
 	// Close detectors client
 	if err := c.detectorClient.Shutdown(); err != nil {
 		c.logger.Errorf("ctl: shutdown: %w", err)
@@ -142,12 +143,20 @@ func (c *Ctl) initializeCapturer(capt Capturer) {
 	c.wg.Add(1)
 	go func(capturer Capturer) {
 		go capturer.Start()
-		for fr := range capturer.Output() {
-			if err := c.detectorClient.SendToRecognize(&proto.RecognizeRequest{
+		for {
+			fr, err := capturer.NextOutput()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				c.logger.Error("ctl: capturer: %w", err)
+				continue
+			}
+			if err = c.detectorClient.SendToRecognize(&proto.RecognizeRequest{
 				Image:     fr.Data,
 				CreatedAt: timestamppb.New(fr.Timestamp),
 			}); err != nil {
-				c.logger.Error("ctl: capturer: %w", err)
+				c.logger.Error("ctl: capturer: sending: %w", err)
 			}
 		}
 		c.wg.Done()

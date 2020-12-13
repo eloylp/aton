@@ -146,8 +146,12 @@ func (m *MJPEGCapturer) processNextPart(mr *multipart.Reader) error {
 	return nil
 }
 
-func (m *MJPEGCapturer) Output() <-chan *Capture {
-	return m.output
+func (m *MJPEGCapturer) NextOutput() (*Capture, error) {
+	capt, ok := <-m.output
+	if !ok {
+		return nil, io.EOF
+	}
+	return capt, nil
 }
 
 func (m *MJPEGCapturer) Close() {
