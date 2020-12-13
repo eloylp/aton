@@ -34,7 +34,7 @@ func TestCapture(t *testing.T) {
 	defer vs.Close()
 	maxFrameBuffer := 100
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGCapturer(vs.URL, maxFrameBuffer, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, maxFrameBuffer, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	output := vc.Output()
@@ -52,7 +52,7 @@ func TestCapture(t *testing.T) {
 
 func TestNonSupportedURLScheme(t *testing.T) {
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	_, err := video.NewMJPEGCapturer("tcp://127.0.0.1:8080", 5, logger)
+	_, err := video.NewMJPEGCapturer("uuid", "tcp://127.0.0.1:8080", 5, logger)
 	assert.EqualError(t, err, "capturer (tcp://127.0.0.1:8080): only http or https scheme supported")
 }
 
@@ -61,7 +61,7 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGCapturer(vs.URL, 1, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(time.Second)
@@ -73,7 +73,7 @@ func TestOnCloseOutputChannelIsClosed(t *testing.T) {
 func TestErrorConnectionRefusedLogged(t *testing.T) {
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
-	vc, err := video.NewMJPEGCapturer("http://127.0.0.2", 1, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", "http://127.0.0.2", 1, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	defer vc.Close()
@@ -92,7 +92,7 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 	vs := helper.VideoStream(t, pictures, "/")
 	defer vs.Close()
 	logger := logging.NewBasicLogger(bytes.NewBuffer(nil))
-	vc, err := video.NewMJPEGCapturer(vs.URL, framesInFlight, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, framesInFlight, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	time.Sleep(500 * time.Millisecond)
@@ -107,7 +107,7 @@ func TestCloseWorksEvenDuringProcessingFrames(t *testing.T) {
 func TestInitialState(t *testing.T) {
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
-	vc, err := video.NewMJPEGCapturer("http://localhost:9999", 10, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", "http://localhost:9999", 10, logger)
 	assert.NoError(t, err)
 	assert.Equal(t, video.StatusNotRunning, vc.Status(), "Init state must be %s", video.StatusNotRunning)
 }
@@ -118,7 +118,7 @@ func TestRunningState(t *testing.T) {
 	defer vs.Close()
 	w := bytes.NewBuffer(nil)
 	logger := logging.NewBasicLogger(w)
-	vc, err := video.NewMJPEGCapturer(vs.URL, 10, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, 10, logger)
 	assert.NoError(t, err)
 	go vc.Start()
 	defer vc.Close()
@@ -133,7 +133,7 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 	expectedConnections := 5
 	netListener, netServer := helper.NetCloserServer(t, expectedConnections)
 	defer netListener.Close()
-	vc, err := video.NewMJPEGCapturer("http://"+netListener.Addr().String(), 10, logger)
+	vc, err := video.NewMJPEGCapturer("uuid", "http://"+netListener.Addr().String(), 10, logger)
 	assert.NoError(t, err)
 	startTime := time.Now()
 	go vc.Start()

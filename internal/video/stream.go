@@ -28,6 +28,7 @@ type Capture struct {
 }
 
 type MJPEGCapturer struct {
+	UUIDIdent  string
 	URL        *url.URL
 	output     chan *Capture
 	close      chan struct{}
@@ -36,7 +37,7 @@ type MJPEGCapturer struct {
 	maxBackOff float64
 }
 
-func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
+func NewMJPEGCapturer(uuid string, rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
 	captURL, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)
@@ -46,6 +47,7 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 	}
 	var maxBackOff float64 = 16
 	return &MJPEGCapturer{
+		UUIDIdent:  uuid,
 		URL:        captURL,
 		output:     make(chan *Capture, maxFrameBuffer),
 		close:      make(chan struct{}, 1),
@@ -53,6 +55,10 @@ func NewMJPEGCapturer(rawURL string, maxFrameBuffer int, logger logging.Logger) 
 		status:     StatusNotRunning,
 		maxBackOff: maxBackOff, // Todo think about extracting to a client.
 	}, nil
+}
+
+func (m *MJPEGCapturer) UUID() string {
+	return m.UUIDIdent
 }
 
 func (m *MJPEGCapturer) Start() {
