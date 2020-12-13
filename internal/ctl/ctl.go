@@ -101,10 +101,11 @@ func (c *Ctl) initializeResultProcessor() {
 			}
 			if resp.Success {
 				c.stats.IncSuccess()
+				c.logger.Info("detected: " + strings.Join(resp.Names, ","))
 			} else {
 				c.stats.IncFailed()
+				c.logger.Info("not detected: " + resp.Message)
 			}
-			c.logger.Info("detected: " + strings.Join(resp.Names, ","))
 		}
 		c.wg.Done()
 	}()

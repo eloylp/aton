@@ -64,6 +64,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	assert.Equal(t, int64(1), sutCTL.Stats().ProcessedFailed(), "Unexpected failed processed frames number")
 
 	assert.Contains(t, loggerOutput.String(), "detected: bona")
+	assert.Contains(t, loggerOutput.String(), "not detected:")
 	assert.NotContains(t, loggerOutput.String(), "level=error")
 
 	sutCTL.Shutdown()
