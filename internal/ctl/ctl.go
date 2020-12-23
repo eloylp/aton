@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/eloylp/aton/internal/ctl/config"
+	"github.com/eloylp/aton/internal/ctl/metrics"
 	"github.com/eloylp/aton/internal/ctl/www"
 	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/proto"
@@ -21,7 +22,7 @@ type Ctl struct {
 	cfg            *config.Config
 	detectorClient DetectorClient
 	capturers      CapturerRegistry
-	stats          *Stats
+	register       *metrics.Register
 	api            *http.Server
 	logger         logging.Logger
 	wg             *sync.WaitGroup
@@ -38,16 +39,18 @@ func New(dc DetectorClient, opts ...config.Option) *Ctl {
 	}
 	api := &http.Server{
 		Addr:         cfg.ListenAddress,
-		Handler:      www.Router(),
+		Handler:      www.Router(metrics.NewHTTPHandler()),
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	stats := &Stats{}
-	stats.IncDetectors(int32(len(cfg.Detectors)))
+	register := metrics.NewRegister()
+	for _, d := range cfg.Detectors {
+		register.DetectorUP(d.UUID)
+	}
 	ctl := &Ctl{
 		cfg:            cfg,
 		detectorClient: dc,
-		stats:          stats,
+		register:       register,
 		capturers:      CapturerRegistry{},
 		api:            api,
 		logger:         logging.NewBasicLogger(cfg.LoggerOutput),
@@ -99,11 +102,11 @@ func (c *Ctl) initializeResultProcessor() {
 				c.logger.Errorf("ctl: processor: %w", err)
 				continue
 			}
+			c.register.IncProcessedFramesTotal(resp.ProcessedBy)
 			if resp.Success {
-				c.stats.IncSuccess()
 				c.logger.Info("detected: " + strings.Join(resp.Names, ","))
 			} else {
-				c.stats.IncFailed()
+				c.register.IncFailedFramesTotal(resp.ProcessedBy)
 				c.logger.Info("not detected: " + resp.Message)
 			}
 		}
@@ -127,10 +130,6 @@ func (c *Ctl) Shutdown() {
 	c.wg.Wait()
 }
 
-func (c *Ctl) Stats() *Stats {
-	return c.stats
-}
-
 func (c *Ctl) AddCapturer(capt Capturer) error {
 	c.L.Lock()
 	defer c.L.Unlock()
@@ -142,13 +141,17 @@ func (c *Ctl) AddCapturer(capt Capturer) error {
 func (c *Ctl) initializeCapturer(capt Capturer) {
 	c.wg.Add(1)
 	go func(capturer Capturer) {
+		c.register.CapturerUP(capt.UUID())
+		defer c.register.CapturerDown(capt.UUID())
 		go capturer.Start()
 		for {
 			fr, err := capturer.NextOutput()
 			if err == io.EOF {
 				break
 			}
+			c.register.IncCapturerReceivedFramesTotal(capt.UUID())
 			if err != nil {
+				c.register.IncCapturerFailedFramesTotal(capt.UUID())
 				c.logger.Error("ctl: capturer: %w", err)
 				continue
 			}
@@ -161,5 +164,4 @@ func (c *Ctl) initializeCapturer(capt Capturer) {
 		}
 		c.wg.Done()
 	}(capt)
-	c.stats.IncCapturers()
 }

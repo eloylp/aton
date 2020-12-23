@@ -4,6 +4,8 @@ package ctl_test
 
 import (
 	"bytes"
+	"io/ioutil"
+	"net/http"
 	"path/filepath"
 	"testing"
 	"time"
@@ -56,12 +58,15 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	assert.NoError(t, err)
 	time.Sleep(500 * time.Millisecond)
 
-	assert.Equal(t, int32(1), sutCTL.Stats().CurrentDetectors(), "Unexpected detectors number")
-	assert.Equal(t, int32(1), sutCTL.Stats().CurrentCapturers(), "Unexpected capturers number")
+	metricsData := string(fetchResource(t, "http://"+ctlListenAddress+"/metrics"))
 
-	assert.Equal(t, int64(4), sutCTL.Stats().Processed(), "Unexpected total processed frames number")
-	assert.Equal(t, int64(3), sutCTL.Stats().ProcessedSuccess(), "Unexpected success processed frames number")
-	assert.Equal(t, int64(1), sutCTL.Stats().ProcessedFailed(), "Unexpected failed processed frames number")
+	assert.Contains(t, metricsData, `aton_ctl_detector_up{uuid="09AF"} 1`)
+	assert.Contains(t, metricsData, `aton_ctl_capturer_up{uuid="cap1"} 1`)
+
+	assert.Contains(t, metricsData, `aton_ctl_capturer_received_frame_total{uuid="cap1"} 4`)
+	assert.NotContains(t, metricsData, `aton_ctl_capturer_failed_frame_total{uuid="cap1"}`)
+	assert.Contains(t, metricsData, `aton_ctl_processed_frames_total{uuid="09AF"} 4`)
+	assert.Contains(t, metricsData, `aton_ctl_unrecognized_frames_total{uuid="09AF"} 1`)
 
 	assert.Contains(t, loggerOutput.String(), "detected: bona")
 	assert.Contains(t, loggerOutput.String(), "not detected:")
@@ -70,4 +75,18 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	sutCTL.Shutdown()
 	assert.NoError(t, err)
 	dc.AssertExpectations(t)
+}
+
+func fetchResource(t *testing.T, s string) []byte {
+	t.Helper()
+	resp, err := http.Get(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return data
 }

@@ -43,19 +43,21 @@ func (f *fakeDetectorClient) StartRecognize(ctx context.Context) error {
 		for req := range f.recognizeReq {
 			if f.processedFailed/(f.processedSuccess+f.processedFailed) < f.errPercent/100 {
 				f.recognizeResp <- &proto.RecognizeResponse{
-					Names:     []string{},
-					Success:   false,
-					Message:   "Not recognized",
-					CreatedAt: req.CreatedAt,
+					Names:       []string{},
+					ProcessedBy: "09AF",
+					Success:     false,
+					Message:     "Not recognized",
+					CreatedAt:   req.CreatedAt,
 				}
 				f.processedFailed++
 				continue
 			}
 			f.recognizeResp <- &proto.RecognizeResponse{
-				Names:     []string{"bona"},
-				Success:   true,
-				Message:   "Matches on pictures",
-				CreatedAt: req.CreatedAt,
+				Names:       []string{"bona"},
+				ProcessedBy: "09AF",
+				Success:     true,
+				Message:     "Matches on pictures",
+				CreatedAt:   req.CreatedAt,
 			}
 			f.processedSuccess++
 		}

@@ -27,9 +27,10 @@ message RecognizeRequest {
 
 message RecognizeResponse {
   repeated string names = 1;
-  bool success = 2;
-  string message = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp recognized_at = 5;
+  string processedBy = 2;
+  bool success = 3;
+  string message = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp recognized_at = 6;
 }
 
