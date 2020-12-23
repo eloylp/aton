@@ -42,7 +42,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 		config.WithListenAddress(ctlListenAddress),
 		config.WithLoggerOutput(&loggerOutput),
 		config.WithDetectors(config.Detector{
-			Address: "127.0.0.1",
+			Address: "127.0.0.1:8080",
 			UUID:    "09AF",
 		}),
 	)
