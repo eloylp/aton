@@ -131,12 +131,11 @@ func (c *Ctl) Shutdown() {
 	c.wg.Wait()
 }
 
-func (c *Ctl) AddCapturer(capt Capturer) error {
+func (c *Ctl) AddCapturer(capt Capturer) {
 	c.L.Lock()
 	defer c.L.Unlock()
 	c.capturers[capt.UUID()] = capt
 	c.initializeCapturer(capt)
-	return nil
 }
 
 func (c *Ctl) initializeCapturer(capt Capturer) {

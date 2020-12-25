@@ -54,8 +54,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	capturer := newFakeCapturer(t, "cap1", allFaces)
 	capturer.On("Start").Return()
 	capturer.On("Close").Return()
-	err := sutCTL.AddCapturer(capturer)
-	assert.NoError(t, err)
+	sutCTL.AddCapturer(capturer)
 	time.Sleep(500 * time.Millisecond)
 
 	metricsData := string(fetchResource(t, "http://"+ctlListenAddress+"/metrics"))
@@ -73,7 +72,6 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	assert.NotContains(t, loggerOutput.String(), "level=error")
 
 	sutCTL.Shutdown()
-	assert.NoError(t, err)
 	dc.AssertExpectations(t)
 }
 
