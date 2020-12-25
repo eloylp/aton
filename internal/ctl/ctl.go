@@ -103,12 +103,16 @@ func (c *Ctl) initializeResultProcessor() {
 				c.logger.Errorf("ctl: processor: %w", err)
 				continue
 			}
-			c.register.IncProcessedFramesTotal(resp.ProcessedBy)
 			if resp.Success {
-				c.logger.Info("detected: " + strings.Join(resp.Names, ","))
+				c.register.IncProcessedFramesTotal(resp.ProcessedBy)
+				if len(resp.Names) > 0 {
+					c.logger.Info("initializeResultProcessor(): detected: " + strings.Join(resp.Names, ","))
+				} else {
+					c.register.IncUnrecognizedFramesTotal(resp.ProcessedBy)
+					c.logger.Info("initializeResultProcessor(): not detected: " + resp.Message)
+				}
 			} else {
 				c.register.IncFailedFramesTotal(resp.ProcessedBy)
-				c.logger.Info("not detected: " + resp.Message)
 			}
 		}
 		c.wg.Done()

@@ -62,12 +62,12 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	assert.Contains(t, metricsData, `aton_ctl_detector_up{uuid="09AF"} 1`)
 	assert.Contains(t, metricsData, `aton_ctl_capturer_up{uuid="cap1"} 1`)
 
-	assert.Contains(t, metricsData, `aton_ctl_capturer_received_frame_total{uuid="cap1"} 4`)
-	assert.NotContains(t, metricsData, `aton_ctl_capturer_failed_frame_total{uuid="cap1"}`)
+	assert.Contains(t, metricsData, `aton_ctl_capturer_received_frames_total{uuid="cap1"} 4`)
+	assert.NotContains(t, metricsData, `aton_ctl_capturer_failed_frames_total{uuid="cap1"}`)
 	assert.Contains(t, metricsData, `aton_ctl_processed_frames_total{uuid="09AF"} 4`)
 	assert.Contains(t, metricsData, `aton_ctl_unrecognized_frames_total{uuid="09AF"} 1`)
 
-	assert.Contains(t, loggerOutput.String(), "detected: bona")
+	assert.Contains(t, loggerOutput.String(), "initializeResultProcessor(): detected: bona")
 	assert.Contains(t, loggerOutput.String(), "not detected:")
 	assert.NotContains(t, loggerOutput.String(), "level=error")
 

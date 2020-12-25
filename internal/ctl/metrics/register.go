@@ -9,6 +9,7 @@ type Register struct {
 	capturerFailedFramesTotal   *prometheus.CounterVec
 	processedFramesTotal        *prometheus.CounterVec
 	failedFramesTotal           *prometheus.CounterVec
+	unrecognizedFramesTotal     *prometheus.CounterVec
 	currentCapturers            *prometheus.GaugeVec
 	currentDetectors            *prometheus.GaugeVec
 }
@@ -19,6 +20,7 @@ func NewRegister() *Register {
 		capturerFailedFramesTotal:   capturerFailedFramesTotal,
 		processedFramesTotal:        processedFramesTotal,
 		failedFramesTotal:           failedFramesTotal,
+		unrecognizedFramesTotal:     unrecognizedFramesTotal,
 		currentCapturers:            currentCapturers,
 		currentDetectors:            currentDetectors,
 	}
@@ -38,6 +40,10 @@ func (r *Register) IncProcessedFramesTotal(labelValues ...string) {
 
 func (r *Register) IncFailedFramesTotal(labelValues ...string) {
 	r.failedFramesTotal.WithLabelValues(labelValues...).Inc()
+}
+
+func (r *Register) IncUnrecognizedFramesTotal(labelValues ...string) {
+	r.unrecognizedFramesTotal.WithLabelValues(labelValues...).Inc()
 }
 
 func (r *Register) CapturerUP(labelValues ...string) {

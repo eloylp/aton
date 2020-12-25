@@ -45,7 +45,7 @@ func (f *fakeDetectorClient) StartRecognize(ctx context.Context) error {
 				f.recognizeResp <- &proto.RecognizeResponse{
 					Names:       []string{},
 					ProcessedBy: "09AF",
-					Success:     false,
+					Success:     true,
 					Message:     "Not recognized",
 					CreatedAt:   req.CreatedAt,
 				}
