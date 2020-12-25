@@ -60,6 +60,13 @@ docker-test:
 	docker build --build-arg uid=$(shell id -u) \
 	--build-arg uname=$(shell id -u -n) \
 	-t ghcr.io/eloylp/aton-test -f Dockerfile.integration-test .
+init-detector:
+	docker run --rm -e "DETECTOR_ADDR=0.0.0.0:8082" -e "DETECTOR_MODEL_DIR=./models" \
+	-u $(shell id -u) \
+	-v $(shell pwd):/home/$(shell id -u -n)/app \
+	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
+	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
+    -p "8082:8082" -v $(shell pwd):/code ghcr.io/eloylp/aton-test go run ./cmd/detector/main.go
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
 docker-cuda:
