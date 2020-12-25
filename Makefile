@@ -1,11 +1,9 @@
 PROJECT_NAME := aton
-BINARY_NAME := aton
 VERSION := $(shell git describe --tags)
 GO_LINT_CI_VERSION := v1.31.0
 TIME := $(shell date +%Y-%m-%dT%T%z)
 BUILD := $(shell git rev-parse --short HEAD)
 DIST_FOLDER := ./dist
-BINARY_OUTPUT := $(DIST_FOLDER)/$(BINARY_NAME)
 LD_FLAGS=-ldflags "-s -w \
 		-X=main.Name=$(PROJECT_NAME) \
 		-X=main.Version=$(VERSION) \
@@ -50,12 +48,14 @@ test-bench:
 	go test -v -bench=. $(shell go list ./... | grep -v detector)
 build: clean
 	mkdir -p $(DIST_FOLDER)
-	go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
-	@echo "Binary output at $(BINARY_OUTPUT)"
-build-cuda: clean
-	mkdir -p $(DIST_FOLDER)
-	CGO_LDFLAGS="-L/usr/local/cuda/lib64 -lcudnn -lpthread -lcuda -lcudart -lcublas -lcurand -lcusolver" go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
-	@echo "Binary output at $(BINARY_OUTPUT)"
+	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/ctl ./cmd/ctl/main.go
+	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/detector ./cmd/detector/main.go
+	@echo "Binary outputs at $(DIST_FOLDER)"
+
+#build-cuda: clean
+#	mkdir -p $(DIST_FOLDER)
+#	CGO_LDFLAGS="-L/usr/local/cuda/lib64 -lcudnn -lpthread -lcuda -lcudart -lcublas -lcurand -lcusolver" go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
+#	@echo "Binary output at $(BINARY_OUTPUT)"
 docker-test:
 	docker build --build-arg uid=$(shell id -u) \
 	--build-arg uname=$(shell id -u -n) \
