@@ -43,7 +43,7 @@ func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 			s.Logger.Error(err)
 			return err
 		}
-		var resp *proto.RecognizeResponse
+		resp := &proto.RecognizeResponse{}
 		resp.CreatedAt = req.CreatedAt
 		resp.Success = true
 		cats, err := s.detector.FindCategories(req.Image)
