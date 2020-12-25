@@ -10,12 +10,14 @@ import (
 )
 
 const (
-	DetectorListenAddress = "DETECTOR_ADDR"
-	DetectorModelDir      = "DETECTOR_MODEL_DIR"
+	DetectorListenAddress  = "DETECTOR_ADDR"
+	DetectorMetricsAddress = "DETECTOR_METRICS_ADDR"
+	DetectorModelDir       = "DETECTOR_MODEL_DIR"
 )
 
 func main() {
 	address := os.Getenv(DetectorListenAddress)
+	metricsAddress := os.Getenv(DetectorMetricsAddress)
 	modelDir := os.Getenv(DetectorModelDir)
 	logger := logging.NewBasicLogger(os.Stdout)
 	faceDetector, err := detector.NewGoFaceDetector(modelDir)
@@ -23,7 +25,7 @@ func main() {
 		terminateAbnormally(logger, err)
 	}
 	service := grpc.NewService(faceDetector, logger, time.Now)
-	server := grpc.NewServer(service, logger, address)
+	server := grpc.NewServer(address, service, metricsAddress, logger)
 	if err := server.Start(); err != nil {
 		terminateAbnormally(logger, err)
 	}

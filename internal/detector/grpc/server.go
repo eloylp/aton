@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 
 	"github.com/eloylp/aton/internal/logging"
@@ -13,20 +16,28 @@ import (
 )
 
 type Server struct {
-	service    proto.DetectorServer
-	logger     logging.Logger
-	s          *grpc.Server
-	listenAddr string
+	service     proto.DetectorServer
+	logger      logging.Logger
+	s           *grpc.Server
+	listenAddr  string
+	metricsAddr string
 }
 
-func NewServer(service proto.DetectorServer, logger logging.Logger, listenAddr string) *Server {
+func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr string, logger logging.Logger) *Server {
+	grpcServer := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
+		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+	)
+	grpc_prometheus.Register(grpcServer)
+	http.Handle("/metrics", promhttp.Handler())
 	s := &Server{
-		service:    service,
-		logger:     logger,
-		listenAddr: listenAddr,
-		s:          grpc.NewServer(),
+		service:     service,
+		logger:      logger,
+		listenAddr:  listenAddr,
+		metricsAddr: metricsAddr,
+		s:           grpcServer,
 	}
-	proto.RegisterDetectorServer(s.s, s.service)
+	proto.RegisterDetectorServer(grpcServer, service)
 	return s
 }
 
@@ -37,6 +48,7 @@ func (gs *Server) Start() error {
 		return err
 	}
 	go gs.watchForOSSignals()
+	go http.ListenAndServe(gs.metricsAddr, nil)
 	return gs.s.Serve(lis)
 }
 
