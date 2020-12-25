@@ -67,6 +67,7 @@ func (c *Ctl) Start() error {
 		return err
 	}
 	c.initializeResultProcessor()
+	c.wg.Wait()
 	return nil
 }
 
