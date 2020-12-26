@@ -32,13 +32,14 @@ func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr stri
 		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
 	)
 	grpc_prometheus.Register(grpcServer)
-	http.Handle("/metrics", promhttp.Handler())
+	metricsMux := http.NewServeMux()
+	metricsMux.Handle("/metrics", promhttp.Handler())
 	s := &Server{
 		service:       service,
 		logger:        logger,
 		listenAddr:    listenAddr,
 		metricsAddr:   metricsAddr,
-		metricsServer: &http.Server{Addr: metricsAddr},
+		metricsServer: &http.Server{Addr: metricsAddr, Handler: metricsMux},
 		s:             grpcServer,
 	}
 	proto.RegisterDetectorServer(grpcServer, service)
@@ -54,7 +55,7 @@ func (gs *Server) Start() error {
 	go gs.watchForOSSignals()
 	gs.logger.Infof("starting detector metrics at %s", gs.metricsAddr)
 	go func() {
-		if err := http.ListenAndServe(gs.metricsAddr, nil); err != http.ErrServerClosed {
+		if err := gs.metricsServer.ListenAndServe(); err != http.ErrServerClosed {
 			gs.logger.Errorf("metrics-server: %v", err)
 		}
 	}()
