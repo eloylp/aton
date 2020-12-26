@@ -13,13 +13,19 @@ import (
 )
 
 type Service struct {
+	UUID     string
 	detector detector.Classifier
 	logger   *logrus.Logger
 	timeNow  func() time.Time
 }
 
-func NewService(d detector.Classifier, logger *logrus.Logger, timeNow func() time.Time) *Service {
-	return &Service{detector: d, logger: logger, timeNow: timeNow}
+func NewService(uuid string, d detector.Classifier, logger *logrus.Logger, timeNow func() time.Time) *Service {
+	return &Service{
+		UUID:     uuid,
+		detector: d,
+		logger:   logger,
+		timeNow:  timeNow,
+	}
 }
 
 func (s *Service) LoadCategories(_ context.Context, r *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
@@ -45,6 +51,7 @@ func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 		}
 		resp := &proto.RecognizeResponse{}
 		resp.CreatedAt = req.CreatedAt
+		resp.ProcessedBy = s.UUID
 		resp.Success = true
 		cats, err := s.detector.FindCategories(req.Image)
 		resp.RecognizedAt = timestamppb.Now()
