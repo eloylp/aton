@@ -1,4 +1,4 @@
-package detector
+package engine
 
 import (
 	"fmt"
@@ -8,11 +8,6 @@ import (
 
 	"github.com/Kagami/go-face"
 )
-
-type Classifier interface {
-	SaveCategories([]string, []byte) error
-	FindCategories([]byte) ([]string, error)
-}
 
 type GoFace struct {
 	rec *face.Recognizer

@@ -5,21 +5,22 @@ import (
 	"io"
 	"time"
 
+	"github.com/eloylp/aton/internal/detector/engine"
+
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/eloylp/aton/internal/detector"
 	"github.com/eloylp/aton/internal/proto"
 )
 
 type Service struct {
 	UUID     string
-	detector detector.Classifier
+	detector engine.Classifier
 	logger   *logrus.Logger
 	timeNow  func() time.Time
 }
 
-func NewService(uuid string, d detector.Classifier, logger *logrus.Logger, timeNow func() time.Time) *Service {
+func NewService(uuid string, d engine.Classifier, logger *logrus.Logger, timeNow func() time.Time) *Service {
 	return &Service{
 		UUID:     uuid,
 		detector: d,

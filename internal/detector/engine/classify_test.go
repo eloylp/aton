@@ -1,15 +1,15 @@
 // +build detector
 
-package detector_test
+package engine_test
 
 import (
 	"fmt"
+	"github.com/eloylp/aton/internal/detector/engine"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/internal/detector"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 
@@ -24,22 +24,7 @@ var (
 	groupBonaAndLuda = filepath.Join(imagesDir, "bonaAndLuda.jpg")
 )
 
-func TestGoFaceDetector(t *testing.T) {
-	faceDetector, err := detector.NewGoFaceDetector(ModelsDir)
-	assert.NoError(t, err)
-	t.Run("Error if duplicated names",
-		AssertErrorIfDuplicatedNames(faceDetector))
-	t.Run("Error if initial samples and names number mismatch",
-		AssertErrorIfNotAllFacesRecognized(faceDetector))
-	t.Run("Detect one face",
-		AssertSingleFaceDetection(faceDetector))
-	t.Run("Detect single face in group",
-		AssertSingleFaceDetectionInGroup(faceDetector))
-	t.Run("Detect multiple faces within group",
-		AssertMultipleFacesDetectionInGroup(faceDetector))
-}
-
-func AssertErrorIfDuplicatedNames(d detector.Classifier) func(t *testing.T) {
+func AssertErrorIfDuplicatedNames(d engine.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "luda", "bona_dep2", "luda", "bona"}, helper.ReadFile(t, faceBona1))
 		fmt.Println(err)
@@ -47,14 +32,14 @@ func AssertErrorIfDuplicatedNames(d detector.Classifier) func(t *testing.T) {
 	}
 }
 
-func AssertErrorIfNotAllFacesRecognized(d detector.Classifier) func(t *testing.T) {
+func AssertErrorIfNotAllFacesRecognized(d engine.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "EXTRA_NON_EXISTENT_FACE"}, helper.ReadFile(t, faceBona1))
 		assert.EqualError(t, err, "gofacedetector: passed faces number (2) not match with recognized (1)")
 	}
 }
 
-func AssertSingleFaceDetection(d detector.Classifier) func(t *testing.T) {
+func AssertSingleFaceDetection(d engine.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona"}, helper.ReadFile(t, faceBona1))
 		assert.NoError(t, err)
@@ -66,7 +51,7 @@ func AssertSingleFaceDetection(d detector.Classifier) func(t *testing.T) {
 	}
 }
 
-func AssertSingleFaceDetectionInGroup(d detector.Classifier) func(t *testing.T) {
+func AssertSingleFaceDetectionInGroup(d engine.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona"}, helper.ReadFile(t, faceBona1))
 		assert.NoError(t, err)
@@ -76,7 +61,7 @@ func AssertSingleFaceDetectionInGroup(d detector.Classifier) func(t *testing.T) 
 	}
 }
 
-func AssertMultipleFacesDetectionInGroup(d detector.Classifier) func(t *testing.T) {
+func AssertMultipleFacesDetectionInGroup(d engine.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "luda"}, helper.ReadFile(t, groupBonaAndLuda))
 		assert.NoError(t, err)
