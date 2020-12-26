@@ -5,21 +5,21 @@ import (
 	"io"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/eloylp/aton/internal/detector"
-	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/proto"
 )
 
 type Service struct {
 	detector detector.Classifier
-	logging.Logger
-	timeNow func() time.Time
+	logger   *logrus.Logger
+	timeNow  func() time.Time
 }
 
-func NewService(d detector.Classifier, logger logging.Logger, timeNow func() time.Time) *Service {
-	return &Service{detector: d, Logger: logger, timeNow: timeNow}
+func NewService(d detector.Classifier, logger *logrus.Logger, timeNow func() time.Time) *Service {
+	return &Service{detector: d, logger: logger, timeNow: timeNow}
 }
 
 func (s *Service) LoadCategories(_ context.Context, r *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
@@ -36,11 +36,11 @@ func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 	for {
 		req, err := server.Recv()
 		if err == io.EOF {
-			s.Logger.Info("ending detector consumer")
+			s.logger.Info("ending detector consumer")
 			return nil
 		}
 		if err != nil {
-			s.Logger.Error(err)
+			s.logger.Error(err)
 			return err
 		}
 		resp := &proto.RecognizeResponse{}
@@ -51,7 +51,7 @@ func (s *Service) Recognize(server proto.Detector_RecognizeServer) error {
 		if err != nil {
 			resp.Success = false
 			resp.Message = err.Error()
-			s.Logger.Error(err)
+			s.logger.Error(err)
 		}
 		resp.Names = cats
 		if err := server.Send(resp); err != nil {

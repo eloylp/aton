@@ -4,6 +4,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/eloylp/aton/internal/detector"
 	"github.com/eloylp/aton/internal/detector/grpc"
 	"github.com/eloylp/aton/internal/logging"
@@ -19,7 +21,8 @@ func main() {
 	address := os.Getenv(DetectorListenAddress)
 	metricsAddress := os.Getenv(DetectorMetricsAddress)
 	modelDir := os.Getenv(DetectorModelDir)
-	logger := logging.NewBasicLogger(os.Stdout)
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 	faceDetector, err := detector.NewGoFaceDetector(modelDir)
 	if err != nil {
 		terminateAbnormally(logger, err)

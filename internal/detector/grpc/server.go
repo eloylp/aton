@@ -9,27 +9,43 @@ import (
 	"syscall"
 	"time"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/proto"
 )
 
 type Server struct {
 	service       proto.DetectorServer
-	logger        logging.Logger
+	logger        *logrus.Logger
 	s             *grpc.Server
 	metricsServer *http.Server
 	listenAddr    string
 	metricsAddr   string
 }
 
-func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr string, logger logging.Logger) *Server {
+func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr string, logger *logrus.Logger) *Server {
+	logrusEntry := logrus.NewEntry(logger)
+	grpc_logrus.ReplaceGrpcLogger(logrusEntry)
 	grpcServer := grpc.NewServer(
-		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
-		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+			grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_prometheus.StreamServerInterceptor,
+			grpc_logrus.StreamServerInterceptor(logrusEntry),
+			grpc_recovery.StreamServerInterceptor(),
+		)),
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_prometheus.UnaryServerInterceptor,
+			grpc_logrus.UnaryServerInterceptor(logrusEntry),
+			grpc_recovery.UnaryServerInterceptor(),
+		)),
 	)
 	grpc_prometheus.Register(grpcServer)
 	metricsMux := http.NewServeMux()
@@ -66,7 +82,7 @@ func (gs *Server) watchForOSSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 	recvSig := <-ch
-	gs.logger.Infof("received shutdown signal %q, gracefully shutdown", recvSig.String())
+	gs.logger.Infof("received shutdown signal %s, gracefully shutdown", recvSig.String())
 	gs.Shutdown()
 }
 
