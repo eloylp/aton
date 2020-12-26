@@ -48,6 +48,7 @@ func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr stri
 		)),
 	)
 	grpc_prometheus.Register(grpcServer)
+	grpc_prometheus.EnableHandlingTimeHistogram()
 	metricsMux := http.NewServeMux()
 	metricsMux.Handle("/metrics", promhttp.Handler())
 	s := &Server{
