@@ -4,12 +4,14 @@ package ctl_test
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
@@ -32,7 +34,8 @@ const (
 )
 
 func TestCtlDoesBasicFlow(t *testing.T) {
-	var loggerOutput bytes.Buffer
+	loggerOutput := bytes.NewBuffer(nil)
+	logger := testLogger(loggerOutput)
 	dc := newFakeDetectorClient(25)
 	dc.On("Connect").Return(nil)
 	dc.On("StartRecognize", mock.Anything).Return(nil)
@@ -41,8 +44,8 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	sutCTL := ctl.New(
 		dc,
 		metrics.NewService(),
+		logger,
 		config.WithListenAddress(ctlListenAddress),
-		config.WithLoggerOutput(&loggerOutput),
 		config.WithDetectors(config.Detector{
 			Address: "127.0.0.1:8080",
 			UUID:    "09AF",
@@ -75,6 +78,12 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 
 	sutCTL.Shutdown()
 	dc.AssertExpectations(t)
+}
+
+func testLogger(output io.Writer) *logrus.Logger {
+	l := logrus.New()
+	l.SetOutput(output)
+	return l
 }
 
 func fetchResource(t *testing.T, s string) []byte {

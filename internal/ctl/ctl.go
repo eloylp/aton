@@ -29,7 +29,7 @@ type Ctl struct {
 	L              *sync.Mutex
 }
 
-func New(dc DetectorClient, metricsService *metrics.Service, opts ...config.Option) *Ctl {
+func New(dc DetectorClient, metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Ctl {
 	cfg := &config.Config{
 		APIReadTimeout:  config.DefaultAPIReadTimeout,
 		APIWriteTimeout: config.DefaultAPIWriteTimeout,
@@ -46,8 +46,6 @@ func New(dc DetectorClient, metricsService *metrics.Service, opts ...config.Opti
 	for _, d := range cfg.Detectors {
 		metricsService.DetectorUP(d.UUID)
 	}
-	logger := logrus.New()
-	logger.SetOutput(cfg.LoggerOutput)
 	ctl := &Ctl{
 		cfg:            cfg,
 		detectorClient: dc,

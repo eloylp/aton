@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io"
 	"time"
 )
 
@@ -12,7 +11,6 @@ const (
 
 type Config struct {
 	ListenAddress   string
-	LoggerOutput    io.Writer
 	Detectors       []Detector
 	APIReadTimeout  time.Duration
 	APIWriteTimeout time.Duration
@@ -23,12 +21,6 @@ type Option func(*Config)
 func WithListenAddress(addr string) Option {
 	return func(cfg *Config) {
 		cfg.ListenAddress = addr
-	}
-}
-
-func WithLoggerOutput(w io.Writer) Option {
-	return func(cfg *Config) {
-		cfg.LoggerOutput = w
 	}
 }
 
