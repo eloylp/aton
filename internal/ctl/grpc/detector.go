@@ -4,25 +4,55 @@ import (
 	"context"
 	"fmt"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/eloylp/aton/internal/logging"
+	"github.com/eloylp/aton/internal/ctl/metrics"
 	"github.com/eloylp/aton/internal/proto"
 )
 
 type DetectorClient struct {
-	addr           string
-	client         proto.DetectorClient
-	internalClient proto.Detector_RecognizeClient
-	logger         logging.Logger
+	addr            string
+	client          proto.DetectorClient
+	internalClient  proto.Detector_RecognizeClient
+	logger          *logrus.Logger
+	metricsRegistry *metrics.Service
 }
 
-func NewDetectorClient(addr string, logger logging.Logger) *DetectorClient {
-	return &DetectorClient{addr: addr, logger: logger}
+func NewDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *metrics.Service) *DetectorClient {
+	return &DetectorClient{
+		addr:            addr,
+		logger:          logger,
+		metricsRegistry: metricsRegistry,
+	}
 }
 
 func (c *DetectorClient) Connect() error {
-	grpcClientConn, err := grpc.Dial(c.addr, grpc.WithInsecure())
+	clientMetrics := grpc_prometheus.NewClientMetrics()
+	clientMetrics.EnableClientHandlingTimeHistogram()
+	c.metricsRegistry.MustRegister(clientMetrics)
+	logrusEntry := logrus.NewEntry(c.logger)
+	var retries uint = 10
+	grpcClientConn, err := grpc.Dial(c.addr,
+		grpc.WithInsecure(),
+		grpc.WithStreamInterceptor(
+			grpc_middleware.ChainStreamClient(
+				clientMetrics.StreamClientInterceptor(),
+				grpc_logrus.StreamClientInterceptor(logrusEntry),
+			),
+		),
+		grpc.WithUnaryInterceptor(
+			grpc_middleware.ChainUnaryClient(
+				clientMetrics.UnaryClientInterceptor(),
+				grpc_logrus.UnaryClientInterceptor(logrusEntry),
+				grpc_retry.UnaryClientInterceptor(grpc_retry.WithMax(retries)),
+			),
+		),
+	)
 	if err != nil {
 		return fmt.Errorf("dectectorclient: %w", err)
 	}

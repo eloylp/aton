@@ -22,14 +22,14 @@ type Ctl struct {
 	cfg            *config.Config
 	detectorClient DetectorClient
 	capturers      CapturerRegistry
-	register       *metrics.Register
+	metricsService *metrics.Service
 	api            *http.Server
 	logger         logging.Logger
 	wg             *sync.WaitGroup
 	L              *sync.Mutex
 }
 
-func New(dc DetectorClient, opts ...config.Option) *Ctl {
+func New(dc DetectorClient, metricsService *metrics.Service, opts ...config.Option) *Ctl {
 	cfg := &config.Config{
 		APIReadTimeout:  config.DefaultAPIReadTimeout,
 		APIWriteTimeout: config.DefaultAPIWriteTimeout,
@@ -39,18 +39,17 @@ func New(dc DetectorClient, opts ...config.Option) *Ctl {
 	}
 	api := &http.Server{
 		Addr:         cfg.ListenAddress,
-		Handler:      www.Router(metrics.NewHTTPHandler()),
+		Handler:      www.Router(metricsService.HTTPHandler()),
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	register := metrics.NewRegister()
 	for _, d := range cfg.Detectors {
-		register.DetectorUP(d.UUID)
+		metricsService.DetectorUP(d.UUID)
 	}
 	ctl := &Ctl{
 		cfg:            cfg,
 		detectorClient: dc,
-		register:       register,
+		metricsService: metricsService,
 		capturers:      CapturerRegistry{},
 		api:            api,
 		logger:         logging.NewBasicLogger(cfg.LoggerOutput),
@@ -104,15 +103,15 @@ func (c *Ctl) initializeResultProcessor() {
 				continue
 			}
 			if resp.Success {
-				c.register.IncProcessedFramesTotal(resp.ProcessedBy)
+				c.metricsService.IncProcessedFramesTotal(resp.ProcessedBy)
 				if len(resp.Names) > 0 {
 					c.logger.Info("initializeResultProcessor(): detected: " + strings.Join(resp.Names, ","))
 				} else {
-					c.register.IncUnrecognizedFramesTotal(resp.ProcessedBy)
+					c.metricsService.IncUnrecognizedFramesTotal(resp.ProcessedBy)
 					c.logger.Info("initializeResultProcessor(): not detected: " + resp.Message)
 				}
 			} else {
-				c.register.IncFailedFramesTotal(resp.ProcessedBy)
+				c.metricsService.IncFailedFramesTotal(resp.ProcessedBy)
 			}
 		}
 		c.wg.Done()
@@ -145,17 +144,17 @@ func (c *Ctl) AddCapturer(capt Capturer) {
 func (c *Ctl) initializeCapturer(capt Capturer) {
 	c.wg.Add(1)
 	go func(capturer Capturer) {
-		c.register.CapturerUP(capt.UUID())
-		defer c.register.CapturerDown(capt.UUID())
+		c.metricsService.CapturerUP(capt.UUID())
+		defer c.metricsService.CapturerDown(capt.UUID())
 		go capturer.Start()
 		for {
 			fr, err := capturer.NextOutput()
 			if err == io.EOF {
 				break
 			}
-			c.register.IncCapturerReceivedFramesTotal(capt.UUID())
+			c.metricsService.IncCapturerReceivedFramesTotal(capt.UUID())
 			if err != nil {
-				c.register.IncCapturerFailedFramesTotal(capt.UUID())
+				c.metricsService.IncCapturerFailedFramesTotal(capt.UUID())
 				c.logger.Error("ctl: capturer: %w", err)
 				continue
 			}

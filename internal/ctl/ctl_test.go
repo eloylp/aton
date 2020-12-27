@@ -15,6 +15,7 @@ import (
 
 	"github.com/eloylp/aton/internal/ctl"
 	"github.com/eloylp/aton/internal/ctl/config"
+	"github.com/eloylp/aton/internal/ctl/metrics"
 )
 
 var (
@@ -39,6 +40,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	dc.On("Shutdown").Return(nil)
 	sutCTL := ctl.New(
 		dc,
+		metrics.NewService(),
 		config.WithListenAddress(ctlListenAddress),
 		config.WithLoggerOutput(&loggerOutput),
 		config.WithDetectors(config.Detector{
