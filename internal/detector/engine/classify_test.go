@@ -4,12 +4,12 @@ package engine_test
 
 import (
 	"fmt"
-	"github.com/eloylp/aton/internal/detector/engine"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/eloylp/aton/internal/detector/engine"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 
