@@ -4,14 +4,10 @@ package ctl_test
 
 import (
 	"bytes"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"path/filepath"
 	"testing"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
@@ -78,24 +74,4 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 
 	sutCTL.Shutdown()
 	dc.AssertExpectations(t)
-}
-
-func testLogger(output io.Writer) *logrus.Logger {
-	l := logrus.New()
-	l.SetOutput(output)
-	return l
-}
-
-func fetchResource(t *testing.T, s string) []byte {
-	t.Helper()
-	resp, err := http.Get(s)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return data
 }
