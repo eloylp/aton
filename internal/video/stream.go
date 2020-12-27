@@ -14,7 +14,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/eloylp/aton/internal/logging"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -32,12 +32,12 @@ type MJPEGCapturer struct {
 	URL        *url.URL
 	output     chan *Capture
 	close      chan struct{}
-	logger     logging.Logger
+	logger     *logrus.Logger
 	status     string
 	maxBackOff float64
 }
 
-func NewMJPEGCapturer(uuid, rawURL string, maxFrameBuffer int, logger logging.Logger) (*MJPEGCapturer, error) {
+func NewMJPEGCapturer(uuid, rawURL string, maxFrameBuffer int, logger *logrus.Logger) (*MJPEGCapturer, error) {
 	captURL, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("capturer (%s): %w", rawURL, err)

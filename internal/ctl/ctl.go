@@ -7,12 +7,12 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/eloylp/aton/internal/ctl/config"
 	"github.com/eloylp/aton/internal/ctl/metrics"
 	"github.com/eloylp/aton/internal/ctl/www"
-	"github.com/eloylp/aton/internal/logging"
 	"github.com/eloylp/aton/internal/proto"
 )
 
@@ -24,7 +24,7 @@ type Ctl struct {
 	capturers      CapturerRegistry
 	metricsService *metrics.Service
 	api            *http.Server
-	logger         logging.Logger
+	logger         *logrus.Logger
 	wg             *sync.WaitGroup
 	L              *sync.Mutex
 }
@@ -46,13 +46,15 @@ func New(dc DetectorClient, metricsService *metrics.Service, opts ...config.Opti
 	for _, d := range cfg.Detectors {
 		metricsService.DetectorUP(d.UUID)
 	}
+	logger := logrus.New()
+	logger.SetOutput(cfg.LoggerOutput)
 	ctl := &Ctl{
 		cfg:            cfg,
 		detectorClient: dc,
 		metricsService: metricsService,
 		capturers:      CapturerRegistry{},
 		api:            api,
-		logger:         logging.NewBasicLogger(cfg.LoggerOutput),
+		logger:         logger,
 		wg:             &sync.WaitGroup{},
 		L:              &sync.Mutex{},
 	}
@@ -62,7 +64,7 @@ func New(dc DetectorClient, metricsService *metrics.Service, opts ...config.Opti
 func (c *Ctl) Start() error {
 	c.initializeAPI()
 	if err := c.initializeDetectorClient(); err != nil {
-		c.logger.Errorf("ctl: %w", err)
+		c.logger.Errorf("ctl: %v", err)
 		return err
 	}
 	c.initializeResultProcessor()
@@ -74,7 +76,7 @@ func (c *Ctl) initializeAPI() {
 	c.wg.Add(1)
 	go func() {
 		if err := c.api.ListenAndServe(); err != http.ErrServerClosed {
-			c.logger.Errorf("ctl: %w", err)
+			c.logger.Errorf("ctl: %v", err)
 		}
 		c.wg.Done()
 	}()
@@ -99,7 +101,7 @@ func (c *Ctl) initializeResultProcessor() {
 				break
 			}
 			if err != nil {
-				c.logger.Errorf("ctl: processor: %w", err)
+				c.logger.Errorf("ctl: processor: %v", err)
 				continue
 			}
 			if resp.Success {
@@ -121,7 +123,7 @@ func (c *Ctl) initializeResultProcessor() {
 func (c *Ctl) Shutdown() {
 	// Close api server
 	if err := c.api.Shutdown(context.TODO()); err != nil {
-		c.logger.Errorf("ctl: shutdown: %w", err)
+		c.logger.Errorf("ctl: shutdown: %v", err)
 	}
 	// Close capturers. Stop receiving more data to the system.
 	for _, capt := range c.capturers {
@@ -129,7 +131,7 @@ func (c *Ctl) Shutdown() {
 	}
 	// Close detectors client
 	if err := c.detectorClient.Shutdown(); err != nil {
-		c.logger.Errorf("ctl: shutdown: %w", err)
+		c.logger.Errorf("ctl: shutdown: %v", err)
 	}
 	c.wg.Wait()
 }
