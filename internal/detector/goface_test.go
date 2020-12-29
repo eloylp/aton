@@ -1,17 +1,17 @@
 // +build detector
 
-package engine_test
+package detector_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/internal/detector/engine"
+	"github.com/eloylp/aton/internal/detector"
 )
 
 func TestGoFaceDetector(t *testing.T) {
-	faceDetector, err := engine.NewGoFaceDetector(ModelsDir)
+	faceDetector, err := detector.NewGoFace(ModelsDir)
 	assert.NoError(t, err)
 	t.Run("Error if duplicated names",
 		AssertErrorIfDuplicatedNames(faceDetector))

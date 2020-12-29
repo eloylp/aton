@@ -1,4 +1,4 @@
-package engine
+package detector
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ type GoFace struct {
 	r   *rand.Rand
 }
 
-func NewGoFaceDetector(modelsDir string) (*GoFace, error) {
+func NewGoFace(modelsDir string) (*GoFace, error) {
 	rec, err := face.NewRecognizer(modelsDir)
 	if err != nil {
 		return nil, fmt.Errorf("gofacedetector: can't init face recognizer: %w", err)
