@@ -1,6 +1,6 @@
 // +build integration
 
-package engine_test
+package ctl_test
 
 import (
 	"context"
