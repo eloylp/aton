@@ -23,9 +23,6 @@ func New(opts ...config.Option) (*Ctl, error) {
 
 func NewWithConfig(cfg *config.Config) (*Ctl, error) {
 	logger := logrus.New()
-	if cfg.LogFormat == "json" {
-		logger.SetFormatter(&logrus.JSONFormatter{})
-	}
 	metricsService := metrics.NewService()
 	dc := NewGRPCDetectorClient(cfg.Detector.Address, logger, metricsService)
 	c := NewWith(dc, metricsService, logger,
@@ -49,6 +46,9 @@ func NewWith(dc DetectorClient, metricsService *metrics.Service, logger *logrus.
 	}
 	for _, opt := range opts {
 		opt(cfg)
+	}
+	if cfg.LogFormat == "json" {
+		logger.SetFormatter(&logrus.JSONFormatter{})
 	}
 	if cfg.LogOutput == nil {
 		cfg.LogOutput = os.Stdout
