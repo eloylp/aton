@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/kelseyhightower/envconfig"
 )
@@ -14,6 +15,7 @@ type Config struct {
 	MetricsListenAddr string `split_words:"true" ,default:"0.0.0.0:8081"`
 	ModelDir          string `split_words:"true" ,required:"true"`
 	LogFormat         string `default:"json" ,split_words:"true"`
+	LogOutput         io.Writer
 }
 
 func WithUUID(uuid string) Option {
@@ -43,6 +45,12 @@ func WithModelDir(dir string) Option {
 func WithLogFormat(logFormat string) Option {
 	return func(cfg *Config) {
 		cfg.LogFormat = logFormat
+	}
+}
+
+func WithLogOutput(w io.Writer) Option {
+	return func(cfg *Config) {
+		cfg.LogOutput = w
 	}
 }
 

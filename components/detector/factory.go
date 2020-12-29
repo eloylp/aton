@@ -2,6 +2,7 @@ package detector
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -30,6 +31,10 @@ func NewWithConfig(cfg *config.Config) (*Server, error) {
 	if cfg.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	}
+	if cfg.LogOutput == nil {
+		cfg.LogOutput = os.Stdout
+	}
+	logger.SetOutput(cfg.LogOutput)
 	faceDetector, err := NewGoFace(cfg.ModelDir)
 	if err != nil {
 		return nil, fmt.Errorf("detector: %w", err)
