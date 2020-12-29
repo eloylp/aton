@@ -49,3 +49,9 @@ func FromEnv() (*Config, error) {
 	}
 	return cfg, nil
 }
+
+func WithLogFormat(format string) Option {
+	return func(cfg *Config) {
+		cfg.LogFormat = format
+	}
+}
