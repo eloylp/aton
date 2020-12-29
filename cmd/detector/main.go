@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/eloylp/aton/internal/detector"
+	"github.com/eloylp/aton/components/detector"
 )
 
 func main() {

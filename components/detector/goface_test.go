@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/internal/detector"
+	"github.com/eloylp/aton/components/detector"
 )
 
 func TestGoFaceDetector(t *testing.T) {

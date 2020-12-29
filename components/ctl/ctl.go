@@ -10,10 +10,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/eloylp/aton/internal/ctl/config"
-	"github.com/eloylp/aton/internal/ctl/metrics"
-	"github.com/eloylp/aton/internal/proto"
-	"github.com/eloylp/aton/internal/video"
+	"github.com/eloylp/aton/components/ctl/config"
+	"github.com/eloylp/aton/components/ctl/metrics"
+	"github.com/eloylp/aton/components/proto"
+	"github.com/eloylp/aton/components/video"
 )
 
 type CapturerRegistry map[string]Capturer

@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/eloylp/aton/internal/proto"
+	"github.com/eloylp/aton/components/proto"
 )
 
 type Service struct {

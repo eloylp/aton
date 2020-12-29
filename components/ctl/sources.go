@@ -3,8 +3,8 @@ package ctl
 import (
 	"context"
 
-	"github.com/eloylp/aton/internal/proto"
-	"github.com/eloylp/aton/internal/video"
+	"github.com/eloylp/aton/components/proto"
+	"github.com/eloylp/aton/components/video"
 )
 
 type Capturer interface {

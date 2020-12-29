@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/eloylp/aton/internal/ctl"
+	"github.com/eloylp/aton/components/ctl"
 )
 
 func main() {

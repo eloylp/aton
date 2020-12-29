@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/internal/video"
+	"github.com/eloylp/aton/components/video"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 

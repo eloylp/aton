@@ -39,9 +39,9 @@ test-detector:
 test-e2e:
 	go test -v --tags="e2e" $(shell go list ./... | grep -v detector)
 proto:
-	protoc internal/proto/detector.proto --go_out=plugins=grpc:internal/
-	find ./internal/github.com/ -type f -name "*pb.go" -exec mv {} ./internal/proto \;
-	rm -rf ./internal/github.com
+	protoc components/proto/detector.proto --go_out=plugins=grpc:components/
+	find ./components/github.com/ -type f -name "*pb.go" -exec mv {} ./components/proto \;
+	rm -rf ./components/github.com
 test-racy:
 	go test -race -v --tags="racy" $(shell go list ./... | grep -v detector)
 test-bench:

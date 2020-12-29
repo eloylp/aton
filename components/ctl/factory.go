@@ -7,10 +7,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/eloylp/aton/internal/ctl/config"
-	"github.com/eloylp/aton/internal/ctl/grpc"
-	"github.com/eloylp/aton/internal/ctl/metrics"
-	"github.com/eloylp/aton/internal/ctl/www"
+	"github.com/eloylp/aton/components/ctl/config"
+	"github.com/eloylp/aton/components/ctl/grpc"
+	"github.com/eloylp/aton/components/ctl/metrics"
+	"github.com/eloylp/aton/components/ctl/www"
 )
 
 func New(opts ...config.Option) (*Ctl, error) {

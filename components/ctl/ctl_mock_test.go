@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/mock"
 
-	"github.com/eloylp/aton/internal/proto"
-	"github.com/eloylp/aton/internal/video"
+	"github.com/eloylp/aton/components/proto"
+	"github.com/eloylp/aton/components/video"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 

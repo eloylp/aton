@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/internal/detector"
+	"github.com/eloylp/aton/components/detector"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 

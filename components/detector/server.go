@@ -18,7 +18,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/eloylp/aton/internal/proto"
+	"github.com/eloylp/aton/components/proto"
 )
 
 type Server struct {

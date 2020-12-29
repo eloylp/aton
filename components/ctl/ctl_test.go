@@ -4,7 +4,7 @@ package ctl_test
 
 import (
 	"bytes"
-	"github.com/eloylp/aton/internal/ctl"
+	"github.com/eloylp/aton/components/ctl"
 	"path/filepath"
 	"testing"
 	"time"
@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/eloylp/aton/internal/ctl/config"
-	"github.com/eloylp/aton/internal/ctl/metrics"
+	"github.com/eloylp/aton/components/ctl/config"
+	"github.com/eloylp/aton/components/ctl/metrics"
 )
 
 var (

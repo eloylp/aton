@@ -7,8 +7,8 @@ import (
 	"github.com/eloylp/kit/test/check"
 	"github.com/eloylp/kit/test/handler"
 
-	"github.com/eloylp/aton/internal/ctl/metrics"
-	"github.com/eloylp/aton/internal/ctl/www"
+	"github.com/eloylp/aton/components/ctl/metrics"
+	"github.com/eloylp/aton/components/ctl/www"
 )
 
 var metricsService = metrics.NewService()
