@@ -42,10 +42,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 		metrics.NewService(),
 		logger,
 		config.WithListenAddress(ctlListenAddress),
-		config.WithDetectors(config.Detector{
-			Address: "127.0.0.1:8080",
-			UUID:    "09AF",
-		}),
+		config.WithDetector("09AF", "127.0.0.1:8080"),
 	)
 
 	go func() {

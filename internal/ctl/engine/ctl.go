@@ -14,6 +14,7 @@ import (
 	"github.com/eloylp/aton/internal/ctl/metrics"
 	"github.com/eloylp/aton/internal/ctl/www"
 	"github.com/eloylp/aton/internal/proto"
+	"github.com/eloylp/aton/internal/video"
 )
 
 type CapturerRegistry map[string]Capturer
@@ -43,9 +44,7 @@ func New(dc DetectorClient, metricsService *metrics.Service, logger *logrus.Logg
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	for _, d := range cfg.Detectors {
-		metricsService.DetectorUP(d.UUID)
-	}
+	metricsService.DetectorUP(cfg.Detector.UUID)
 	ctl := &Ctl{
 		cfg:            cfg,
 		detectorClient: dc,
@@ -139,6 +138,15 @@ func (c *Ctl) AddCapturer(capt Capturer) {
 	defer c.L.Unlock()
 	c.capturers[capt.UUID()] = capt
 	c.initializeCapturer(capt)
+}
+
+func (c *Ctl) AddMJPEGCapturer(uuid, url string, maxFrameBuffer int) error {
+	capt, err := video.NewMJPEGCapturer(uuid, url, maxFrameBuffer, c.logger)
+	if err != nil {
+		return err
+	}
+	c.AddCapturer(capt)
+	return nil
 }
 
 func (c *Ctl) initializeCapturer(capt Capturer) {
