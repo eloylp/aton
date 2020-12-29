@@ -3,6 +3,7 @@ package ctl
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -49,6 +50,10 @@ func NewWith(dc DetectorClient, metricsService *metrics.Service, logger *logrus.
 	for _, opt := range opts {
 		opt(cfg)
 	}
+	if cfg.LogOutput == nil {
+		cfg.LogOutput = os.Stdout
+	}
+	logger.SetOutput(cfg.LogOutput)
 	api := &http.Server{
 		Addr:         cfg.ListenAddress,
 		Handler:      www.Router(metricsService.HTTPHandler()),

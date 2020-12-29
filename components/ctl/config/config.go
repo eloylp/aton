@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -18,6 +19,7 @@ type Config struct {
 	APIReadTimeout  time.Duration
 	APIWriteTimeout time.Duration
 	LogFormat       string `default:"json" ,split_words:"true"`
+	LogOutput       io.Writer
 }
 
 type Option func(*Config)
@@ -53,5 +55,11 @@ func FromEnv() (*Config, error) {
 func WithLogFormat(format string) Option {
 	return func(cfg *Config) {
 		cfg.LogFormat = format
+	}
+}
+
+func WithLogOutput(w io.Writer) Option {
+	return func(cfg *Config) {
+		cfg.LogOutput = w
 	}
 }
