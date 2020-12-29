@@ -18,10 +18,10 @@ func New(opts ...config.Option) (*Ctl, error) {
 	for _, o := range opts {
 		o(cfg)
 	}
-	return NewWithConfig(cfg)
+	return newWithConfig(cfg)
 }
 
-func NewWithConfig(cfg *config.Config) (*Ctl, error) {
+func newWithConfig(cfg *config.Config) (*Ctl, error) {
 	logger := logrus.New()
 	if cfg.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
@@ -43,7 +43,7 @@ func NewFromEnv() (*Ctl, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ctl: %w", err)
 	}
-	return NewWithConfig(cfg)
+	return newWithConfig(cfg)
 }
 
 func NewWith(dc DetectorClient, metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Ctl {

@@ -15,7 +15,7 @@ func New(opts ...config.Option) (*Server, error) {
 	for _, o := range opts {
 		o(cfg)
 	}
-	return NewWithConfig(cfg)
+	return newWithConfig(cfg)
 }
 
 func NewFromEnv() (*Server, error) {
@@ -23,10 +23,10 @@ func NewFromEnv() (*Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("detector: %w", err)
 	}
-	return NewWithConfig(cfg)
+	return newWithConfig(cfg)
 }
 
-func NewWithConfig(cfg *config.Config) (*Server, error) {
+func newWithConfig(cfg *config.Config) (*Server, error) {
 	logger := logrus.New()
 	if cfg.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
