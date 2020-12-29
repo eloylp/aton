@@ -1,4 +1,4 @@
-package grpc
+package ctl
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/eloylp/aton/components/proto"
 )
 
-type DetectorClient struct {
+type GRPCDetectorClient struct {
 	addr            string
 	client          proto.DetectorClient
 	internalClient  proto.Detector_RecognizeClient
@@ -23,15 +23,15 @@ type DetectorClient struct {
 	metricsRegistry *metrics.Service
 }
 
-func NewDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *metrics.Service) *DetectorClient {
-	return &DetectorClient{
+func NewGRPCDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *metrics.Service) *GRPCDetectorClient {
+	return &GRPCDetectorClient{
 		addr:            addr,
 		logger:          logger,
 		metricsRegistry: metricsRegistry,
 	}
 }
 
-func (c *DetectorClient) Connect() error {
+func (c *GRPCDetectorClient) Connect() error {
 	clientMetrics := grpc_prometheus.NewClientMetrics()
 	clientMetrics.EnableClientHandlingTimeHistogram()
 	c.metricsRegistry.MustRegister(clientMetrics)
@@ -60,18 +60,20 @@ func (c *DetectorClient) Connect() error {
 	return nil
 }
 
-func (c *DetectorClient) LoadCategories(ctx context.Context, request *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
+func (c *GRPCDetectorClient) LoadCategories(
+	ctx context.Context,
+	request *proto.LoadCategoriesRequest) (*proto.LoadCategoriesResponse, error) {
 	return c.client.LoadCategories(ctx, request)
 }
 
-func (c *DetectorClient) SendToRecognize(req *proto.RecognizeRequest) error {
+func (c *GRPCDetectorClient) SendToRecognize(req *proto.RecognizeRequest) error {
 	if err := c.internalClient.Send(req); err != nil {
 		return fmt.Errorf("detectorclient: recognize: send: %w", err)
 	}
 	return nil
 }
 
-func (c *DetectorClient) NextRecognizeResponse() (*proto.RecognizeResponse, error) {
+func (c *GRPCDetectorClient) NextRecognizeResponse() (*proto.RecognizeResponse, error) {
 	resp, err := c.internalClient.Recv()
 	if err != nil {
 		return nil, fmt.Errorf("detectorclient: recognize: next: %w", err)
@@ -79,7 +81,7 @@ func (c *DetectorClient) NextRecognizeResponse() (*proto.RecognizeResponse, erro
 	return resp, nil
 }
 
-func (c *DetectorClient) StartRecognize(ctx context.Context) error {
+func (c *GRPCDetectorClient) StartRecognize(ctx context.Context) error {
 	var err error
 	c.internalClient, err = c.client.Recognize(ctx)
 	if err != nil {
@@ -88,7 +90,7 @@ func (c *DetectorClient) StartRecognize(ctx context.Context) error {
 	return nil
 }
 
-func (c *DetectorClient) Shutdown() error {
+func (c *GRPCDetectorClient) Shutdown() error {
 	if err := c.internalClient.CloseSend(); err != nil {
 		return fmt.Errorf("detectorclient: shutdown: %w", err)
 	}

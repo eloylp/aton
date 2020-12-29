@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/eloylp/aton/components/ctl/config"
-	"github.com/eloylp/aton/components/ctl/grpc"
 	"github.com/eloylp/aton/components/ctl/metrics"
 	"github.com/eloylp/aton/components/ctl/www"
 )
@@ -27,7 +26,7 @@ func NewWithConfig(cfg *config.Config) (*Ctl, error) {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	}
 	metricsService := metrics.NewService()
-	dc := grpc.NewDetectorClient(cfg.Detector.Address, logger, metricsService)
+	dc := NewGRPCDetectorClient(cfg.Detector.Address, logger, metricsService)
 	c := NewWith(dc, metricsService, logger,
 		config.WithListenAddress(cfg.ListenAddress),
 	)
