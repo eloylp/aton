@@ -1,6 +1,6 @@
 // +build integration
 
-package ctl_test
+package engine_test
 
 import (
 	"bytes"
@@ -11,13 +11,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/eloylp/aton/internal/ctl"
 	"github.com/eloylp/aton/internal/ctl/config"
+	"github.com/eloylp/aton/internal/ctl/engine"
 	"github.com/eloylp/aton/internal/ctl/metrics"
 )
 
 var (
-	imagesDir = "../../samples/images"
+	imagesDir = "../../../samples/images"
 	faceBona1 = filepath.Join(imagesDir, "bona.jpg")
 	faceBona2 = filepath.Join(imagesDir, "bona2.jpg")
 	faceBona3 = filepath.Join(imagesDir, "bona3.jpg")
@@ -37,7 +37,7 @@ func TestCtlDoesBasicFlow(t *testing.T) {
 	dc.On("StartRecognize", mock.Anything).Return(nil)
 	dc.On("SendToRecognize", mock.Anything).Return(nil)
 	dc.On("Shutdown").Return(nil)
-	sutCTL := ctl.New(
+	sutCTL := engine.New(
 		dc,
 		metrics.NewService(),
 		logger,
