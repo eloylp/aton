@@ -19,6 +19,7 @@ type GRPCDetectorClient struct {
 	addr            string
 	client          proto.DetectorClient
 	internalClient  proto.Detector_RecognizeClient
+	clientConn      *grpc.ClientConn
 	logger          *logrus.Logger
 	metricsRegistry *metrics.Service
 }
@@ -56,7 +57,7 @@ func (c *GRPCDetectorClient) Connect() error {
 	if err != nil {
 		return fmt.Errorf("dectectorclient: %w", err)
 	}
-	c.client = proto.NewDetectorClient(grpcClientConn)
+	c.client = proto.NewDetectorClient(c.clientConn)
 	return nil
 }
 
@@ -91,7 +92,12 @@ func (c *GRPCDetectorClient) StartRecognize(ctx context.Context) error {
 }
 
 func (c *GRPCDetectorClient) Shutdown() error {
-	if err := c.internalClient.CloseSend(); err != nil {
+	if c.internalClient != nil {
+		if err := c.internalClient.CloseSend(); err != nil {
+			return fmt.Errorf("detectorclient: shutdown: %w", err)
+		}
+	}
+	if err := c.clientConn.Close(); err != nil {
 		return fmt.Errorf("detectorclient: shutdown: %w", err)
 	}
 	return nil

@@ -30,6 +30,7 @@ type Ctl struct {
 }
 
 func (c *Ctl) Start() error {
+	c.logger.Infof("starting CTL at %s", c.cfg.ListenAddress)
 	c.initializeAPI()
 	if err := c.initializeDetectorClient(); err != nil {
 		c.logger.Errorf("ctl: %v", err)
@@ -89,6 +90,7 @@ func (c *Ctl) initializeResultProcessor() {
 }
 
 func (c *Ctl) Shutdown() {
+	c.logger.Info("started graceful shutdown sequence")
 	// Close api server
 	if err := c.api.Shutdown(context.TODO()); err != nil {
 		c.logger.Errorf("ctl: shutdown: %v", err)
@@ -102,6 +104,7 @@ func (c *Ctl) Shutdown() {
 		c.logger.Errorf("ctl: shutdown: %v", err)
 	}
 	c.wg.Wait()
+	c.logger.Infof("stopped CTL at %s", c.cfg.ListenAddress)
 }
 
 func (c *Ctl) AddCapturer(capt Capturer) {
