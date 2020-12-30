@@ -88,6 +88,7 @@ func (gs *Server) watchForOSSignals() {
 }
 
 func (gs *Server) Shutdown() {
+	gs.logger.Info("gracefully shutdown started.")
 	const duration = 5 * time.Second
 	ctx, cancl := context.WithTimeout(context.Background(), duration)
 	defer cancl()
