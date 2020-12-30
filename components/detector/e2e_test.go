@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/eloylp/aton/pkg/test/helper"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/eloylp/aton/components/detector"
@@ -25,7 +26,8 @@ func TestStartStopSequence(t *testing.T) {
 	assert.NoError(t, err)
 
 	go d.Start()
-	time.Sleep(time.Second) // Wait for initialization
+	helper.TryConnectTo(t, "127.0.0.1:10002", time.Second)
+	helper.TryConnectTo(t, "127.0.0.1:10003", time.Second)
 	d.Shutdown()
 
 	logO := logOutput.String()
