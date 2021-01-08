@@ -9,6 +9,8 @@ package proto
 import (
 	context "context"
 	proto "github.com/golang/protobuf/proto"
+	duration "github.com/golang/protobuf/ptypes/duration"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -29,6 +31,147 @@ const (
 // This is a compile-time assertion that a sufficiently up-to-date version
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
+
+type TargetType int32
+
+const (
+	TargetType_TARGET_TYPE_FACE   TargetType = 0
+	TargetType_TARGET_TYPE_OBJECT TargetType = 1
+)
+
+// Enum value maps for TargetType.
+var (
+	TargetType_name = map[int32]string{
+		0: "TARGET_TYPE_FACE",
+		1: "TARGET_TYPE_OBJECT",
+	}
+	TargetType_value = map[string]int32{
+		"TARGET_TYPE_FACE":   0,
+		"TARGET_TYPE_OBJECT": 1,
+	}
+)
+
+func (x TargetType) Enum() *TargetType {
+	p := new(TargetType)
+	*p = x
+	return p
+}
+
+func (x TargetType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TargetType) Descriptor() protoreflect.EnumDescriptor {
+	return file_components_proto_detector_proto_enumTypes[0].Descriptor()
+}
+
+func (TargetType) Type() protoreflect.EnumType {
+	return &file_components_proto_detector_proto_enumTypes[0]
+}
+
+func (x TargetType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TargetType.Descriptor instead.
+func (TargetType) EnumDescriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{0}
+}
+
+type TargetStatus int32
+
+const (
+	TargetStatus_TARGET_STATUS_OK               TargetStatus = 0
+	TargetStatus_TARGET_STATUS_CONNECTION_RETRY TargetStatus = 1
+)
+
+// Enum value maps for TargetStatus.
+var (
+	TargetStatus_name = map[int32]string{
+		0: "TARGET_STATUS_OK",
+		1: "TARGET_STATUS_CONNECTION_RETRY",
+	}
+	TargetStatus_value = map[string]int32{
+		"TARGET_STATUS_OK":               0,
+		"TARGET_STATUS_CONNECTION_RETRY": 1,
+	}
+)
+
+func (x TargetStatus) Enum() *TargetStatus {
+	p := new(TargetStatus)
+	*p = x
+	return p
+}
+
+func (x TargetStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TargetStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_components_proto_detector_proto_enumTypes[1].Descriptor()
+}
+
+func (TargetStatus) Type() protoreflect.EnumType {
+	return &file_components_proto_detector_proto_enumTypes[1]
+}
+
+func (x TargetStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TargetStatus.Descriptor instead.
+func (TargetStatus) EnumDescriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{1}
+}
+
+type HealthCheckResponse_ServingStatus int32
+
+const (
+	HealthCheckResponse_UNKNOWN     HealthCheckResponse_ServingStatus = 0
+	HealthCheckResponse_SERVING     HealthCheckResponse_ServingStatus = 1
+	HealthCheckResponse_NOT_SERVING HealthCheckResponse_ServingStatus = 2
+)
+
+// Enum value maps for HealthCheckResponse_ServingStatus.
+var (
+	HealthCheckResponse_ServingStatus_name = map[int32]string{
+		0: "UNKNOWN",
+		1: "SERVING",
+		2: "NOT_SERVING",
+	}
+	HealthCheckResponse_ServingStatus_value = map[string]int32{
+		"UNKNOWN":     0,
+		"SERVING":     1,
+		"NOT_SERVING": 2,
+	}
+)
+
+func (x HealthCheckResponse_ServingStatus) Enum() *HealthCheckResponse_ServingStatus {
+	p := new(HealthCheckResponse_ServingStatus)
+	*p = x
+	return p
+}
+
+func (x HealthCheckResponse_ServingStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (HealthCheckResponse_ServingStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_components_proto_detector_proto_enumTypes[2].Descriptor()
+}
+
+func (HealthCheckResponse_ServingStatus) Type() protoreflect.EnumType {
+	return &file_components_proto_detector_proto_enumTypes[2]
+}
+
+func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use HealthCheckResponse_ServingStatus.Descriptor instead.
+func (HealthCheckResponse_ServingStatus) EnumDescriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{8, 0}
+}
 
 type LoadCategoriesRequest struct {
 	state         protoimpl.MessageState
@@ -85,17 +228,16 @@ func (x *LoadCategoriesRequest) GetImage() []byte {
 	return nil
 }
 
-type LoadCategoriesResponse struct {
+type InformStatusRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success bool   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Interval *duration.Duration `protobuf:"bytes,1,opt,name=interval,proto3" json:"interval,omitempty"`
 }
 
-func (x *LoadCategoriesResponse) Reset() {
-	*x = LoadCategoriesResponse{}
+func (x *InformStatusRequest) Reset() {
+	*x = InformStatusRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_components_proto_detector_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -103,13 +245,13 @@ func (x *LoadCategoriesResponse) Reset() {
 	}
 }
 
-func (x *LoadCategoriesResponse) String() string {
+func (x *InformStatusRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoadCategoriesResponse) ProtoMessage() {}
+func (*InformStatusRequest) ProtoMessage() {}
 
-func (x *LoadCategoriesResponse) ProtoReflect() protoreflect.Message {
+func (x *InformStatusRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_components_proto_detector_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -121,36 +263,30 @@ func (x *LoadCategoriesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoadCategoriesResponse.ProtoReflect.Descriptor instead.
-func (*LoadCategoriesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use InformStatusRequest.ProtoReflect.Descriptor instead.
+func (*InformStatusRequest) Descriptor() ([]byte, []int) {
 	return file_components_proto_detector_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LoadCategoriesResponse) GetSuccess() bool {
+func (x *InformStatusRequest) GetInterval() *duration.Duration {
 	if x != nil {
-		return x.Success
+		return x.Interval
 	}
-	return false
+	return nil
 }
 
-func (x *LoadCategoriesResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-type RecognizeRequest struct {
+type Status struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Image     []byte               `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
-	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Description   string     `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
+	Targets       []*Target  `protobuf:"bytes,2,rep,name=targets,proto3" json:"targets,omitempty"`
+	DetectionType TargetType `protobuf:"varint,3,opt,name=detection_type,json=detectionType,proto3,enum=proto.TargetType" json:"detection_type,omitempty"`
 }
 
-func (x *RecognizeRequest) Reset() {
-	*x = RecognizeRequest{}
+func (x *Status) Reset() {
+	*x = Status{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_components_proto_detector_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -158,13 +294,13 @@ func (x *RecognizeRequest) Reset() {
 	}
 }
 
-func (x *RecognizeRequest) String() string {
+func (x *Status) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RecognizeRequest) ProtoMessage() {}
+func (*Status) ProtoMessage() {}
 
-func (x *RecognizeRequest) ProtoReflect() protoreflect.Message {
+func (x *Status) ProtoReflect() protoreflect.Message {
 	mi := &file_components_proto_detector_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -176,40 +312,45 @@ func (x *RecognizeRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RecognizeRequest.ProtoReflect.Descriptor instead.
-func (*RecognizeRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use Status.ProtoReflect.Descriptor instead.
+func (*Status) Descriptor() ([]byte, []int) {
 	return file_components_proto_detector_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *RecognizeRequest) GetImage() []byte {
+func (x *Status) GetDescription() string {
 	if x != nil {
-		return x.Image
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Status) GetTargets() []*Target {
+	if x != nil {
+		return x.Targets
 	}
 	return nil
 }
 
-func (x *RecognizeRequest) GetCreatedAt() *timestamp.Timestamp {
+func (x *Status) GetDetectionType() TargetType {
 	if x != nil {
-		return x.CreatedAt
+		return x.DetectionType
 	}
-	return nil
+	return TargetType_TARGET_TYPE_FACE
 }
 
-type RecognizeResponse struct {
+type Result struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Names        []string             `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
-	ProcessedBy  string               `protobuf:"bytes,2,opt,name=processedBy,proto3" json:"processedBy,omitempty"`
+	TargetUuid   string               `protobuf:"bytes,1,opt,name=target_uuid,json=targetUuid,proto3" json:"target_uuid,omitempty"`
+	Matches      []string             `protobuf:"bytes,2,rep,name=matches,proto3" json:"matches,omitempty"`
 	Success      bool                 `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
-	Message      string               `protobuf:"bytes,4,opt,name=message,proto3" json:"message,omitempty"`
-	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	RecognizedAt *timestamp.Timestamp `protobuf:"bytes,6,opt,name=recognized_at,json=recognizedAt,proto3" json:"recognized_at,omitempty"`
+	RecognizedAt *timestamp.Timestamp `protobuf:"bytes,4,opt,name=recognized_at,json=recognizedAt,proto3" json:"recognized_at,omitempty"`
 }
 
-func (x *RecognizeResponse) Reset() {
-	*x = RecognizeResponse{}
+func (x *Result) Reset() {
+	*x = Result{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_components_proto_detector_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -217,13 +358,13 @@ func (x *RecognizeResponse) Reset() {
 	}
 }
 
-func (x *RecognizeResponse) String() string {
+func (x *Result) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RecognizeResponse) ProtoMessage() {}
+func (*Result) ProtoMessage() {}
 
-func (x *RecognizeResponse) ProtoReflect() protoreflect.Message {
+func (x *Result) ProtoReflect() protoreflect.Message {
 	mi := &file_components_proto_detector_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -235,51 +376,312 @@ func (x *RecognizeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RecognizeResponse.ProtoReflect.Descriptor instead.
-func (*RecognizeResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use Result.ProtoReflect.Descriptor instead.
+func (*Result) Descriptor() ([]byte, []int) {
 	return file_components_proto_detector_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *RecognizeResponse) GetNames() []string {
+func (x *Result) GetTargetUuid() string {
 	if x != nil {
-		return x.Names
-	}
-	return nil
-}
-
-func (x *RecognizeResponse) GetProcessedBy() string {
-	if x != nil {
-		return x.ProcessedBy
+		return x.TargetUuid
 	}
 	return ""
 }
 
-func (x *RecognizeResponse) GetSuccess() bool {
+func (x *Result) GetMatches() []string {
+	if x != nil {
+		return x.Matches
+	}
+	return nil
+}
+
+func (x *Result) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-func (x *RecognizeResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-func (x *RecognizeResponse) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *RecognizeResponse) GetRecognizedAt() *timestamp.Timestamp {
+func (x *Result) GetRecognizedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.RecognizedAt
 	}
 	return nil
+}
+
+type Target struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Uuid   string       `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Url    string       `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Status TargetStatus `protobuf:"varint,3,opt,name=status,proto3,enum=proto.TargetStatus" json:"status,omitempty"`
+	Type   TargetType   `protobuf:"varint,4,opt,name=type,proto3,enum=proto.TargetType" json:"type,omitempty"`
+}
+
+func (x *Target) Reset() {
+	*x = Target{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_components_proto_detector_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Target) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Target) ProtoMessage() {}
+
+func (x *Target) ProtoReflect() protoreflect.Message {
+	mi := &file_components_proto_detector_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Target.ProtoReflect.Descriptor instead.
+func (*Target) Descriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Target) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *Target) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *Target) GetStatus() TargetStatus {
+	if x != nil {
+		return x.Status
+	}
+	return TargetStatus_TARGET_STATUS_OK
+}
+
+func (x *Target) GetType() TargetType {
+	if x != nil {
+		return x.Type
+	}
+	return TargetType_TARGET_TYPE_FACE
+}
+
+type AddTargetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TargetUuid string     `protobuf:"bytes,1,opt,name=target_uuid,json=targetUuid,proto3" json:"target_uuid,omitempty"`
+	TargetUrl  string     `protobuf:"bytes,2,opt,name=target_url,json=targetUrl,proto3" json:"target_url,omitempty"`
+	TargetType TargetType `protobuf:"varint,3,opt,name=target_type,json=targetType,proto3,enum=proto.TargetType" json:"target_type,omitempty"`
+}
+
+func (x *AddTargetRequest) Reset() {
+	*x = AddTargetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_components_proto_detector_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddTargetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddTargetRequest) ProtoMessage() {}
+
+func (x *AddTargetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_components_proto_detector_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddTargetRequest.ProtoReflect.Descriptor instead.
+func (*AddTargetRequest) Descriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AddTargetRequest) GetTargetUuid() string {
+	if x != nil {
+		return x.TargetUuid
+	}
+	return ""
+}
+
+func (x *AddTargetRequest) GetTargetUrl() string {
+	if x != nil {
+		return x.TargetUrl
+	}
+	return ""
+}
+
+func (x *AddTargetRequest) GetTargetType() TargetType {
+	if x != nil {
+		return x.TargetType
+	}
+	return TargetType_TARGET_TYPE_FACE
+}
+
+type RemoveTargetRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TargetUuid string `protobuf:"bytes,1,opt,name=target_uuid,json=targetUuid,proto3" json:"target_uuid,omitempty"`
+}
+
+func (x *RemoveTargetRequest) Reset() {
+	*x = RemoveTargetRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_components_proto_detector_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RemoveTargetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveTargetRequest) ProtoMessage() {}
+
+func (x *RemoveTargetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_components_proto_detector_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveTargetRequest.ProtoReflect.Descriptor instead.
+func (*RemoveTargetRequest) Descriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RemoveTargetRequest) GetTargetUuid() string {
+	if x != nil {
+		return x.TargetUuid
+	}
+	return ""
+}
+
+type HealthCheckRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Service string `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+}
+
+func (x *HealthCheckRequest) Reset() {
+	*x = HealthCheckRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_components_proto_detector_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HealthCheckRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HealthCheckRequest) ProtoMessage() {}
+
+func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_components_proto_detector_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HealthCheckRequest.ProtoReflect.Descriptor instead.
+func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *HealthCheckRequest) GetService() string {
+	if x != nil {
+		return x.Service
+	}
+	return ""
+}
+
+type HealthCheckResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status HealthCheckResponse_ServingStatus `protobuf:"varint,1,opt,name=status,proto3,enum=proto.HealthCheckResponse_ServingStatus" json:"status,omitempty"`
+}
+
+func (x *HealthCheckResponse) Reset() {
+	*x = HealthCheckResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_components_proto_detector_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HealthCheckResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HealthCheckResponse) ProtoMessage() {}
+
+func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_components_proto_detector_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HealthCheckResponse.ProtoReflect.Descriptor instead.
+func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
+	return file_components_proto_detector_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
+	if x != nil {
+		return x.Status
+	}
+	return HealthCheckResponse_UNKNOWN
 }
 
 var File_components_proto_detector_proto protoreflect.FileDescriptor
@@ -287,54 +689,116 @@ var File_components_proto_detector_proto protoreflect.FileDescriptor
 var file_components_proto_detector_proto_rawDesc = []byte{
 	0x0a, 0x1f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x2f, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
-	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74,
-	0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x4d, 0x0a, 0x15, 0x4c, 0x6f, 0x61,
-	0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69,
-	0x65, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0c, 0x52, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x22, 0x4c, 0x0a, 0x16, 0x4c, 0x6f, 0x61, 0x64,
-	0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x18, 0x0a, 0x07,
-	0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d,
-	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x63, 0x0a, 0x10, 0x52, 0x65, 0x63, 0x6f, 0x67, 0x6e,
-	0x69, 0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6d,
-	0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65,
-	0x12, 0x39, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
-	0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0xfb, 0x01, 0x0a, 0x11,
-	0x52, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x14, 0x0a, 0x05, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x05, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x70, 0x72, 0x6f, 0x63, 0x65,
-	0x73, 0x73, 0x65, 0x64, 0x42, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x70, 0x72,
-	0x6f, 0x63, 0x65, 0x73, 0x73, 0x65, 0x64, 0x42, 0x79, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63,
+	0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x4d, 0x0a, 0x15, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x1e, 0x0a, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12,
+	0x14, 0x0a, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05,
+	0x69, 0x6d, 0x61, 0x67, 0x65, 0x22, 0x4c, 0x0a, 0x13, 0x49, 0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x53,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x35, 0x0a, 0x08,
+	0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x72,
+	0x76, 0x61, 0x6c, 0x22, 0x8d, 0x01, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x20,
+	0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x27, 0x0a, 0x07, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x52, 0x07, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x73, 0x12, 0x38, 0x0a, 0x0e, 0x64, 0x65, 0x74,
+	0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x54, 0x79, 0x70, 0x65, 0x52, 0x0d, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x79, 0x70, 0x65, 0x22, 0x9e, 0x01, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1f,
+	0x0a, 0x0b, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0a, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x55, 0x75, 0x69, 0x64, 0x12,
+	0x18, 0x0a, 0x07, 0x6d, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09,
+	0x52, 0x07, 0x6d, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63,
 	0x63, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63,
-	0x65, 0x73, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x04,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x39, 0x0a,
-	0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x63,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x3f, 0x0a, 0x0d, 0x72, 0x65, 0x63, 0x6f,
-	0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
-	0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0c, 0x72, 0x65, 0x63,
-	0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x74, 0x32, 0x9d, 0x01, 0x0a, 0x08, 0x44, 0x65,
-	0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x12, 0x4d, 0x0a, 0x0e, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4c,
-	0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x42, 0x0a, 0x09, 0x52, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69,
-	0x7a, 0x65, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x67,
-	0x6e, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x30, 0x01, 0x42, 0x29, 0x5a, 0x27, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65, 0x6c, 0x6f, 0x79, 0x6c, 0x70, 0x2f, 0x61,
-	0x74, 0x6f, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x73, 0x73, 0x12, 0x3f, 0x0a, 0x0d, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65,
+	0x64, 0x5f, 0x61, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d,
+	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0c, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a,
+	0x65, 0x64, 0x41, 0x74, 0x22, 0x82, 0x01, 0x0a, 0x06, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12,
+	0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75,
+	0x75, 0x69, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x2b, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x54, 0x61,
+	0x72, 0x67, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x12, 0x25, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x54,
+	0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x22, 0x86, 0x01, 0x0a, 0x10, 0x41, 0x64,
+	0x64, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f,
+	0x0a, 0x0b, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0a, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x55, 0x75, 0x69, 0x64, 0x12,
+	0x1d, 0x0a, 0x0a, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x75, 0x72, 0x6c, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x55, 0x72, 0x6c, 0x12, 0x32,
+	0x0a, 0x0b, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0e, 0x32, 0x11, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x54, 0x61, 0x72, 0x67,
+	0x65, 0x74, 0x54, 0x79, 0x70, 0x65, 0x52, 0x0a, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x54, 0x79,
+	0x70, 0x65, 0x22, 0x36, 0x0a, 0x13, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x54, 0x61, 0x72, 0x67,
+	0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x74, 0x61, 0x72,
+	0x67, 0x65, 0x74, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a,
+	0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x55, 0x75, 0x69, 0x64, 0x22, 0x2e, 0x0a, 0x12, 0x48, 0x65,
+	0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x18, 0x0a, 0x07, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x22, 0x93, 0x01, 0x0a, 0x13, 0x48,
+	0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x40, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0e, 0x32, 0x28, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74,
+	0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x22, 0x3a, 0x0a, 0x0d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x6e, 0x67, 0x53,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e,
+	0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x12,
+	0x0f, 0x0a, 0x0b, 0x4e, 0x4f, 0x54, 0x5f, 0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x02,
+	0x2a, 0x3a, 0x0a, 0x0a, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14,
+	0x0a, 0x10, 0x54, 0x41, 0x52, 0x47, 0x45, 0x54, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x46, 0x41,
+	0x43, 0x45, 0x10, 0x00, 0x12, 0x16, 0x0a, 0x12, 0x54, 0x41, 0x52, 0x47, 0x45, 0x54, 0x5f, 0x54,
+	0x59, 0x50, 0x45, 0x5f, 0x4f, 0x42, 0x4a, 0x45, 0x43, 0x54, 0x10, 0x01, 0x2a, 0x48, 0x0a, 0x0c,
+	0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x14, 0x0a, 0x10,
+	0x54, 0x41, 0x52, 0x47, 0x45, 0x54, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x4f, 0x4b,
+	0x10, 0x00, 0x12, 0x22, 0x0a, 0x1e, 0x54, 0x41, 0x52, 0x47, 0x45, 0x54, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x55, 0x53, 0x5f, 0x43, 0x4f, 0x4e, 0x4e, 0x45, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x52,
+	0x45, 0x54, 0x52, 0x59, 0x10, 0x01, 0x32, 0xcb, 0x02, 0x0a, 0x08, 0x44, 0x65, 0x74, 0x65, 0x63,
+	0x74, 0x6f, 0x72, 0x12, 0x46, 0x0a, 0x0e, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67,
+	0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x4c, 0x6f,
+	0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x3b, 0x0a, 0x0c, 0x49,
+	0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x1a, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2e, 0x49, 0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x30, 0x01, 0x12, 0x38, 0x0a, 0x0d, 0x49, 0x6e, 0x66, 0x6f,
+	0x72, 0x6d, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
+	0x79, 0x1a, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74,
+	0x30, 0x01, 0x12, 0x3c, 0x0a, 0x09, 0x41, 0x64, 0x64, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12,
+	0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x41, 0x64, 0x64, 0x54, 0x61, 0x72, 0x67, 0x65,
+	0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x12, 0x42, 0x0a, 0x0c, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x54, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x12, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x54,
+	0x61, 0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45,
+	0x6d, 0x70, 0x74, 0x79, 0x32, 0x8a, 0x01, 0x0a, 0x06, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x12,
+	0x3e, 0x0a, 0x05, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x48, 0x65, 0x61, 0x6c,
+	0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x40, 0x0a, 0x05, 0x57, 0x61, 0x74, 0x63, 0x68, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x48, 0x65, 0x61, 0x6c,
+	0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x30,
+	0x01, 0x42, 0x29, 0x5a, 0x27, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x65, 0x6c, 0x6f, 0x79, 0x6c, 0x70, 0x2f, 0x61, 0x74, 0x6f, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70,
+	0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -349,27 +813,53 @@ func file_components_proto_detector_proto_rawDescGZIP() []byte {
 	return file_components_proto_detector_proto_rawDescData
 }
 
-var file_components_proto_detector_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_components_proto_detector_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_components_proto_detector_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_components_proto_detector_proto_goTypes = []interface{}{
-	(*LoadCategoriesRequest)(nil),  // 0: proto.LoadCategoriesRequest
-	(*LoadCategoriesResponse)(nil), // 1: proto.LoadCategoriesResponse
-	(*RecognizeRequest)(nil),       // 2: proto.RecognizeRequest
-	(*RecognizeResponse)(nil),      // 3: proto.RecognizeResponse
-	(*timestamp.Timestamp)(nil),    // 4: google.protobuf.Timestamp
+	(TargetType)(0),                        // 0: proto.TargetType
+	(TargetStatus)(0),                      // 1: proto.TargetStatus
+	(HealthCheckResponse_ServingStatus)(0), // 2: proto.HealthCheckResponse.ServingStatus
+	(*LoadCategoriesRequest)(nil),          // 3: proto.LoadCategoriesRequest
+	(*InformStatusRequest)(nil),            // 4: proto.InformStatusRequest
+	(*Status)(nil),                         // 5: proto.Status
+	(*Result)(nil),                         // 6: proto.Result
+	(*Target)(nil),                         // 7: proto.Target
+	(*AddTargetRequest)(nil),               // 8: proto.AddTargetRequest
+	(*RemoveTargetRequest)(nil),            // 9: proto.RemoveTargetRequest
+	(*HealthCheckRequest)(nil),             // 10: proto.HealthCheckRequest
+	(*HealthCheckResponse)(nil),            // 11: proto.HealthCheckResponse
+	(*duration.Duration)(nil),              // 12: google.protobuf.Duration
+	(*timestamp.Timestamp)(nil),            // 13: google.protobuf.Timestamp
+	(*empty.Empty)(nil),                    // 14: google.protobuf.Empty
 }
 var file_components_proto_detector_proto_depIdxs = []int32{
-	4, // 0: proto.RecognizeRequest.created_at:type_name -> google.protobuf.Timestamp
-	4, // 1: proto.RecognizeResponse.created_at:type_name -> google.protobuf.Timestamp
-	4, // 2: proto.RecognizeResponse.recognized_at:type_name -> google.protobuf.Timestamp
-	0, // 3: proto.Detector.LoadCategories:input_type -> proto.LoadCategoriesRequest
-	2, // 4: proto.Detector.Recognize:input_type -> proto.RecognizeRequest
-	1, // 5: proto.Detector.LoadCategories:output_type -> proto.LoadCategoriesResponse
-	3, // 6: proto.Detector.Recognize:output_type -> proto.RecognizeResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	12, // 0: proto.InformStatusRequest.interval:type_name -> google.protobuf.Duration
+	7,  // 1: proto.Status.targets:type_name -> proto.Target
+	0,  // 2: proto.Status.detection_type:type_name -> proto.TargetType
+	13, // 3: proto.Result.recognized_at:type_name -> google.protobuf.Timestamp
+	1,  // 4: proto.Target.status:type_name -> proto.TargetStatus
+	0,  // 5: proto.Target.type:type_name -> proto.TargetType
+	0,  // 6: proto.AddTargetRequest.target_type:type_name -> proto.TargetType
+	2,  // 7: proto.HealthCheckResponse.status:type_name -> proto.HealthCheckResponse.ServingStatus
+	3,  // 8: proto.Detector.LoadCategories:input_type -> proto.LoadCategoriesRequest
+	4,  // 9: proto.Detector.InformStatus:input_type -> proto.InformStatusRequest
+	14, // 10: proto.Detector.InformResults:input_type -> google.protobuf.Empty
+	8,  // 11: proto.Detector.AddTarget:input_type -> proto.AddTargetRequest
+	9,  // 12: proto.Detector.RemoveTarget:input_type -> proto.RemoveTargetRequest
+	10, // 13: proto.Health.Check:input_type -> proto.HealthCheckRequest
+	10, // 14: proto.Health.Watch:input_type -> proto.HealthCheckRequest
+	14, // 15: proto.Detector.LoadCategories:output_type -> google.protobuf.Empty
+	5,  // 16: proto.Detector.InformStatus:output_type -> proto.Status
+	6,  // 17: proto.Detector.InformResults:output_type -> proto.Result
+	14, // 18: proto.Detector.AddTarget:output_type -> google.protobuf.Empty
+	14, // 19: proto.Detector.RemoveTarget:output_type -> google.protobuf.Empty
+	11, // 20: proto.Health.Check:output_type -> proto.HealthCheckResponse
+	11, // 21: proto.Health.Watch:output_type -> proto.HealthCheckResponse
+	15, // [15:22] is the sub-list for method output_type
+	8,  // [8:15] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_components_proto_detector_proto_init() }
@@ -391,7 +881,7 @@ func file_components_proto_detector_proto_init() {
 			}
 		}
 		file_components_proto_detector_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoadCategoriesResponse); i {
+			switch v := v.(*InformStatusRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -403,7 +893,7 @@ func file_components_proto_detector_proto_init() {
 			}
 		}
 		file_components_proto_detector_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RecognizeRequest); i {
+			switch v := v.(*Status); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -415,7 +905,67 @@ func file_components_proto_detector_proto_init() {
 			}
 		}
 		file_components_proto_detector_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RecognizeResponse); i {
+			switch v := v.(*Result); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_components_proto_detector_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Target); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_components_proto_detector_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddTargetRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_components_proto_detector_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RemoveTargetRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_components_proto_detector_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HealthCheckRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_components_proto_detector_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HealthCheckResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -432,13 +982,14 @@ func file_components_proto_detector_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_components_proto_detector_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   4,
+			NumEnums:      3,
+			NumMessages:   9,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_components_proto_detector_proto_goTypes,
 		DependencyIndexes: file_components_proto_detector_proto_depIdxs,
+		EnumInfos:         file_components_proto_detector_proto_enumTypes,
 		MessageInfos:      file_components_proto_detector_proto_msgTypes,
 	}.Build()
 	File_components_proto_detector_proto = out.File
@@ -459,8 +1010,11 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DetectorClient interface {
-	LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*LoadCategoriesResponse, error)
-	Recognize(ctx context.Context, opts ...grpc.CallOption) (Detector_RecognizeClient, error)
+	LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Detector_InformStatusClient, error)
+	InformResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Detector_InformResultsClient, error)
+	AddTarget(ctx context.Context, in *AddTargetRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RemoveTarget(ctx context.Context, in *RemoveTargetRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type detectorClient struct {
@@ -471,8 +1025,8 @@ func NewDetectorClient(cc grpc.ClientConnInterface) DetectorClient {
 	return &detectorClient{cc}
 }
 
-func (c *detectorClient) LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*LoadCategoriesResponse, error) {
-	out := new(LoadCategoriesResponse)
+func (c *detectorClient) LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/proto.Detector/LoadCategories", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -480,52 +1034,115 @@ func (c *detectorClient) LoadCategories(ctx context.Context, in *LoadCategoriesR
 	return out, nil
 }
 
-func (c *detectorClient) Recognize(ctx context.Context, opts ...grpc.CallOption) (Detector_RecognizeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Detector_serviceDesc.Streams[0], "/proto.Detector/Recognize", opts...)
+func (c *detectorClient) InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Detector_InformStatusClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Detector_serviceDesc.Streams[0], "/proto.Detector/InformStatus", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &detectorRecognizeClient{stream}
+	x := &detectorInformStatusClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	return x, nil
 }
 
-type Detector_RecognizeClient interface {
-	Send(*RecognizeRequest) error
-	Recv() (*RecognizeResponse, error)
+type Detector_InformStatusClient interface {
+	Recv() (*Status, error)
 	grpc.ClientStream
 }
 
-type detectorRecognizeClient struct {
+type detectorInformStatusClient struct {
 	grpc.ClientStream
 }
 
-func (x *detectorRecognizeClient) Send(m *RecognizeRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *detectorRecognizeClient) Recv() (*RecognizeResponse, error) {
-	m := new(RecognizeResponse)
+func (x *detectorInformStatusClient) Recv() (*Status, error) {
+	m := new(Status)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
+func (c *detectorClient) InformResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Detector_InformResultsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Detector_serviceDesc.Streams[1], "/proto.Detector/InformResults", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &detectorInformResultsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Detector_InformResultsClient interface {
+	Recv() (*Result, error)
+	grpc.ClientStream
+}
+
+type detectorInformResultsClient struct {
+	grpc.ClientStream
+}
+
+func (x *detectorInformResultsClient) Recv() (*Result, error) {
+	m := new(Result)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *detectorClient) AddTarget(ctx context.Context, in *AddTargetRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/proto.Detector/AddCapturer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *detectorClient) RemoveTarget(ctx context.Context, in *RemoveTargetRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/proto.Detector/RemoveTarget", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DetectorServer is the server API for Detector service.
 type DetectorServer interface {
-	LoadCategories(context.Context, *LoadCategoriesRequest) (*LoadCategoriesResponse, error)
-	Recognize(Detector_RecognizeServer) error
+	LoadCategories(context.Context, *LoadCategoriesRequest) (*empty.Empty, error)
+	InformStatus(*InformStatusRequest, Detector_InformStatusServer) error
+	InformResults(*empty.Empty, Detector_InformResultsServer) error
+	AddTarget(context.Context, *AddTargetRequest) (*empty.Empty, error)
+	RemoveTarget(context.Context, *RemoveTargetRequest) (*empty.Empty, error)
 }
 
 // UnimplementedDetectorServer can be embedded to have forward compatible implementations.
 type UnimplementedDetectorServer struct {
 }
 
-func (*UnimplementedDetectorServer) LoadCategories(context.Context, *LoadCategoriesRequest) (*LoadCategoriesResponse, error) {
+func (*UnimplementedDetectorServer) LoadCategories(context.Context, *LoadCategoriesRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadCategories not implemented")
 }
-func (*UnimplementedDetectorServer) Recognize(Detector_RecognizeServer) error {
-	return status.Errorf(codes.Unimplemented, "method Recognize not implemented")
+func (*UnimplementedDetectorServer) InformStatus(*InformStatusRequest, Detector_InformStatusServer) error {
+	return status.Errorf(codes.Unimplemented, "method InformStatus not implemented")
+}
+func (*UnimplementedDetectorServer) InformResults(*empty.Empty, Detector_InformResultsServer) error {
+	return status.Errorf(codes.Unimplemented, "method InformResults not implemented")
+}
+func (*UnimplementedDetectorServer) AddTarget(context.Context, *AddTargetRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddCapturer not implemented")
+}
+func (*UnimplementedDetectorServer) RemoveTarget(context.Context, *RemoveTargetRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveTarget not implemented")
 }
 
 func RegisterDetectorServer(s *grpc.Server, srv DetectorServer) {
@@ -550,30 +1167,82 @@ func _Detector_LoadCategories_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Detector_Recognize_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(DetectorServer).Recognize(&detectorRecognizeServer{stream})
+func _Detector_InformStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(InformStatusRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DetectorServer).InformStatus(m, &detectorInformStatusServer{stream})
 }
 
-type Detector_RecognizeServer interface {
-	Send(*RecognizeResponse) error
-	Recv() (*RecognizeRequest, error)
+type Detector_InformStatusServer interface {
+	Send(*Status) error
 	grpc.ServerStream
 }
 
-type detectorRecognizeServer struct {
+type detectorInformStatusServer struct {
 	grpc.ServerStream
 }
 
-func (x *detectorRecognizeServer) Send(m *RecognizeResponse) error {
+func (x *detectorInformStatusServer) Send(m *Status) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *detectorRecognizeServer) Recv() (*RecognizeRequest, error) {
-	m := new(RecognizeRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _Detector_InformResults_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(empty.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DetectorServer).InformResults(m, &detectorInformResultsServer{stream})
+}
+
+type Detector_InformResultsServer interface {
+	Send(*Result) error
+	grpc.ServerStream
+}
+
+type detectorInformResultsServer struct {
+	grpc.ServerStream
+}
+
+func (x *detectorInformResultsServer) Send(m *Result) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Detector_AddTarget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddTargetRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(DetectorServer).AddTarget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Detector/AddCapturer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DetectorServer).AddTarget(ctx, req.(*AddTargetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Detector_RemoveTarget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveTargetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DetectorServer).RemoveTarget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Detector/RemoveTarget",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DetectorServer).RemoveTarget(ctx, req.(*RemoveTargetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Detector_serviceDesc = grpc.ServiceDesc{
@@ -584,13 +1253,161 @@ var _Detector_serviceDesc = grpc.ServiceDesc{
 			MethodName: "LoadCategories",
 			Handler:    _Detector_LoadCategories_Handler,
 		},
+		{
+			MethodName: "AddCapturer",
+			Handler:    _Detector_AddTarget_Handler,
+		},
+		{
+			MethodName: "RemoveTarget",
+			Handler:    _Detector_RemoveTarget_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Recognize",
-			Handler:       _Detector_Recognize_Handler,
+			StreamName:    "InformStatus",
+			Handler:       _Detector_InformStatus_Handler,
 			ServerStreams: true,
-			ClientStreams: true,
+		},
+		{
+			StreamName:    "InformResults",
+			Handler:       _Detector_InformResults_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "components/proto/detector.proto",
+}
+
+// HealthClient is the client API for Health service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type HealthClient interface {
+	Check(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
+	Watch(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (Health_WatchClient, error)
+}
+
+type healthClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewHealthClient(cc grpc.ClientConnInterface) HealthClient {
+	return &healthClient{cc}
+}
+
+func (c *healthClient) Check(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
+	out := new(HealthCheckResponse)
+	err := c.cc.Invoke(ctx, "/proto.Health/Check", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *healthClient) Watch(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (Health_WatchClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Health_serviceDesc.Streams[0], "/proto.Health/Watch", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &healthWatchClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Health_WatchClient interface {
+	Recv() (*HealthCheckResponse, error)
+	grpc.ClientStream
+}
+
+type healthWatchClient struct {
+	grpc.ClientStream
+}
+
+func (x *healthWatchClient) Recv() (*HealthCheckResponse, error) {
+	m := new(HealthCheckResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// HealthServer is the server API for Health service.
+type HealthServer interface {
+	Check(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
+	Watch(*HealthCheckRequest, Health_WatchServer) error
+}
+
+// UnimplementedHealthServer can be embedded to have forward compatible implementations.
+type UnimplementedHealthServer struct {
+}
+
+func (*UnimplementedHealthServer) Check(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
+}
+func (*UnimplementedHealthServer) Watch(*HealthCheckRequest, Health_WatchServer) error {
+	return status.Errorf(codes.Unimplemented, "method Watch not implemented")
+}
+
+func RegisterHealthServer(s *grpc.Server, srv HealthServer) {
+	s.RegisterService(&_Health_serviceDesc, srv)
+}
+
+func _Health_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealthCheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HealthServer).Check(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Health/Check",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HealthServer).Check(ctx, req.(*HealthCheckRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Health_Watch_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(HealthCheckRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(HealthServer).Watch(m, &healthWatchServer{stream})
+}
+
+type Health_WatchServer interface {
+	Send(*HealthCheckResponse) error
+	grpc.ServerStream
+}
+
+type healthWatchServer struct {
+	grpc.ServerStream
+}
+
+func (x *healthWatchServer) Send(m *HealthCheckResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+var _Health_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.Health",
+	HandlerType: (*HealthServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Check",
+			Handler:    _Health_Check_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Watch",
+			Handler:       _Health_Watch_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "components/proto/detector.proto",
