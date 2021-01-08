@@ -3,6 +3,7 @@ package ctl
 import (
 	"context"
 	"fmt"
+	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
@@ -37,20 +38,27 @@ func (c *GRPCDetectorClient) Connect() error {
 	clientMetrics.EnableClientHandlingTimeHistogram()
 	c.metricsRegistry.MustRegister(clientMetrics)
 	logrusEntry := logrus.NewEntry(c.logger)
-	var retries uint = 10
-	grpcClientConn, err := grpc.Dial(c.addr,
+	backOffScalar := 500 * time.Millisecond
+	backOffJitter := 0.35
+	var err error
+	c.clientConn, err = grpc.Dial(c.addr,
 		grpc.WithInsecure(),
 		grpc.WithStreamInterceptor(
 			grpc_middleware.ChainStreamClient(
 				clientMetrics.StreamClientInterceptor(),
 				grpc_logrus.StreamClientInterceptor(logrusEntry),
+				grpc_retry.StreamClientInterceptor(grpc_retry.WithBackoff(
+					grpc_retry.BackoffExponentialWithJitter(backOffScalar, backOffJitter),
+				)),
 			),
 		),
 		grpc.WithUnaryInterceptor(
 			grpc_middleware.ChainUnaryClient(
 				clientMetrics.UnaryClientInterceptor(),
 				grpc_logrus.UnaryClientInterceptor(logrusEntry),
-				grpc_retry.UnaryClientInterceptor(grpc_retry.WithMax(retries)),
+				grpc_retry.UnaryClientInterceptor(grpc_retry.WithBackoff(
+					grpc_retry.BackoffExponentialWithJitter(backOffScalar, backOffJitter),
+				)),
 			),
 		),
 	)
