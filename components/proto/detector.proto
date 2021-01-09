@@ -11,8 +11,8 @@ service Detector {
   rpc LoadCategories(LoadCategoriesRequest) returns (google.protobuf.Empty);
   rpc InformStatus(InformStatusRequest) returns (stream Status);
   rpc InformResults(google.protobuf.Empty) returns (stream Result);
-  rpc AddTarget(AddTargetRequest) returns (google.protobuf.Empty);
-  rpc RemoveTarget(RemoveTargetRequest) returns (google.protobuf.Empty);
+  rpc AddCapturer(AddCapturerRequest) returns (google.protobuf.Empty);
+  rpc RemoveCapturer(RemoveCapturerRequest) returns (google.protobuf.Empty);
 }
 
 message LoadCategoriesRequest {
@@ -26,42 +26,42 @@ message InformStatusRequest{
 
 message Status {
   string description = 1;
-  repeated Target targets = 2;
-  TargetType detection_type = 3;
+  repeated Capturer capturers = 2;
+  CapturerType detection_type = 3;
 }
 
 message Result {
-  string target_uuid = 1;
+  string capturer_uuid = 1;
   repeated string matches = 2;
   bool success = 3;
   google.protobuf.Timestamp recognized_at = 4;
 }
 
-message Target {
+message Capturer {
   string uuid = 1;
   string url = 2;
-  TargetStatus status = 3;
-  TargetType type = 4;
+  CapturerStatus status = 3;
+  CapturerType type = 4;
 }
 
-message AddTargetRequest {
-  string target_uuid = 1;
-  string target_url = 2;
-  TargetType target_type = 3;
+message AddCapturerRequest {
+  string capturer_uuid = 1;
+  string capturer_url = 2;
+  CapturerType capturer_type = 3;
 }
 
-enum TargetType {
-  TARGET_TYPE_FACE = 0;
-  TARGET_TYPE_OBJECT = 1;
+enum CapturerType {
+  CAPTURER_TYPE_FACE = 0;
+  CAPTURER_TYPE_OBJECT = 1;
 }
 
-enum TargetStatus {
-  TARGET_STATUS_OK = 0;
-  TARGET_STATUS_CONNECTION_RETRY = 1;
+enum CapturerStatus {
+  CAPTURER_STATUS_OK = 0;
+  CAPTURER_STATUS_CONNECTION_RETRY = 1;
 }
 
-message RemoveTargetRequest {
-  string target_uuid = 1;
+message RemoveCapturerRequest {
+  string capturer_uuid = 1;
 }
 
 // gRPC Healthcheck protocol - https://github.com/grpc/grpc/blob/master/doc/health-checking.md
