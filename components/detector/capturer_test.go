@@ -1,0 +1,69 @@
+// +build integration
+
+package detector_test
+
+import (
+	"bytes"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/eloylp/aton/components/detector"
+	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/video"
+)
+
+func TestProcessingTargetResults(t *testing.T) {
+	// Prepare logger and metrics dependencies
+	loggerOutput := bytes.NewBuffer(nil)
+	logger := logrus.New()
+	logger.SetOutput(loggerOutput)
+	m := metrics.NewService()
+
+	// Prepare the target handler
+	sut := detector.NewCapturerHandler(logger, m, 100)
+
+	// Prepare our test target, simulates a video capture.
+	target := NewFakeTarget(t, []string{faceBona1, faceBona2})
+	target.On("Start").Return()
+	target.On("Close").Return()
+	target.On("Status").Return(video.StatusRunning)
+	target.On("UUID").Return("TEST")
+	// Including the target in our SUT, the target handler
+	sut.AddCapturer(target)
+
+	// Wait for the backbone to be filled with results
+	assert.Eventually(t, func() bool {
+		return sut.BackboneLen() == 2 // because we processed 2 images.
+	}, time.Second, time.Millisecond)
+
+	assert.Equal(t, []detector.CapturerStatus{
+		{
+			UUID:   "TEST",
+			Status: video.StatusRunning,
+		},
+	}, sut.Status())
+
+	sut.Shutdown()
+
+	target.AssertExpectations(t)
+
+	// Assert logging
+	logOutput := loggerOutput.String()
+	assert.NotContains(t, logOutput, "level=error")
+	assert.Contains(t, logOutput, "capturerHandler: added target with UUID: TEST")
+	assert.Contains(t, logOutput, "capturerHandler: starting target with UUID: TEST")
+	assert.Contains(t, logOutput, "capturerHandler: closing target with UUID: TEST")
+
+	// Assert metrics
+	rec := httptest.NewRecorder()
+	m.HTTPHandler().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
+
+	response := rec.Body.String()
+	assert.Contains(t, response, `aton_detector_capturer_received_frames_total{uuid="TEST"} 2`)
+	assert.Contains(t, response, `aton_detector_capturer_up{uuid="TEST"} 0`)
+}
