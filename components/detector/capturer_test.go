@@ -48,6 +48,14 @@ func TestProcessingTargetResults(t *testing.T) {
 		},
 	}, sut.Status())
 
+	for i := 0; i < 2; i++ {
+		data, err := sut.NextResult()
+		if err == io.EOF {
+			break
+		}
+		assert.Equal(t, 1301206, len(data.Data))
+	}
+
 	sut.Shutdown()
 
 	target.AssertExpectations(t)
