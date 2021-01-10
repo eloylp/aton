@@ -10,4 +10,5 @@ type Capturer interface {
 	Close()
 	Status() string
 	UUID() string
+	TargetURL() string
 }

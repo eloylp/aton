@@ -161,3 +161,7 @@ func (m *MJPEGCapturer) Close() {
 func (m *MJPEGCapturer) Status() string {
 	return m.status
 }
+
+func (m *MJPEGCapturer) TargetURL() string {
+	return m.URL.String()
+}
