@@ -53,3 +53,7 @@ func (ft *FakeTarget) Status() string {
 func (ft *FakeTarget) UUID() string {
 	return ft.Called().String(0)
 }
+
+func (ft *FakeTarget) TargetURL() string {
+	return ft.Called().String(0)
+}

@@ -12,6 +12,7 @@ import (
 
 type CapturerStatus struct {
 	UUID   string
+	URL    string
 	Status string
 }
 type CapturerHandler struct {
@@ -99,6 +100,7 @@ func (th *CapturerHandler) Status() []CapturerStatus {
 		status = append(status, CapturerStatus{
 			UUID:   t.UUID(),
 			Status: t.Status(),
+			URL:    t.TargetURL(),
 		})
 	}
 	return status

@@ -4,6 +4,7 @@ package detector_test
 
 import (
 	"bytes"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -28,11 +29,12 @@ func TestProcessingTargetResults(t *testing.T) {
 	sut := detector.NewCapturerHandler(logger, m, 100)
 
 	// Prepare our test target, simulates a video capture.
-	target := NewFakeTarget(t, []string{faceBona1, faceBona2})
+	target := NewFakeTarget(t, []string{faceBona1, faceBona1})
 	target.On("Start").Return()
 	target.On("Close").Return()
 	target.On("Status").Return(video.StatusRunning)
 	target.On("UUID").Return("TEST")
+	target.On("TargetURL").Return("http://example.com")
 	// Including the target in our SUT, the target handler
 	sut.AddCapturer(target)
 
@@ -44,6 +46,7 @@ func TestProcessingTargetResults(t *testing.T) {
 	assert.Equal(t, []detector.CapturerStatus{
 		{
 			UUID:   "TEST",
+			URL:    "http://example.com",
 			Status: video.StatusRunning,
 		},
 	}, sut.Status())
