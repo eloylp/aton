@@ -1,6 +1,7 @@
 package detector
 
 import (
+	"fmt"
 	"io"
 	"sync"
 
@@ -104,4 +105,15 @@ func (th *CapturerHandler) Status() []CapturerStatus {
 		})
 	}
 	return status
+}
+
+func (th *CapturerHandler) RemoveCapturer(uuid string) error {
+	th.L.Lock()
+	defer th.L.Unlock()
+	if _, ok := th.capturers[uuid]; !ok {
+		return fmt.Errorf("capturerHandler: capturer with UUID %s not found", uuid)
+	}
+	th.capturers[uuid].Close()
+	delete(th.capturers, uuid)
+	return nil
 }
