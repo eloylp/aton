@@ -117,3 +117,11 @@ func (th *CapturerHandler) RemoveCapturer(uuid string) error {
 	delete(th.capturers, uuid)
 	return nil
 }
+
+func (th *CapturerHandler) NextResult() (*video.Capture, error) {
+	data, ok := <-th.output
+	if !ok {
+		return nil, io.EOF
+	}
+	return data, nil
+}
