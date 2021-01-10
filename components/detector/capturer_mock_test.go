@@ -13,12 +13,12 @@ import (
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 
-type FakeTarget struct {
+type FakeCapturer struct {
 	mock.Mock
 	output chan *video.Capture
 }
 
-func NewFakeTarget(t *testing.T, outputs []string) *FakeTarget {
+func NewFakeTarget(t *testing.T, outputs []string) *FakeCapturer {
 	output := make(chan *video.Capture, len(outputs))
 	for _, o := range outputs {
 		output <- &video.Capture{
@@ -26,14 +26,14 @@ func NewFakeTarget(t *testing.T, outputs []string) *FakeTarget {
 			Timestamp: time.Now(),
 		}
 	}
-	return &FakeTarget{output: output}
+	return &FakeCapturer{output: output}
 }
 
-func (ft *FakeTarget) Start() {
+func (ft *FakeCapturer) Start() {
 	ft.Called()
 }
 
-func (ft *FakeTarget) NextOutput() (*video.Capture, error) {
+func (ft *FakeCapturer) NextOutput() (*video.Capture, error) {
 	c, ok := <-ft.output
 	if !ok {
 		return nil, io.EOF
@@ -41,19 +41,19 @@ func (ft *FakeTarget) NextOutput() (*video.Capture, error) {
 	return c, nil
 }
 
-func (ft *FakeTarget) Close() {
+func (ft *FakeCapturer) Close() {
 	close(ft.output)
 	ft.Called()
 }
 
-func (ft *FakeTarget) Status() string {
+func (ft *FakeCapturer) Status() string {
 	return ft.Called().String(0)
 }
 
-func (ft *FakeTarget) UUID() string {
+func (ft *FakeCapturer) UUID() string {
 	return ft.Called().String(0)
 }
 
-func (ft *FakeTarget) TargetURL() string {
+func (ft *FakeCapturer) TargetURL() string {
 	return ft.Called().String(0)
 }
