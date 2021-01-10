@@ -56,6 +56,7 @@ func TestProcessingTargetResults(t *testing.T) {
 		if err == io.EOF {
 			break
 		}
+		assert.NoError(t, err)
 		assert.Equal(t, 1301206, len(data.Data))
 	}
 
