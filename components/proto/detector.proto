@@ -10,7 +10,7 @@ option go_package = "github.com/eloylp/aton/components/proto";
 service Detector {
   rpc LoadCategories(LoadCategoriesRequest) returns (google.protobuf.Empty);
   rpc InformStatus(InformStatusRequest) returns (stream Status);
-  rpc InformResults(google.protobuf.Empty) returns (stream Result);
+  rpc ProcessResults(google.protobuf.Empty) returns (stream Result);
   rpc AddCapturer(AddCapturerRequest) returns (google.protobuf.Empty);
   rpc RemoveCapturer(RemoveCapturerRequest) returns (google.protobuf.Empty);
 }
@@ -27,7 +27,6 @@ message InformStatusRequest{
 message Status {
   string description = 1;
   repeated Capturer capturers = 2;
-  CapturerType detection_type = 3;
 }
 
 message Result {
@@ -35,24 +34,18 @@ message Result {
   repeated string matches = 2;
   bool success = 3;
   google.protobuf.Timestamp recognized_at = 4;
+  google.protobuf.Timestamp captured_at = 5;
 }
 
 message Capturer {
   string uuid = 1;
   string url = 2;
   CapturerStatus status = 3;
-  CapturerType type = 4;
 }
 
 message AddCapturerRequest {
   string capturer_uuid = 1;
   string capturer_url = 2;
-  CapturerType capturer_type = 3;
-}
-
-enum CapturerType {
-  CAPTURER_TYPE_FACE = 0;
-  CAPTURER_TYPE_OBJECT = 1;
 }
 
 enum CapturerStatus {
