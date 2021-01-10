@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/eloylp/aton/components/detector/config"
+	"github.com/eloylp/aton/components/detector/metrics"
 )
 
 func New(opts ...config.Option) (*Server, error) {
@@ -39,7 +40,9 @@ func newWithConfig(cfg *config.Config) (*Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("detector: %w", err)
 	}
-	service := NewService(cfg.UUID, faceDetector, logger, time.Now)
+	m := metrics.NewService()
+	capturerHandler := NewCapturerHandler(logger, m, 100) // todo parametrize
+	service := NewService(cfg.UUID, faceDetector, capturerHandler, logger, time.Now)
 	server := NewServer(cfg.ListenAddr, service, cfg.MetricsListenAddr, logger)
 	return server, nil
 }
