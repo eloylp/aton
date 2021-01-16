@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"github.com/eloylp/aton/components/detector/config"
@@ -34,6 +35,9 @@ func newWithConfig(cfg *config.Config) (*Server, error) {
 	}
 	if cfg.LogOutput == nil {
 		cfg.LogOutput = os.Stdout
+	}
+	if cfg.UUID == "" {
+		cfg.UUID = uuid.New().String()
 	}
 	logger.SetOutput(cfg.LogOutput)
 	faceDetector, err := NewGoFace(cfg.ModelDir)

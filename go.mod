@@ -6,6 +6,7 @@ require (
 	github.com/Kagami/go-face v0.0.0-20200825065730-3dd2d74dccfb
 	github.com/eloylp/kit v0.0.0-20200808225010-6d60ac35baee
 	github.com/golang/protobuf v1.4.3
+	github.com/google/uuid v1.1.5
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
