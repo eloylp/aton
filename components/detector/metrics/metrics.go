@@ -15,7 +15,7 @@ func capturerReceivedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_total",
 		Help:      "The total frames obtained from capturers",
-	}, []string{"uuid"})
+	}, []string{"uuid", "capturer_uuid"})
 }
 
 func capturerFailedFramesTotal() *prometheus.CounterVec {
@@ -24,7 +24,7 @@ func capturerFailedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_failed_frames_total",
 		Help:      "The failed frames returned by capturers",
-	}, []string{"uuid"})
+	}, []string{"uuid", "capturer_uuid"})
 }
 
 // Responses of detectors metrics
@@ -64,14 +64,5 @@ func currentCapturers() *prometheus.GaugeVec {
 		Subsystem: subsystem,
 		Name:      "capturer_up",
 		Help:      "Capturers that are up",
-	}, []string{"uuid"})
-}
-
-func currentDetectors() *prometheus.GaugeVec {
-	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Subsystem: subsystem,
-		Name:      "detector_up",
-		Help:      "Detectors that are up",
 	}, []string{"uuid"})
 }

@@ -23,7 +23,7 @@ func TestProcessingTargetResults(t *testing.T) {
 	loggerOutput := bytes.NewBuffer(nil)
 	logger := logrus.New()
 	logger.SetOutput(loggerOutput)
-	m := metrics.NewService()
+	m := metrics.NewService("UUID")
 
 	// Prepare the target handler
 	sut := detector.NewCapturerHandler(logger, m, 100)
@@ -85,7 +85,7 @@ func TestRemoveCapturerFromHandler(t *testing.T) {
 	loggerOutput := bytes.NewBuffer(nil)
 	logger := logrus.New()
 	logger.SetOutput(loggerOutput)
-	m := metrics.NewService()
+	m := metrics.NewService("UUID")
 
 	// Prepare the target handler
 	sut := detector.NewCapturerHandler(logger, m, 100)
