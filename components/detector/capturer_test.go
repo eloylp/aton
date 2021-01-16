@@ -95,17 +95,19 @@ func TestRemoveCapturerFromHandler(t *testing.T) {
 	target.On("Start").Return()
 	target.On("Close").Return()
 	target.On("Status").Return(video.StatusRunning)
-	target.On("UUID").Return("TEST")
+	target.On("UUID").Return("UUID")
 	target.On("TargetURL").Return("http://example.com")
 	// Including the target in our SUT, the target handler
 	sut.AddCapturer(target)
 
 	// We remove the capturer and check count in status.
-	err := sut.RemoveCapturer("TEST")
+	capt, err := sut.RemoveCapturer("UUID")
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(sut.Status()))
+	assert.Equal(t, "UUID", capt.UUID())
+	assert.Equal(t, "http://example.com", capt.TargetURL())
 
 	// Check that now throws error because does not exist.
-	err = sut.RemoveCapturer("TEST")
-	assert.EqualError(t, err, "capturerHandler: capturer with UUID TEST not found")
+	_, err = sut.RemoveCapturer("UUID")
+	assert.EqualError(t, err, "capturerHandler: capturer with UUID UUID not found")
 }

@@ -59,8 +59,8 @@ func (th *CapturerHandler) initializeCapturer(t Capturer) {
 	th.logger.Infof("capturerHandler: starting target with UUID: %s", t.UUID())
 	th.wg.Add(1)
 	go func() {
-		th.metricsService.CapturerUP(t.UUID())
-		defer th.metricsService.CapturerDown(t.UUID())
+		th.metricsService.CapturerUP(t.UUID(), t.TargetURL())
+		defer th.metricsService.CapturerDown(t.UUID(), t.TargetURL())
 		go t.Start()
 		for {
 			fr, err := t.NextOutput()
@@ -107,15 +107,16 @@ func (th *CapturerHandler) Status() []CapturerStatus {
 	return status
 }
 
-func (th *CapturerHandler) RemoveCapturer(uuid string) error {
+func (th *CapturerHandler) RemoveCapturer(uuid string) (Capturer, error) {
 	th.L.Lock()
 	defer th.L.Unlock()
-	if _, ok := th.capturers[uuid]; !ok {
-		return fmt.Errorf("capturerHandler: capturer with UUID %s not found", uuid)
+	capt, ok := th.capturers[uuid]
+	if !ok {
+		return nil, fmt.Errorf("capturerHandler: capturer with UUID %s not found", uuid)
 	}
 	th.capturers[uuid].Close()
 	delete(th.capturers, uuid)
-	return nil
+	return capt, nil
 }
 
 func (th *CapturerHandler) NextResult() (*video.Capture, error) {
