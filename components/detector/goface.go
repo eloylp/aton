@@ -77,7 +77,7 @@ func (d *GoFace) catExists(cat int32) bool {
 	return ok
 }
 
-func (d *GoFace) FindCategories(input []byte) ([]string, error) {
+func (d *GoFace) FindCategories(input []byte) (*FoundCategories, error) {
 	faces, err := d.rec.Recognize(input)
 	if err != nil {
 		return nil, fmt.Errorf("gofacedetector: can't recognize input: %w", err)
@@ -93,5 +93,8 @@ func (d *GoFace) FindCategories(input []byte) ([]string, error) {
 			done[catName] = struct{}{}
 		}
 	}
-	return results, nil
+	return &FoundCategories{
+		Matches:       results,
+		DetectedCount: len(faces),
+	}, nil
 }
