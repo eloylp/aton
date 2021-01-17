@@ -4,6 +4,7 @@ package video_test
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"path/filepath"
 	"testing"
@@ -170,4 +171,19 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 	assert.WithinDuration(t, startTime.Add(6*time.Second), resultConnections[2], marginErr)
 	assert.WithinDuration(t, startTime.Add(14*time.Second), resultConnections[3], marginErr)
 	assert.WithinDuration(t, startTime.Add(30*time.Second), resultConnections[4], marginErr)
+}
+
+func TestShutdownWhileBackPressured(t *testing.T) {
+	pictures := []string{faceBona1, faceBona2, faceBona3, faceBona4}
+	vs := helper.ReplayedVideoStream(t, pictures, "/", 100)
+	defer vs.Close()
+	w := bytes.NewBuffer(nil)
+	logger := testLogger(w)
+	vc, err := video.NewMJPEGCapturer("uuid", vs.URL, 10, logger)
+	assert.NoError(t, err)
+	time.AfterFunc(time.Second, func() {
+		vc.Close()
+	})
+	vc.Start()
+	fmt.Println(w.String())
 }

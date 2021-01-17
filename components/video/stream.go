@@ -142,7 +142,10 @@ func (m *MJPEGCapturer) processNextPart(mr *multipart.Reader) error {
 	if err != nil {
 		return fmt.Errorf("capturer: %w", err)
 	}
-	m.output <- &Capture{data, time.Now()}
+	select {
+	case m.output <- &Capture{data, time.Now()}:
+	case <-m.close:
+	}
 	return nil
 }
 
