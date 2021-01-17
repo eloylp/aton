@@ -60,3 +60,27 @@ func streamHandler(t *testing.T, fg frameGenerator) http.HandlerFunc {
 		}
 	}
 }
+
+func ReplayedVideoStream(t *testing.T, picturesPaths []string, servingPath string, times int) *httptest.Server {
+	t.Helper()
+	frames := make([][]byte, len(picturesPaths))
+	for i := 0; i < len(picturesPaths); i++ {
+		frames[i] = ReadFile(t, picturesPaths[i])
+	}
+	rplStream := make(chan []byte, len(frames)*times)
+	for i := 0; i < times; i++ {
+		for f := 0; f < len(frames); f++ {
+			rplStream <- frames[f]
+		}
+	}
+	close(rplStream)
+	mux := http.NewServeMux()
+	mux.HandleFunc(servingPath, streamHandler(t, func() ([]byte, error) {
+		frame, ok := <-rplStream
+		if !ok {
+			return nil, io.EOF
+		}
+		return frame, nil
+	}))
+	return httptest.NewServer(mux)
+}
