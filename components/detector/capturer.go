@@ -23,6 +23,7 @@ type CapturerHandler struct {
 	metricsService *metrics.Service
 	wg             sync.WaitGroup
 	L              sync.RWMutex
+	close          chan struct{}
 }
 
 func NewCapturerHandler(
@@ -35,6 +36,7 @@ func NewCapturerHandler(
 		capturers:      map[string]Capturer{},
 		metricsService: metricsService,
 		output:         make(chan *video.Capture, backboneBuffSize),
+		close:          make(chan struct{}),
 	}
 }
 
@@ -73,7 +75,11 @@ func (th *CapturerHandler) initializeCapturer(t Capturer) {
 				th.logger.Errorf("capturerHandler: target: %v", err)
 				continue
 			}
-			th.output <- fr
+			select {
+			case th.output <- fr:
+			case <-th.close:
+			}
+
 		}
 		th.wg.Done()
 	}()
@@ -86,6 +92,7 @@ func (th *CapturerHandler) BackboneLen() int {
 func (th *CapturerHandler) Shutdown() {
 	th.L.Lock()
 	defer th.L.Unlock()
+	close(th.close)
 	for _, t := range th.capturers {
 		th.logger.Infof("capturerHandler: closing target with UUID: %s", t.UUID())
 		t.Close()
