@@ -82,17 +82,17 @@ mainLoop:
 				break mainLoop
 			}
 			mr := multipart.NewReader(resp.Body, param["boundary"])
+		partLoop:
 			for {
-				if err := m.processNextPart(mr); err != nil {
-					m.logger.Error(err)
-					break
-				}
 				select {
 				case <-m.close:
 					close(m.output)
 					break mainLoop
 				default:
-					continue
+					if err := m.processNextPart(mr); err != nil {
+						m.logger.Error(err)
+						break partLoop
+					}
 				}
 			}
 		}
