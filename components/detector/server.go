@@ -14,15 +14,15 @@ import (
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
+	"github.com/eloylp/aton/components/detector/metrics"
 	"github.com/eloylp/aton/components/proto"
 )
 
 type Server struct {
-	service       proto.DetectorServer
+	service       service
 	logger        *logrus.Logger
 	s             *grpc.Server
 	metricsServer *http.Server
@@ -30,27 +30,37 @@ type Server struct {
 	metricsAddr   string
 }
 
-func NewServer(listenAddr string, service proto.DetectorServer, metricsAddr string, logger *logrus.Logger) *Server {
+type service interface {
+	proto.DetectorServer
+	Shutdown()
+}
+
+func NewServer(listenAddr string, service service, metricsAddr string, m *metrics.Service, logger *logrus.Logger) *Server {
 	logrusEntry := logrus.NewEntry(logger)
 	grpc_logrus.ReplaceGrpcLogger(logrusEntry)
+	grpcMetrics := grpc_prometheus.NewServerMetrics()
+	m.MustRegister(grpcMetrics)
+	grpc_prometheus.EnableHandlingTimeHistogram()
+
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-			grpc_prometheus.StreamServerInterceptor,
+			grpcMetrics.StreamServerInterceptor(),
 			grpc_logrus.StreamServerInterceptor(logrusEntry),
 			grpc_recovery.StreamServerInterceptor(),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-			grpc_prometheus.UnaryServerInterceptor,
+			grpcMetrics.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrusEntry),
 			grpc_recovery.UnaryServerInterceptor(),
 		)),
 	)
 	grpc_prometheus.Register(grpcServer)
-	grpc_prometheus.EnableHandlingTimeHistogram()
+	grpcMetrics.InitializeMetrics(grpcServer)
+
 	metricsMux := http.NewServeMux()
-	metricsMux.Handle("/metrics", promhttp.Handler())
+	metricsMux.Handle("/metrics", m.HTTPHandler())
 	s := &Server{
 		service:       service,
 		logger:        logger,
@@ -95,6 +105,7 @@ func (gs *Server) Shutdown() {
 	if err := gs.metricsServer.Shutdown(ctx); err != nil {
 		gs.logger.Errorf("shutdown: metrics-server: %v", err)
 	}
+	gs.service.Shutdown()
 	gs.s.GracefulStop()
 	gs.logger.Infof("stopped detector service at %s", gs.listenAddr)
 	gs.logger.Infof("stopped detector metrics at %s", gs.metricsAddr)

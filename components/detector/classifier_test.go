@@ -46,7 +46,7 @@ func AssertSingleFaceDetection(d detector.Classifier) func(t *testing.T) {
 		for _, c := range []string{faceBona2, faceBona3, faceBona4} {
 			resp, err := d.FindCategories(helper.ReadFile(t, c))
 			assert.NoError(t, err)
-			assert.Equal(t, 1, resp.DetectedCount)
+			assert.Equal(t, 1, resp.TotalEntities)
 			assert.Equal(t, []string{"bona"}, resp.Matches)
 		}
 	}
@@ -58,7 +58,7 @@ func AssertSingleFaceDetectionInGroup(d detector.Classifier) func(t *testing.T) 
 		assert.NoError(t, err)
 		resp, err := d.FindCategories(helper.ReadFile(t, groupFaces))
 		assert.NoError(t, err)
-		assert.Equal(t, 10, resp.DetectedCount)
+		assert.Equal(t, 10, resp.TotalEntities)
 		assert.Equal(t, []string{"bona"}, resp.Matches)
 	}
 }
@@ -69,7 +69,7 @@ func AssertMultipleFacesDetectionInGroup(d detector.Classifier) func(t *testing.
 		assert.NoError(t, err)
 		resp, err := d.FindCategories(helper.ReadFile(t, groupFaces))
 		assert.NoError(t, err)
-		assert.Equal(t, 10, resp.DetectedCount)
+		assert.Equal(t, 10, resp.TotalEntities)
 		assert.Equal(t, []string{"luda", "bona"}, resp.Matches)
 	}
 }

@@ -7,5 +7,5 @@ type Classifier interface {
 
 type FoundCategories struct {
 	Matches       []string
-	DetectedCount int
+	TotalEntities int
 }

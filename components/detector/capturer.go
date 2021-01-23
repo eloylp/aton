@@ -69,9 +69,9 @@ func (th *CapturerHandler) initializeCapturer(t Capturer) {
 			if err == io.EOF {
 				break
 			}
-			th.metricsService.IncCapturerReceivedFramesTotal(t.UUID())
+			th.metricsService.IncCapturerReceivedFramesTotal(t.UUID(), t.TargetURL())
 			if err != nil {
-				th.metricsService.IncCapturerFailedFramesTotal(t.UUID())
+				th.metricsService.IncCapturerFailedFramesTotal(t.UUID(), t.TargetURL())
 				th.logger.Errorf("capturerHandler: target: %v", err)
 				continue
 			}

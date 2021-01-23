@@ -30,9 +30,9 @@ message Status {
 }
 
 message Result {
-  string capturer_uuid = 1;
-  repeated string matches = 2;
-  bool success = 3;
+  string detector_uuid = 1;
+  repeated string recognized = 2;
+  int32  totalEntities = 3;
   google.protobuf.Timestamp recognized_at = 4;
   google.protobuf.Timestamp captured_at = 5;
 }

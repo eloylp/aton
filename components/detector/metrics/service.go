@@ -14,7 +14,8 @@ type Service struct {
 	capturerFailedFramesTotal   *prometheus.CounterVec
 	processedFramesTotal        *prometheus.CounterVec
 	failedFramesTotal           *prometheus.CounterVec
-	unrecognizedFramesTotal     *prometheus.CounterVec
+	unrecognizedEntitiesTotal   *prometheus.CounterVec
+	entitiesTotal               *prometheus.CounterVec
 	currentCapturers            *prometheus.GaugeVec
 }
 
@@ -27,7 +28,8 @@ func NewService(detectorUuid string) *Service {
 		capturerFailedFramesTotal:   capturerFailedFramesTotal(),
 		processedFramesTotal:        processedFramesTotal(),
 		failedFramesTotal:           failedFramesTotal(),
-		unrecognizedFramesTotal:     unrecognizedFramesTotal(),
+		entitiesTotal:               entitiesTotal(),
+		unrecognizedEntitiesTotal:   unrecognizedEntitiesTotal(),
 		currentCapturers:            currentCapturers(),
 	}
 	s.registerMetrics(promRegistry)
@@ -40,16 +42,17 @@ func (s *Service) registerMetrics(reg *prometheus.Registry) {
 	reg.MustRegister(s.capturerFailedFramesTotal)
 	reg.MustRegister(s.processedFramesTotal)
 	reg.MustRegister(s.failedFramesTotal)
-	reg.MustRegister(s.unrecognizedFramesTotal)
+	reg.MustRegister(s.entitiesTotal)
+	reg.MustRegister(s.unrecognizedEntitiesTotal)
 	reg.MustRegister(s.currentCapturers)
 }
 
-func (s *Service) IncCapturerReceivedFramesTotal(capturerUuid string) {
-	s.capturerReceivedFramesTotal.WithLabelValues(s.UUID, capturerUuid).Inc()
+func (s *Service) IncCapturerReceivedFramesTotal(uuid, url string) {
+	s.capturerReceivedFramesTotal.WithLabelValues(s.UUID, uuid, url).Inc()
 }
 
-func (s *Service) IncCapturerFailedFramesTotal(capturerUuid string) {
-	s.capturerFailedFramesTotal.WithLabelValues(s.UUID, capturerUuid).Inc()
+func (s *Service) IncCapturerFailedFramesTotal(uuid, url string) {
+	s.capturerFailedFramesTotal.WithLabelValues(s.UUID, uuid, url).Inc()
 }
 
 func (s *Service) IncProcessedFramesTotal() {
@@ -60,16 +63,20 @@ func (s *Service) IncFailedFramesTotal() {
 	s.failedFramesTotal.WithLabelValues(s.UUID).Inc()
 }
 
-func (s *Service) IncUnrecognizedFramesTotal() {
-	s.unrecognizedFramesTotal.WithLabelValues(s.UUID).Inc()
+func (s *Service) AddEntitiesTotal(count int) {
+	s.entitiesTotal.WithLabelValues(s.UUID).Add(float64(count))
 }
 
-func (s *Service) CapturerUP(capturerUuid string) {
-	s.currentCapturers.WithLabelValues(s.UUID, capturerUuid).Inc()
+func (s *Service) AddUnrecognizedEntitiesTotal(count int) {
+	s.unrecognizedEntitiesTotal.WithLabelValues(s.UUID).Add(float64(count))
 }
 
-func (s *Service) CapturerDown(capturerUuid string) {
-	s.currentCapturers.WithLabelValues(s.UUID, capturerUuid).Dec()
+func (s *Service) CapturerUP(uuid, url string) {
+	s.currentCapturers.WithLabelValues(s.UUID, uuid, url).Inc()
+}
+
+func (s *Service) CapturerDown(uuid, url string) {
+	s.currentCapturers.WithLabelValues(s.UUID, uuid, url).Dec()
 }
 
 func (s *Service) MustRegister(c ...prometheus.Collector) {

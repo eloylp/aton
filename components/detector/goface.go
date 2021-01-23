@@ -95,6 +95,6 @@ func (d *GoFace) FindCategories(input []byte) (*FoundCategories, error) {
 	}
 	return &FoundCategories{
 		Matches:       results,
-		DetectedCount: len(faces),
+		TotalEntities: len(faces),
 	}, nil
 }

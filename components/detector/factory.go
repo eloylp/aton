@@ -44,9 +44,9 @@ func newWithConfig(cfg *config.Config) (*Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("detector: %w", err)
 	}
-	m := metrics.NewService()
+	m := metrics.NewService(cfg.UUID)
 	capturerHandler := NewCapturerHandler(logger, m, 100) // todo parametrize
-	service := NewService(cfg.UUID, faceDetector, capturerHandler, logger, time.Now)
-	server := NewServer(cfg.ListenAddr, service, cfg.MetricsListenAddr, logger)
+	service := NewService(cfg.UUID, faceDetector, capturerHandler, m, logger, time.Now)
+	server := NewServer(cfg.ListenAddr, service, cfg.MetricsListenAddr, m, logger)
 	return server, nil
 }

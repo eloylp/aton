@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/eloylp/aton/components/detector/metrics"
 	"github.com/eloylp/aton/components/proto"
 	"github.com/eloylp/aton/components/video"
 )
@@ -22,6 +23,7 @@ type Service struct {
 	UUID            string
 	detector        Classifier
 	capturerHandler *CapturerHandler
+	metricsService  *metrics.Service
 	logger          *logrus.Logger
 	timeNow         func() time.Time
 	L               *sync.Mutex
@@ -30,6 +32,7 @@ type Service struct {
 func NewService(
 	uuid string, d Classifier,
 	capturerHandler *CapturerHandler,
+	metricsService *metrics.Service,
 	logger *logrus.Logger,
 	timeNow func() time.Time,
 ) *Service {
@@ -37,6 +40,7 @@ func NewService(
 		UUID:            uuid,
 		detector:        d,
 		capturerHandler: capturerHandler,
+		metricsService:  metricsService,
 		logger:          logger,
 		timeNow:         timeNow,
 	}
@@ -49,7 +53,7 @@ func (s *Service) LoadCategories(_ context.Context, request *proto.LoadCategorie
 		return nil, status.New(codes.Internal, msg).Err()
 	}
 	s.logger.Infof("LoadCategories(): loaded %q", strings.Join(request.Categories, ","))
-	return nil, nil
+	return &empty.Empty{}, nil
 }
 
 func (s *Service) InformStatus(request *proto.InformStatusRequest, stream proto.Detector_InformStatusServer) error {
@@ -75,18 +79,22 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessRe
 			s.logger.Info("ProcessResults(): stopped, end of processing.")
 			break
 		}
+		s.metricsService.IncProcessedFramesTotal()
 		if err != nil {
 			msg := fmt.Sprintf("ProcessResults(): %v", err)
-			s.logger.Errorf(msg)
+			s.logger.Error(msg)
+			s.metricsService.IncFailedFramesTotal()
 			return status.New(codes.Internal, msg).Err()
 		}
-		success := true
-		cat, err := s.detector.FindCategories(capturerResult.Data)
+		resp, err := s.detector.FindCategories(capturerResult.Data)
 		if err != nil {
-			success = false
 			msg := fmt.Sprintf("ProcessResults(): %v", err)
-			s.logger.Errorf(msg)
+			s.logger.Error(msg)
+			s.metricsService.IncFailedFramesTotal()
+			return status.New(codes.Internal, msg).Err()
 		}
+		s.metricsService.AddEntitiesTotal(resp.TotalEntities)
+		s.metricsService.AddUnrecognizedEntitiesTotal(resp.TotalEntities - len(resp.Matches))
 		recognizedAtProtoTime, err := ptypes.TimestampProto(s.timeNow())
 		if err != nil {
 			panic(err)
@@ -96,11 +104,11 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessRe
 			panic(err)
 		}
 		err = stream.Send(&proto.Result{
-			CapturerUuid: s.UUID,
-			Matches:      cat,
-			Success:      success,
-			RecognizedAt: recognizedAtProtoTime,
-			CapturedAt:   capturedAtProtoTime,
+			DetectorUuid:  s.UUID,
+			Recognized:    resp.Matches,
+			TotalEntities: int32(resp.TotalEntities),
+			RecognizedAt:  recognizedAtProtoTime,
+			CapturedAt:    capturedAtProtoTime,
 		})
 		if err == io.EOF {
 			s.logger.Info("ProcessResults(): stopped, end of processing.")
@@ -116,20 +124,23 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessRe
 }
 
 func (s *Service) AddCapturer(_ context.Context, request *proto.AddCapturerRequest) (*empty.Empty, error) {
-	err := s.capturerHandler.AddMJPEGCapturer(request.GetCapturerUuid(), request.GetCapturerUrl(), 10)
+	err := s.capturerHandler.AddMJPEGCapturer(request.GetCapturerUuid(), request.GetCapturerUrl(), 10) // Todo ...
 	if err != nil {
 		return nil, status.New(codes.Internal, "addCapturer: "+err.Error()).Err()
 	}
-	return nil, nil
+	s.metricsService.CapturerUP(request.CapturerUuid, request.CapturerUrl)
+	return &empty.Empty{}, nil
 }
 
 func (s *Service) RemoveCapturer(_ context.Context, request *proto.RemoveCapturerRequest) (*empty.Empty, error) {
-	if err := s.capturerHandler.RemoveCapturer(request.GetCapturerUuid()); err != nil {
+	capt, err := s.capturerHandler.RemoveCapturer(request.GetCapturerUuid())
+	if err != nil {
 		msg := fmt.Sprintf("RemoveCapturer(): %v", err)
 		s.logger.Error(msg)
 		return nil, status.New(codes.NotFound, msg).Err() // TODO make type switch to gather not found err.
 	}
-	return nil, nil
+	s.metricsService.CapturerDown(capt.UUID(), capt.TargetURL())
+	return &empty.Empty{}, nil
 }
 
 func (s *Service) Status() *proto.Status {
@@ -154,4 +165,8 @@ func (s *Service) Status() *proto.Status {
 		Description: "General status of detector",
 		Capturers:   capt,
 	}
+}
+
+func (s *Service) Shutdown() {
+	s.capturerHandler.Shutdown()
 }
