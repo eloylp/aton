@@ -14,8 +14,7 @@ const (
 )
 
 type Config struct {
-	ListenAddress   string   `split_words:"true" ,default:"0.0.0.0:8081"`
-	Detector        Detector `split_words:"true" ,required:"true"`
+	ListenAddress   string `split_words:"true" ,default:"0.0.0.0:8081"`
 	APIReadTimeout  time.Duration
 	APIWriteTimeout time.Duration
 	LogFormat       string `default:"json" ,split_words:"true"`
@@ -28,20 +27,6 @@ func WithListenAddress(addr string) Option {
 	return func(cfg *Config) {
 		cfg.ListenAddress = addr
 	}
-}
-
-func WithDetector(uuid, addr string) Option {
-	return func(cfg *Config) {
-		cfg.Detector = Detector{
-			UUID:    uuid,
-			Address: addr,
-		}
-	}
-}
-
-type Detector struct {
-	UUID    string `split_words:"true" ,required:"true"`
-	Address string `split_words:"true" ,required:"true"`
 }
 
 func FromEnv() (*Config, error) {

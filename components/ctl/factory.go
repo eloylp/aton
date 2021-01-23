@@ -31,8 +31,7 @@ func newWithConfig(cfg *config.Config) (*Ctl, error) {
 	}
 	logger.SetOutput(cfg.LogOutput)
 	metricsService := metrics.NewService()
-	dc := NewGRPCDetectorClient(cfg.Detector.Address, logger, metricsService)
-	c := NewWith(dc, metricsService, logger,
+	c := NewWith(metricsService, logger,
 		config.WithListenAddress(cfg.ListenAddress),
 	)
 	return c, nil
@@ -46,7 +45,7 @@ func NewFromEnv() (*Ctl, error) {
 	return newWithConfig(cfg)
 }
 
-func NewWith(dc DetectorClient, metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Ctl {
+func NewWith(metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Ctl {
 	cfg := &config.Config{
 		APIReadTimeout:  config.DefaultAPIReadTimeout,
 		APIWriteTimeout: config.DefaultAPIWriteTimeout,
@@ -60,12 +59,9 @@ func NewWith(dc DetectorClient, metricsService *metrics.Service, logger *logrus.
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	metricsService.DetectorUP(cfg.Detector.UUID)
 	ctl := &Ctl{
 		cfg:            cfg,
-		detectorClient: dc,
 		metricsService: metricsService,
-		capturers:      CapturerRegistry{},
 		api:            api,
 		logger:         logger,
 		wg:             &sync.WaitGroup{},

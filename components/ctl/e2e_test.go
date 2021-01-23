@@ -18,7 +18,6 @@ func TestStartStopSequence(t *testing.T) {
 	logOutput := bytes.NewBuffer(nil)
 	c, err := ctl.New(
 		config.WithListenAddress("0.0.0.0:10001"),
-		config.WithDetector("test-detector", "127.0.0.1:10002"),
 		config.WithLogOutput(logOutput),
 		config.WithLogFormat("text"),
 	)

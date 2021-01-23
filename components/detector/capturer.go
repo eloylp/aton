@@ -79,7 +79,6 @@ func (th *CapturerHandler) initializeCapturer(t Capturer) {
 			case th.output <- fr:
 			case <-th.close:
 			}
-
 		}
 		th.wg.Done()
 	}()

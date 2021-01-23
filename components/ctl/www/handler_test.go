@@ -25,7 +25,7 @@ func TestHandlers(t *testing.T) {
 			Case:     "Metrics is showing correctly",
 			Path:     "/metrics",
 			Method:   http.MethodGet,
-			Checkers: []check.Function{check.HasStatus(http.StatusOK), check.Contains(`aton_ctl_detector_up{uuid="A1234"} 1`)},
+			Checkers: []check.Function{check.HasStatus(http.StatusOK), check.Contains(`aton_ctl`)},
 		},
 	}
 	t.Run("Running handler tests ...", handler.Tester(cases, www.Router(metricsService.HTTPHandler()), func(t *testing.T) {

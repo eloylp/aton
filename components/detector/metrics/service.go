@@ -19,10 +19,10 @@ type Service struct {
 	currentCapturers            *prometheus.GaugeVec
 }
 
-func NewService(detectorUuid string) *Service {
+func NewService(detectorUUID string) *Service {
 	promRegistry := prometheus.NewRegistry()
 	s := &Service{
-		UUID:                        detectorUuid,
+		UUID:                        detectorUUID,
 		registry:                    promRegistry,
 		capturerReceivedFramesTotal: capturerReceivedFramesTotal(),
 		capturerFailedFramesTotal:   capturerFailedFramesTotal(),
