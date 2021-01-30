@@ -50,13 +50,16 @@ func NewGRPCDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *
 	}
 }
 
+const (
+	backOffScalar = 500 * time.Millisecond
+	backOffJitter = 0.35
+)
+
 func (c *GRPCDetectorClient) Connect() error {
 	grpcMetrics := grpc_prometheus.NewClientMetrics()
 	grpcMetrics.EnableClientHandlingTimeHistogram()
 	c.metricsRegistry.MustRegister(grpcMetrics)
 	logrusEntry := logrus.NewEntry(c.logger)
-	backOffScalar := 500 * time.Millisecond
-	backOffJitter := 0.35
 	var err error
 	c.clientConn, err = grpc.Dial(c.addr,
 		grpc.WithInsecure(),
