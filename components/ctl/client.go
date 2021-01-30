@@ -132,6 +132,7 @@ func (c *GRPCDetectorClient) startStatusProc(interval time.Duration) {
 		for {
 			status, err := stream.Recv()
 			if err == io.EOF {
+				close(c.detectorStatusQueue)
 				c.logger.Info("gRPCDetectorClient: result stream ended.")
 				return
 			}
@@ -183,6 +184,7 @@ func (c *GRPCDetectorClient) startResultsProc() {
 		for {
 			result, err := stream.Recv()
 			if err != io.EOF {
+				close(c.detectorResultsQueue)
 				c.logger.Info("gRPCDetectorClient: result stream ended.")
 				return
 			}
