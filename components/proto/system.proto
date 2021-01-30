@@ -1,0 +1,27 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "github.com/eloylp/aton/components/proto";
+
+message System {
+  int32 cpu_count = 1;
+  Memory memory = 2;
+  LoadAverage load_average = 3;
+  Network network = 4;
+}
+
+message Memory {
+  uint64 total_memory_bytes = 1;
+  uint64 used_memory_bytes = 2;
+}
+
+message LoadAverage {
+  float avg_1 = 1;
+  float avg_5 = 2;
+  float avg_15 = 3;
+}
+
+message Network {
+  uint64 tx_bytes_sec = 1;
+  uint64 rx_bytes_sec = 2;
+}
