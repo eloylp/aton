@@ -51,9 +51,9 @@ func NewGRPCDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *
 }
 
 func (c *GRPCDetectorClient) Connect() error {
-	clientMetrics := grpc_prometheus.NewClientMetrics()
-	clientMetrics.EnableClientHandlingTimeHistogram()
-	c.metricsRegistry.MustRegister(clientMetrics)
+	grpcMetrics := grpc_prometheus.NewClientMetrics()
+	grpcMetrics.EnableClientHandlingTimeHistogram()
+	c.metricsRegistry.MustRegister(grpcMetrics)
 	logrusEntry := logrus.NewEntry(c.logger)
 	backOffScalar := 500 * time.Millisecond
 	backOffJitter := 0.35
@@ -62,7 +62,7 @@ func (c *GRPCDetectorClient) Connect() error {
 		grpc.WithInsecure(),
 		grpc.WithStreamInterceptor(
 			grpc_middleware.ChainStreamClient(
-				clientMetrics.StreamClientInterceptor(),
+				grpcMetrics.StreamClientInterceptor(),
 				grpc_logrus.StreamClientInterceptor(logrusEntry),
 				grpc_retry.StreamClientInterceptor(grpc_retry.WithBackoff(
 					grpc_retry.BackoffExponentialWithJitter(backOffScalar, backOffJitter),
@@ -71,7 +71,7 @@ func (c *GRPCDetectorClient) Connect() error {
 		),
 		grpc.WithUnaryInterceptor(
 			grpc_middleware.ChainUnaryClient(
-				clientMetrics.UnaryClientInterceptor(),
+				grpcMetrics.UnaryClientInterceptor(),
 				grpc_logrus.UnaryClientInterceptor(logrusEntry),
 				grpc_retry.UnaryClientInterceptor(grpc_retry.WithBackoff(
 					grpc_retry.BackoffExponentialWithJitter(backOffScalar, backOffJitter),
