@@ -9,15 +9,6 @@ const (
 	subsystem = "ctl"
 )
 
-func currentCapturers() *prometheus.GaugeVec {
-	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: namespace,
-		Subsystem: subsystem,
-		Name:      "capturer_up",
-		Help:      "Capturers that are up",
-	}, []string{"uuid"})
-}
-
 func currentDetectors() *prometheus.GaugeVec {
 	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
