@@ -18,6 +18,14 @@ type Config struct {
 	LogOutput         io.Writer
 }
 
+func FromEnv() (*Config, error) {
+	cfg := &Config{}
+	if err := envconfig.Process("ATON_DETECTOR", cfg); err != nil {
+		return nil, fmt.Errorf("config: %w", err)
+	}
+	return cfg, nil
+}
+
 func WithUUID(uuid string) Option {
 	return func(cfg *Config) {
 		cfg.UUID = uuid
@@ -52,12 +60,4 @@ func WithLogOutput(w io.Writer) Option {
 	return func(cfg *Config) {
 		cfg.LogOutput = w
 	}
-}
-
-func FromEnv() (*Config, error) {
-	cfg := &Config{}
-	if err := envconfig.Process("ATON_DETECTOR", cfg); err != nil {
-		return nil, fmt.Errorf("config: %w", err)
-	}
-	return cfg, nil
 }
