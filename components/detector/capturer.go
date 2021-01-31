@@ -75,6 +75,7 @@ func (th *CapturerHandler) initializeCapturer(t Capturer) {
 				th.logger.Errorf("capturerHandler: target: %v", err)
 				continue
 			}
+			th.metricsService.IncCapturerReceivedFramesBytes(t.UUID(), t.TargetURL(), len(fr.Data))
 			select {
 			case th.output <- fr:
 			case <-th.close:

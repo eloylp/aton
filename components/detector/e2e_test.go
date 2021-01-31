@@ -105,6 +105,8 @@ func TestMatchingCapturingRound(t *testing.T) {
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
 	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
 	assert.Contains(t, metricsO, `aton_detector_entities_total{uuid="UUID"} 1`)
 	assert.Contains(t, metricsO, `aton_detector_unrecognized_entities_total{uuid="UUID"} 0`)
 	assert.Contains(t, metricsO, `aton_detector_processed_frames_total{uuid="UUID"} 2`)

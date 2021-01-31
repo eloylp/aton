@@ -20,6 +20,15 @@ func capturerReceivedFramesTotal() *prometheus.CounterVec {
 	}, []string{"uuid", "capturer_uuid", "capturer_url"})
 }
 
+func capturerReceivedFramesBytes() *prometheus.SummaryVec {
+	return prometheus.NewSummaryVec(prometheus.SummaryOpts{
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      "capturer_received_frames_bytes",
+		Help:      "The size of frames obtained by a capturer",
+	}, []string{"uuid", "capturer_uuid", "capturer_url"})
+}
+
 func capturerFailedFramesTotal() *prometheus.CounterVec {
 	return prometheus.NewCounterVec(prometheus.CounterOpts{
 		Namespace: namespace,
