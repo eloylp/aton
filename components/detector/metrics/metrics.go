@@ -4,8 +4,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-const namespace = "aton"
-const subsystem = "detector"
+const (
+	namespace = "aton"
+	subsystem = "detector"
+)
 
 // Capturer (input video stream) metrics
 

@@ -4,8 +4,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-const namespace = "aton"
-const subsystem = "ctl"
+const (
+	namespace = "aton"
+	subsystem = "ctl"
+)
 
 func currentCapturers() *prometheus.GaugeVec {
 	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
