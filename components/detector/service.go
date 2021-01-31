@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/detector/system"
 	"github.com/eloylp/aton/components/proto"
 	"github.com/eloylp/aton/components/video"
 )
@@ -161,9 +162,29 @@ func (s *Service) Status() *proto.Status {
 			Status: pStatus,
 		})
 	}
+	memory := system.Memory()
+	load := system.LoadAverage()
+	network := system.Network()
+
 	return &proto.Status{
 		Description: "General status of detector",
 		Capturers:   capt,
+		System: &proto.System{
+			CpuCount: int32(system.CPUCount()),
+			Memory: &proto.Memory{
+				TotalMemoryBytes: memory.TotalBytes,
+				UsedMemoryBytes:  memory.UsedBytes,
+			},
+			LoadAverage: &proto.LoadAverage{
+				Avg_1:  load.LoadAvg1,
+				Avg_5:  load.LoadAvg5,
+				Avg_15: load.LoadAvg15,
+			},
+			Network: &proto.Network{
+				TxBytesSec: network.TxBytesSec,
+				RxBytesSec: network.RxBytesSec,
+			},
+		},
 	}
 }
 

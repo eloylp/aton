@@ -14,6 +14,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	"github.com/eloylp/aton/components/detector"
 	"github.com/eloylp/aton/components/detector/config"
@@ -164,4 +165,36 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	assert.Contains(t, metricsO, `aton_detector_processed_frames_total{uuid="UUID"} 2`)
 	assert.Contains(t, metricsO, `aton_detector_unrecognized_entities_total{uuid="UUID"} 1`)
 	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Detector",grpc_type="unary"} 1`)
+}
+
+func TestStatusTelemetry(t *testing.T) {
+	logOutput := bytes.NewBuffer(nil)
+	d, err := detector.New(
+		config.WithListenAddress("0.0.0.0:10002"),
+		config.WithMetricsAddress("0.0.0.0:10003"),
+		config.WithLogOutput(logOutput),
+		config.WithLogFormat("text"),
+		config.WithModelDir("../../models"),
+	)
+	assert.NoError(t, err)
+
+	go d.Start()
+	helper.TryConnectTo(t, "127.0.0.1:10002", time.Second)
+	helper.TryConnectTo(t, "127.0.0.1:10003", time.Second)
+	defer d.Shutdown()
+
+	con, err := grpc.Dial("127.0.0.1:10002", grpc.WithInsecure(), grpc.WithBlock())
+	assert.NoError(t, err)
+	defer con.Close()
+
+	assert.NoError(t, err)
+	client := proto.NewDetectorClient(con)
+
+	strCli, err := client.InformStatus(context.Background(), &proto.InformStatusRequest{
+		Interval: durationpb.New(time.Second),
+	})
+	assert.NoError(t, err)
+	status, err := strCli.Recv()
+	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, status.System.CpuCount, int32(1))
 }

@@ -39,7 +39,7 @@ test-detector:
 test-e2e:
 	go test -v --tags="e2e" $(shell go list ./... | grep -v detector)
 proto:
-	protoc components/proto/detector.proto --go_out=plugins=grpc:components/
+	protoc -I components/proto components/proto/detector.proto components/proto/system.proto --go_out=plugins=grpc:components/
 	find ./components/github.com/ -type f -name "*pb.go" -exec mv {} ./components/proto \;
 	rm -rf ./components/github.com
 test-racy:

@@ -5,6 +5,8 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+import "system.proto";
+
 option go_package = "github.com/eloylp/aton/components/proto";
 
 service Detector {
@@ -27,6 +29,7 @@ message InformStatusRequest{
 message Status {
   string description = 1;
   repeated Capturer capturers = 2;
+  System system = 3;
 }
 
 message Result {

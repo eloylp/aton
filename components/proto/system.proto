@@ -16,9 +16,9 @@ message Memory {
 }
 
 message LoadAverage {
-  float avg_1 = 1;
-  float avg_5 = 2;
-  float avg_15 = 3;
+  double avg_1 = 1;
+  double avg_5 = 2;
+  double avg_15 = 3;
 }
 
 message Network {
