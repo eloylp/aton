@@ -155,13 +155,33 @@ func (c *GRPCDetectorClient) startStatusProc(interval time.Duration) {
 						Status: c.Status.String(),
 					})
 				}
-				c.detectorStatusQueue <- &Status{
-					Description: status.Description,
-					Capturers:   capturers,
-				}
+				c.detectorStatusQueue <- c.mapStatus(status, capturers)
 			}
 		}
 	}()
+}
+
+func (c *GRPCDetectorClient) mapStatus(status *proto.Status, capturers []*Capturer) *Status {
+	return &Status{
+		Description: status.Description,
+		Capturers:   capturers,
+		System: System{
+			CPUCount: int(status.System.CpuCount),
+			Network: Network{
+				RxBytesSec: status.System.Network.RxBytesSec,
+				TxBytesSec: status.System.Network.TxBytesSec,
+			},
+			LoadAverage: LoadAverage{
+				Avg1:  status.System.LoadAverage.Avg_1,
+				Avg5:  status.System.LoadAverage.Avg_5,
+				Avg15: status.System.LoadAverage.Avg_15,
+			},
+			Memory: Memory{
+				UsedMemoryBytes:  status.System.Memory.UsedMemoryBytes,
+				TotalMemoryBytes: status.System.Memory.TotalMemoryBytes,
+			},
+		},
+	}
 }
 
 func (c *GRPCDetectorClient) NextStatus() (*Status, error) {
@@ -240,23 +260,4 @@ type AddCapturerRequest struct {
 
 type RemoveCapturerRequest struct {
 	UUID string
-}
-
-type Status struct {
-	Description string
-	Capturers   []*Capturer
-}
-
-type Capturer struct {
-	UUID   string
-	URL    string
-	Status string
-}
-
-type Result struct {
-	DetectorUUID  string
-	Recognized    []string
-	TotalEntities int32
-	RecognizedAt  time.Time
-	CapturedAt    time.Time
 }
