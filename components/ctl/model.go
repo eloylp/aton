@@ -6,7 +6,7 @@ import (
 
 type Detector struct {
 	UUID   string
-	Status Status
+	Status *Status
 }
 
 type Status struct {
