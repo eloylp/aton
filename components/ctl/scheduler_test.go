@@ -60,3 +60,31 @@ func TestUtilizationIndex(t *testing.T) {
 		})
 	}
 }
+
+// nolint: scopelint
+func TestScoreDetector(t *testing.T) {
+	cases := []struct {
+		Detector *ctl.Detector
+		Expected float64
+	}{
+		{
+			Detector: AverageUtilizedDetector(),
+			Expected: -0.75,
+		},
+		{
+			Detector: FullUtilizedDetector(),
+			Expected: math.Inf(-1),
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.Detector.UUID, func(t *testing.T) {
+			ctl.ScoreDetector(tt.Detector)
+			assert.InDelta(
+				t,
+				tt.Expected,
+				tt.Detector.Score,
+				0.05,
+			)
+		})
+	}
+}

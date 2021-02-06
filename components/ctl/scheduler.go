@@ -29,3 +29,12 @@ func DetectorUtilizationIndex(s *Status) float64 {
 	// Calculate the average of the utilization percentages of the system.
 	return (loadPercent + memPercent + networkPercent) / 3
 }
+
+// ScoreDetector calculates a general score for the Detector passed
+// and sets the value in the Detector struct.
+// This function tends to include all the available calculations
+// in order to nurture a priority queue. The more the score the more
+// eligible will be the detector. Negative scoring is possible.
+func ScoreDetector(d *Detector) {
+	d.Score = DetectorUtilizationIndex(d.Status) * -1
+}
