@@ -36,5 +36,5 @@ func DetectorUtilizationIndex(s *Status) float64 {
 // in order to nurture a priority queue. The more the score the more
 // eligible will be the detector. Negative scoring is possible.
 func ScoreDetector(d *Detector) {
-	d.Score = DetectorUtilizationIndex(d.Status) * -1
+	d.Score = DetectorUtilizationIndex(d.Status) * -1 // Negative score, as this is utilization.
 }
