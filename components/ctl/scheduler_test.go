@@ -1,3 +1,5 @@
+// +build unit
+
 package ctl_test
 
 import (
@@ -86,5 +88,67 @@ func TestScoreDetector(t *testing.T) {
 				0.05,
 			)
 		})
+	}
+}
+
+func TestHeapBasedDetectorPriorityQueue(t *testing.T) {
+	q := ctl.NewHeapDetectorPriorityQueue()
+	t.Run("Assert order of elements", AssertQueueOrdering(q))
+	q = ctl.NewHeapDetectorPriorityQueue()
+	t.Run("Assert update of existing element with score updated", AssertQueueUpdate(q))
+	q = ctl.NewHeapDetectorPriorityQueue()
+	t.Run("Assert remove of existing element", AssertQueueRemove(q))
+	q = ctl.NewHeapDetectorPriorityQueue()
+	t.Run("Assert queu returns nil with no elements", AssertQueueEmptyNil(q))
+}
+
+func AssertQueueOrdering(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+	return func(t *testing.T) {
+		q.Upsert(AverageUtilizedDetector())
+		q.Upsert(FullNetworkUtilizedDetector())
+		assert.Equal(t, AverageUtilized, q.Next().UUID)
+	}
+}
+
+func AssertQueueUpdate(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+	return func(t *testing.T) {
+		d0 := AverageUtilizedDetector()
+		d1 := FullNetworkUtilizedDetector()
+		d2 := MidUtilizedDetector()
+
+		q.Upsert(d0)
+		q.Upsert(d1)
+		q.Upsert(d2)
+
+		d3 := LeastUtilizedDetector()
+		d3.UUID = FullNetworkUtilized
+		q.Upsert(d3)
+
+		assert.Equal(t, 3, q.Len())
+		assert.Equal(t, d3, q.Next())
+	}
+}
+
+func AssertQueueRemove(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+	return func(t *testing.T) {
+		d0 := AverageUtilizedDetector()
+		d1 := FullNetworkUtilizedDetector()
+		d2 := MidUtilizedDetector()
+
+		q.Upsert(d0)
+		q.Upsert(d1)
+		q.Upsert(d2)
+
+		err := q.Remove(d2.UUID)
+		assert.NoError(t, err)
+		assert.Equal(t, 2, q.Len())
+		assert.Equal(t, d0, q.Next())
+	}
+}
+
+func AssertQueueEmptyNil(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+	return func(t *testing.T) {
+		assert.Equal(t, 0, q.Len())
+		assert.Nil(t, q.Next())
 	}
 }

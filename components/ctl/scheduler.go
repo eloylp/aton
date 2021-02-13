@@ -1,6 +1,8 @@
 package ctl
 
 import (
+	"container/heap"
+	"fmt"
 	"math"
 )
 
@@ -37,4 +39,88 @@ func DetectorUtilizationIndex(s *Status) float64 {
 // eligible will be the detector. Negative scoring is possible.
 func ScoreDetector(d *Detector) {
 	d.Score = DetectorUtilizationIndex(d.Status) * -1 // Negative score, as this is utilization.
+}
+
+// DetectorPriorityQueue defines the interfaces needed for
+// interacting with the scheduler. Multiple implementations based
+// on different criteria are expected.
+type DetectorPriorityQueue interface {
+	// Upsert will add the *Detector passed as argument to the queue.
+	// If the element already exists it will replace it.
+	Upsert(*Detector)
+	Len() int
+	Remove(string) error
+	// Next must return the next most suitable *Detector for doing some task.
+	// When the queue is empty, nil should be returned.
+	Next() *Detector
+}
+
+// HeapDetectorPriorityQueue is an implementation of DetectorPriorityQueue based on a
+// heap. This necessary implements heap.Interface, as we are using the out of the box
+// heap of the std lib. Such methods should be used only internally by the std lib.
+type HeapDetectorPriorityQueue struct {
+	list []*Detector
+	uuid map[string]*Detector
+}
+
+func NewHeapDetectorPriorityQueue() *HeapDetectorPriorityQueue {
+	return &HeapDetectorPriorityQueue{
+		uuid: make(map[string]*Detector),
+	}
+}
+
+func (h *HeapDetectorPriorityQueue) Upsert(detector *Detector) {
+	ScoreDetector(detector)
+	if _, ok := h.uuid[detector.UUID]; ok {
+		if err := h.Remove(detector.UUID); err != nil {
+			panic(err)
+		}
+	}
+	h.uuid[detector.UUID] = detector
+	heap.Push(h, detector)
+}
+
+func (h *HeapDetectorPriorityQueue) Remove(uuid string) error {
+	sd, ok := h.uuid[uuid]
+	if !ok {
+		return fmt.Errorf("scheduler: heap: cannnot find uuid %s", uuid)
+	}
+	heap.Remove(h, sd.Index)
+	delete(h.uuid, uuid)
+	return nil
+}
+
+func (h *HeapDetectorPriorityQueue) Next() *Detector {
+	if len(h.list) == 0 {
+		return nil
+	}
+	return heap.Pop(h).(*Detector)
+}
+
+func (h *HeapDetectorPriorityQueue) Len() int { return len(h.list) }
+func (h *HeapDetectorPriorityQueue) Less(i, j int) bool {
+	return h.list[i].Score > h.list[j].Score
+}
+
+func (h *HeapDetectorPriorityQueue) Swap(i, j int) {
+	h.list[i], h.list[j] = h.list[j], h.list[i]
+	h.list[i].Index = i
+	h.list[j].Index = j
+}
+
+func (h *HeapDetectorPriorityQueue) Push(x interface{}) {
+	n := len(h.list)
+	d := x.(*Detector)
+	d.Index = n
+	h.list = append(h.list, d)
+}
+
+func (h *HeapDetectorPriorityQueue) Pop() interface{} {
+	old := h.list
+	n := len(old)
+	item := old[n-1]
+	old[n-1] = nil
+	item.Index = -1
+	h.list = old[0 : n-1]
+	return item
 }
