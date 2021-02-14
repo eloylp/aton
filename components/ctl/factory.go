@@ -13,7 +13,7 @@ import (
 	"github.com/eloylp/aton/components/ctl/www"
 )
 
-func New(opts ...config.Option) (*Ctl, error) {
+func New(opts ...config.Option) (*Server, error) {
 	cfg := &config.Config{}
 	for _, o := range opts {
 		o(cfg)
@@ -21,7 +21,7 @@ func New(opts ...config.Option) (*Ctl, error) {
 	return newWithConfig(cfg)
 }
 
-func newWithConfig(cfg *config.Config) (*Ctl, error) {
+func newWithConfig(cfg *config.Config) (*Server, error) {
 	logger := logrus.New()
 	if cfg.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
@@ -37,7 +37,7 @@ func newWithConfig(cfg *config.Config) (*Ctl, error) {
 	return c, nil
 }
 
-func NewFromEnv() (*Ctl, error) {
+func NewFromEnv() (*Server, error) {
 	cfg, err := config.FromEnv()
 	if err != nil {
 		return nil, fmt.Errorf("ctl: %w", err)
@@ -45,7 +45,7 @@ func NewFromEnv() (*Ctl, error) {
 	return newWithConfig(cfg)
 }
 
-func NewWith(metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Ctl {
+func NewWith(metricsService *metrics.Service, logger *logrus.Logger, opts ...config.Option) *Server {
 	cfg := &config.Config{
 		APIReadTimeout:  config.DefaultAPIReadTimeout,
 		APIWriteTimeout: config.DefaultAPIWriteTimeout,
@@ -59,7 +59,7 @@ func NewWith(metricsService *metrics.Service, logger *logrus.Logger, opts ...con
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	ctl := &Ctl{
+	ctl := &Server{
 		cfg:            cfg,
 		metricsService: metricsService,
 		api:            api,
