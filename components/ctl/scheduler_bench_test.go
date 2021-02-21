@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	random      = rand.New(rand.NewSource(time.Now().Unix()))
+	random      = rand.New(rand.NewSource(time.Now().Unix())) //nolint:gosec
 	detectorSet = [...]*ctl.Detector{
 		LeastUtilizedDetector(),
 		OneThirdUtilizedDetector(),
@@ -35,7 +35,6 @@ func Benchmark_HeapPriorityQueue(b *testing.B) {
 	b.Run("Benchmark pull operation with preload of 100 elements", BenchmarkingPull(q, 100))
 	q = ctl.NewHeapDetectorPriorityQueue()
 	b.Run("Benchmark pull operation with preload of 100000 elements", BenchmarkingPull(q, 100000))
-
 }
 
 func BenchmarkingPush(q ctl.DetectorPriorityQueue, elements int) func(*testing.B) {

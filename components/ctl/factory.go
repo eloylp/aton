@@ -53,19 +53,23 @@ func NewWith(metricsService *metrics.Service, logger *logrus.Logger, opts ...con
 	for _, opt := range opts {
 		opt(cfg)
 	}
+	ctl := NewCtl(logger, metricsService, func(addr string, l *logrus.Logger, service *metrics.Service) DetectorClient {
+		return NewGRPCDetectorClient(addr, l, service)
+	})
 	api := &http.Server{
 		Addr:         cfg.ListenAddress,
-		Handler:      www.Router(metricsService.HTTPHandler()),
+		Handler:      www.Router(ctl, metricsService.HTTPHandler()),
 		ReadTimeout:  cfg.APIReadTimeout,
 		WriteTimeout: cfg.APIWriteTimeout,
 	}
-	ctl := &Server{
+	server := &Server{
 		cfg:            cfg,
+		Ctl:            ctl,
 		metricsService: metricsService,
 		api:            api,
 		logger:         logger,
 		wg:             &sync.WaitGroup{},
 		L:              &sync.Mutex{},
 	}
-	return ctl
+	return server
 }

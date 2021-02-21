@@ -13,6 +13,7 @@ import (
 
 type Server struct {
 	cfg            *config.Config
+	Ctl            *Ctl
 	metricsService *metrics.Service
 	api            *http.Server
 	logger         *logrus.Logger
@@ -41,6 +42,10 @@ func (s *Server) Shutdown() {
 	s.logger.Info("started graceful shutdown sequence")
 	// Close api server
 	if err := s.api.Shutdown(context.TODO()); err != nil {
+		s.logger.Errorf("ctl: shutdown: %v", err)
+	}
+	// Close Ctl processing
+	if err := s.Ctl.Shutdown(context.TODO()); err != nil {
 		s.logger.Errorf("ctl: shutdown: %v", err)
 	}
 	s.wg.Wait()

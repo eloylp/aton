@@ -83,7 +83,7 @@ func (h *HeapDetectorPriorityQueue) Upsert(detector *Detector) {
 func (h *HeapDetectorPriorityQueue) Remove(uuid string) error {
 	sd, ok := h.uuid[uuid]
 	if !ok {
-		return fmt.Errorf("scheduler: heap: cannnot find uuid %s", uuid)
+		return fmt.Errorf("scheduler: heap: cannot find uuid %s", uuid)
 	}
 	heap.Remove(h, sd.Index)
 	delete(h.uuid, uuid)

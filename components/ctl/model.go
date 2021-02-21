@@ -6,6 +6,7 @@ import (
 
 type Detector struct {
 	UUID   string
+	Addr   string
 	Index  int
 	Score  float64
 	Status *Status

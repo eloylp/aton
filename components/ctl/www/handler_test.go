@@ -1,6 +1,7 @@
 package www_test
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -28,9 +29,28 @@ func TestHandlers(t *testing.T) {
 			Checkers: []check.Function{check.HasStatus(http.StatusOK), check.Contains(`aton_ctl`)},
 		},
 	}
-	t.Run("Running handler tests ...", handler.Tester(cases, www.Router(metricsService.HTTPHandler()), func(t *testing.T) {
+	t.Run("Running handler tests ...", handler.Tester(cases, www.Router(NewFakeCtl(), metricsService.HTTPHandler()), func(t *testing.T) {
 		metricsService.DetectorUP("A1234")
 	}, func(t *testing.T) {
 		metricsService.DetectorDown("A1234")
 	}))
+}
+
+type FakeCtl struct {
+}
+
+func (f *FakeCtl) Shutdown(ctx context.Context) error {
+	panic("implement me")
+}
+
+func NewFakeCtl() *FakeCtl {
+	return &FakeCtl{}
+}
+
+func (f *FakeCtl) AddDetector(addr string) (string, error) {
+	panic("implement me")
+}
+
+func (f *FakeCtl) AddCapturer(ctx context.Context, uuid, url string) error {
+	panic("implement me")
 }
