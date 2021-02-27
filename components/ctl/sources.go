@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type DetectorClient interface {
+type NodeClient interface {
 	Connect() error
 	LoadCategories(ctx context.Context, r *LoadCategoriesRequest) error
 	AddCapturer(ctx context.Context, r *AddCapturerRequest) error

@@ -7,37 +7,37 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type DetectorRegistry struct {
-	registry              map[string]*DetectorHandler
-	detectorPriorityQueue DetectorPriorityQueue
-	logger                *logrus.Logger
+type NodeRegistry struct {
+	registry          map[string]*NodeHandler
+	nodePriorityQueue NodePriorityQueue
+	logger            *logrus.Logger
 }
 
-func NewDetectorRegistry(detectorQueue DetectorPriorityQueue, logger *logrus.Logger) *DetectorRegistry {
-	return &DetectorRegistry{
-		registry:              make(map[string]*DetectorHandler),
-		detectorPriorityQueue: detectorQueue,
-		logger:                logger,
+func NewNodeRegistry(nodeQueue NodePriorityQueue, logger *logrus.Logger) *NodeRegistry {
+	return &NodeRegistry{
+		registry:          make(map[string]*NodeHandler),
+		nodePriorityQueue: nodeQueue,
+		logger:            logger,
 	}
 }
 
-func (r *DetectorRegistry) Add(s *DetectorHandler) {
-	s.priorityQueue = r.detectorPriorityQueue
-	r.registry[s.detector.UUID] = s
+func (r *NodeRegistry) Add(s *NodeHandler) {
+	s.priorityQueue = r.nodePriorityQueue
+	r.registry[s.node.UUID] = s
 }
 
-func (r *DetectorRegistry) Find(_ string) (DetectorClient, error) {
+func (r *NodeRegistry) Find(_ string) (NodeClient, error) {
 	return nil, nil
 }
 
-func (r *DetectorRegistry) ShutdownAll(ctx context.Context) error {
+func (r *NodeRegistry) ShutdownAll(ctx context.Context) error {
 	for _, v := range r.registry {
 		select {
 		case <-ctx.Done():
-			return fmt.Errorf("detectorRegistry: shutdown aborted: %s", ctx.Err())
+			return fmt.Errorf("nodeRegistry: shutdown aborted: %s", ctx.Err())
 		default:
 			if err := v.Shutdown(); err != nil {
-				r.logger.Errorf("detectorRegistry: shutdown error for detector %s: %s", v.detector.UUID, err)
+				r.logger.Errorf("nodeRegistry: shutdown error for node %s: %s", v.node.UUID, err)
 			}
 		}
 	}

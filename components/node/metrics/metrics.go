@@ -6,7 +6,7 @@ import (
 
 const (
 	namespace = "aton"
-	subsystem = "detector"
+	subsystem = "node"
 )
 
 // Capturer (input video stream) metrics
@@ -38,14 +38,14 @@ func capturerFailedFramesTotal() *prometheus.CounterVec {
 	}, []string{"uuid", "capturer_uuid", "capturer_url"})
 }
 
-// Responses of detectors metrics
+// Responses of nodes metrics
 
 func processedFramesTotal() *prometheus.CounterVec {
 	return prometheus.NewCounterVec(prometheus.CounterOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "processed_frames_total",
-		Help:      "The total frame processed by this detector",
+		Help:      "The total frame processed by this node",
 	}, []string{"uuid"})
 }
 
@@ -54,7 +54,7 @@ func failedFramesTotal() *prometheus.CounterVec {
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "error_frames_total",
-		Help:      "The failed, not processed, frames on this detector",
+		Help:      "The failed, not processed, frames on this node",
 	}, []string{"uuid"})
 }
 
@@ -63,7 +63,7 @@ func entitiesTotal() *prometheus.CounterVec {
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "entities_total",
-		Help:      "The total entities in frames processed by detectors",
+		Help:      "The total entities in frames processed by nodes",
 	}, []string{"uuid"})
 }
 
@@ -83,6 +83,6 @@ func currentCapturers() *prometheus.GaugeVec {
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "capturer_up",
-		Help:      "Capturers that are up on this detector",
+		Help:      "Capturers that are up on this node",
 	}, []string{"uuid", "capturer_uuid", "capturer_url"})
 }

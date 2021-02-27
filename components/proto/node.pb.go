@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.25.0
 // 	protoc        v3.12.1
-// source: detector.proto
+// source: node.proto
 
 package proto
 
@@ -62,11 +62,11 @@ func (x CapturerStatus) String() string {
 }
 
 func (CapturerStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_detector_proto_enumTypes[0].Descriptor()
+	return file_node_proto_enumTypes[0].Descriptor()
 }
 
 func (CapturerStatus) Type() protoreflect.EnumType {
-	return &file_detector_proto_enumTypes[0]
+	return &file_node_proto_enumTypes[0]
 }
 
 func (x CapturerStatus) Number() protoreflect.EnumNumber {
@@ -75,7 +75,7 @@ func (x CapturerStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CapturerStatus.Descriptor instead.
 func (CapturerStatus) EnumDescriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{0}
+	return file_node_proto_rawDescGZIP(), []int{0}
 }
 
 type HealthCheckResponse_ServingStatus int32
@@ -111,11 +111,11 @@ func (x HealthCheckResponse_ServingStatus) String() string {
 }
 
 func (HealthCheckResponse_ServingStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_detector_proto_enumTypes[1].Descriptor()
+	return file_node_proto_enumTypes[1].Descriptor()
 }
 
 func (HealthCheckResponse_ServingStatus) Type() protoreflect.EnumType {
-	return &file_detector_proto_enumTypes[1]
+	return &file_node_proto_enumTypes[1]
 }
 
 func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
@@ -124,7 +124,7 @@ func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use HealthCheckResponse_ServingStatus.Descriptor instead.
 func (HealthCheckResponse_ServingStatus) EnumDescriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{8, 0}
+	return file_node_proto_rawDescGZIP(), []int{8, 0}
 }
 
 type LoadCategoriesRequest struct {
@@ -139,7 +139,7 @@ type LoadCategoriesRequest struct {
 func (x *LoadCategoriesRequest) Reset() {
 	*x = LoadCategoriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[0]
+		mi := &file_node_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -152,7 +152,7 @@ func (x *LoadCategoriesRequest) String() string {
 func (*LoadCategoriesRequest) ProtoMessage() {}
 
 func (x *LoadCategoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[0]
+	mi := &file_node_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -165,7 +165,7 @@ func (x *LoadCategoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoadCategoriesRequest.ProtoReflect.Descriptor instead.
 func (*LoadCategoriesRequest) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{0}
+	return file_node_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *LoadCategoriesRequest) GetCategories() []string {
@@ -193,7 +193,7 @@ type InformStatusRequest struct {
 func (x *InformStatusRequest) Reset() {
 	*x = InformStatusRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[1]
+		mi := &file_node_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +206,7 @@ func (x *InformStatusRequest) String() string {
 func (*InformStatusRequest) ProtoMessage() {}
 
 func (x *InformStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[1]
+	mi := &file_node_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,7 +219,7 @@ func (x *InformStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InformStatusRequest.ProtoReflect.Descriptor instead.
 func (*InformStatusRequest) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{1}
+	return file_node_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *InformStatusRequest) GetInterval() *duration.Duration {
@@ -242,7 +242,7 @@ type Status struct {
 func (x *Status) Reset() {
 	*x = Status{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[2]
+		mi := &file_node_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -255,7 +255,7 @@ func (x *Status) String() string {
 func (*Status) ProtoMessage() {}
 
 func (x *Status) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[2]
+	mi := &file_node_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -268,7 +268,7 @@ func (x *Status) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Status.ProtoReflect.Descriptor instead.
 func (*Status) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{2}
+	return file_node_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Status) GetDescription() string {
@@ -297,7 +297,7 @@ type Result struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DetectorUuid  string               `protobuf:"bytes,1,opt,name=detector_uuid,json=detectorUuid,proto3" json:"detector_uuid,omitempty"`
+	NodeUuid      string               `protobuf:"bytes,1,opt,name=node_uuid,json=nodeUuid,proto3" json:"node_uuid,omitempty"`
 	Recognized    []string             `protobuf:"bytes,2,rep,name=recognized,proto3" json:"recognized,omitempty"`
 	TotalEntities int32                `protobuf:"varint,3,opt,name=totalEntities,proto3" json:"totalEntities,omitempty"`
 	RecognizedAt  *timestamp.Timestamp `protobuf:"bytes,4,opt,name=recognized_at,json=recognizedAt,proto3" json:"recognized_at,omitempty"`
@@ -307,7 +307,7 @@ type Result struct {
 func (x *Result) Reset() {
 	*x = Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[3]
+		mi := &file_node_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -320,7 +320,7 @@ func (x *Result) String() string {
 func (*Result) ProtoMessage() {}
 
 func (x *Result) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[3]
+	mi := &file_node_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -333,12 +333,12 @@ func (x *Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Result.ProtoReflect.Descriptor instead.
 func (*Result) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{3}
+	return file_node_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Result) GetDetectorUuid() string {
+func (x *Result) GetNodeUuid() string {
 	if x != nil {
-		return x.DetectorUuid
+		return x.NodeUuid
 	}
 	return ""
 }
@@ -384,7 +384,7 @@ type Capturer struct {
 func (x *Capturer) Reset() {
 	*x = Capturer{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[4]
+		mi := &file_node_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -397,7 +397,7 @@ func (x *Capturer) String() string {
 func (*Capturer) ProtoMessage() {}
 
 func (x *Capturer) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[4]
+	mi := &file_node_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -410,7 +410,7 @@ func (x *Capturer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Capturer.ProtoReflect.Descriptor instead.
 func (*Capturer) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{4}
+	return file_node_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Capturer) GetUuid() string {
@@ -446,7 +446,7 @@ type AddCapturerRequest struct {
 func (x *AddCapturerRequest) Reset() {
 	*x = AddCapturerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[5]
+		mi := &file_node_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -459,7 +459,7 @@ func (x *AddCapturerRequest) String() string {
 func (*AddCapturerRequest) ProtoMessage() {}
 
 func (x *AddCapturerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[5]
+	mi := &file_node_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -472,7 +472,7 @@ func (x *AddCapturerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCapturerRequest.ProtoReflect.Descriptor instead.
 func (*AddCapturerRequest) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{5}
+	return file_node_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *AddCapturerRequest) GetCapturerUuid() string {
@@ -500,7 +500,7 @@ type RemoveCapturerRequest struct {
 func (x *RemoveCapturerRequest) Reset() {
 	*x = RemoveCapturerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[6]
+		mi := &file_node_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -513,7 +513,7 @@ func (x *RemoveCapturerRequest) String() string {
 func (*RemoveCapturerRequest) ProtoMessage() {}
 
 func (x *RemoveCapturerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[6]
+	mi := &file_node_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -526,7 +526,7 @@ func (x *RemoveCapturerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveCapturerRequest.ProtoReflect.Descriptor instead.
 func (*RemoveCapturerRequest) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{6}
+	return file_node_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RemoveCapturerRequest) GetCapturerUuid() string {
@@ -547,7 +547,7 @@ type HealthCheckRequest struct {
 func (x *HealthCheckRequest) Reset() {
 	*x = HealthCheckRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[7]
+		mi := &file_node_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -560,7 +560,7 @@ func (x *HealthCheckRequest) String() string {
 func (*HealthCheckRequest) ProtoMessage() {}
 
 func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[7]
+	mi := &file_node_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -573,7 +573,7 @@ func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckRequest.ProtoReflect.Descriptor instead.
 func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{7}
+	return file_node_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *HealthCheckRequest) GetService() string {
@@ -594,7 +594,7 @@ type HealthCheckResponse struct {
 func (x *HealthCheckResponse) Reset() {
 	*x = HealthCheckResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_detector_proto_msgTypes[8]
+		mi := &file_node_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -607,7 +607,7 @@ func (x *HealthCheckResponse) String() string {
 func (*HealthCheckResponse) ProtoMessage() {}
 
 func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_detector_proto_msgTypes[8]
+	mi := &file_node_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -620,7 +620,7 @@ func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckResponse.ProtoReflect.Descriptor instead.
 func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
-	return file_detector_proto_rawDescGZIP(), []int{8}
+	return file_node_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
@@ -630,85 +630,84 @@ func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
 	return HealthCheckResponse_UNKNOWN
 }
 
-var File_detector_proto protoreflect.FileDescriptor
+var File_node_proto protoreflect.FileDescriptor
 
-var file_detector_proto_rawDesc = []byte{
-	0x0a, 0x0e, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0c, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x22, 0x4d, 0x0a, 0x15, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67,
-	0x6f, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1e, 0x0a, 0x0a,
-	0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x0a, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x14, 0x0a, 0x05,
-	0x69, 0x6d, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x69, 0x6d, 0x61,
-	0x67, 0x65, 0x22, 0x4c, 0x0a, 0x13, 0x49, 0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x53, 0x74, 0x61, 0x74,
-	0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x35, 0x0a, 0x08, 0x69, 0x6e, 0x74,
-	0x65, 0x72, 0x76, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f,
-	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75,
-	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c,
-	0x22, 0x80, 0x01, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x64,
-	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x0a,
-	0x09, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x0f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65,
-	0x72, 0x52, 0x09, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x73, 0x12, 0x25, 0x0a, 0x06,
-	0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x52, 0x06, 0x73, 0x79, 0x73,
-	0x74, 0x65, 0x6d, 0x22, 0xf1, 0x01, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x23,
-	0x0a, 0x0d, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x64, 0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x55,
-	0x75, 0x69, 0x64, 0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65,
-	0x64, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69,
-	0x7a, 0x65, 0x64, 0x12, 0x24, 0x0a, 0x0d, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x45, 0x6e, 0x74, 0x69,
-	0x74, 0x69, 0x65, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x74, 0x6f, 0x74, 0x61,
-	0x6c, 0x45, 0x6e, 0x74, 0x69, 0x74, 0x69, 0x65, 0x73, 0x12, 0x3f, 0x0a, 0x0d, 0x72, 0x65, 0x63,
-	0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0c, 0x72, 0x65,
-	0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x74, 0x12, 0x3b, 0x0a, 0x0b, 0x63, 0x61,
-	0x70, 0x74, 0x75, 0x72, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
-	0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0a, 0x63, 0x61, 0x70,
-	0x74, 0x75, 0x72, 0x65, 0x64, 0x41, 0x74, 0x22, 0x5f, 0x0a, 0x08, 0x43, 0x61, 0x70, 0x74, 0x75,
-	0x72, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x2d, 0x0a, 0x06, 0x73, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x2e, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
-	0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x5c, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x43,
-	0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x23,
-	0x0a, 0x0d, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x55,
-	0x75, 0x69, 0x64, 0x12, 0x21, 0x0a, 0x0c, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x5f,
-	0x75, 0x72, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x61, 0x70, 0x74, 0x75,
-	0x72, 0x65, 0x72, 0x55, 0x72, 0x6c, 0x22, 0x3c, 0x0a, 0x15, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65,
-	0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x23, 0x0a, 0x0d, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x5f, 0x75, 0x75, 0x69, 0x64,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72,
-	0x55, 0x75, 0x69, 0x64, 0x22, 0x2e, 0x0a, 0x12, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68,
-	0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x22, 0x93, 0x01, 0x0a, 0x13, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43,
-	0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x40, 0x0a, 0x06,
-	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x28, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x6e, 0x67,
-	0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x3a,
-	0x0a, 0x0d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12,
-	0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07,
-	0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b, 0x4e, 0x4f, 0x54,
-	0x5f, 0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x02, 0x2a, 0x4e, 0x0a, 0x0e, 0x43, 0x61,
-	0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a, 0x12,
-	0x43, 0x41, 0x50, 0x54, 0x55, 0x52, 0x45, 0x52, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f,
-	0x4f, 0x4b, 0x10, 0x00, 0x12, 0x24, 0x0a, 0x20, 0x43, 0x41, 0x50, 0x54, 0x55, 0x52, 0x45, 0x52,
-	0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x4f, 0x4e, 0x4e, 0x45, 0x43, 0x54, 0x49,
-	0x4f, 0x4e, 0x5f, 0x52, 0x45, 0x54, 0x52, 0x59, 0x10, 0x01, 0x32, 0xd4, 0x02, 0x0a, 0x08, 0x44,
-	0x65, 0x74, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x12, 0x46, 0x0a, 0x0e, 0x4c, 0x6f, 0x61, 0x64, 0x43,
+var file_node_proto_rawDesc = []byte{
+	0x0a, 0x0a, 0x6e, 0x6f, 0x64, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x1a, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
+	0x66, 0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
+	0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x1a, 0x0c, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
+	0x4d, 0x0a, 0x15, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6d, 0x61, 0x67,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x69, 0x6d, 0x61, 0x67, 0x65, 0x22, 0x4c,
+	0x0a, 0x13, 0x49, 0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x35, 0x0a, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61,
+	0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x76, 0x61, 0x6c, 0x22, 0x80, 0x01, 0x0a,
+	0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2d, 0x0a, 0x09, 0x63, 0x61, 0x70,
+	0x74, 0x75, 0x72, 0x65, 0x72, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x52, 0x09, 0x63,
+	0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x73, 0x12, 0x25, 0x0a, 0x06, 0x73, 0x79, 0x73, 0x74,
+	0x65, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x52, 0x06, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x22,
+	0xe9, 0x01, 0x0a, 0x06, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x6e, 0x6f,
+	0x64, 0x65, 0x5f, 0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6e,
+	0x6f, 0x64, 0x65, 0x55, 0x75, 0x69, 0x64, 0x12, 0x1e, 0x0a, 0x0a, 0x72, 0x65, 0x63, 0x6f, 0x67,
+	0x6e, 0x69, 0x7a, 0x65, 0x64, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65, 0x63,
+	0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x12, 0x24, 0x0a, 0x0d, 0x74, 0x6f, 0x74, 0x61, 0x6c,
+	0x45, 0x6e, 0x74, 0x69, 0x74, 0x69, 0x65, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d,
+	0x74, 0x6f, 0x74, 0x61, 0x6c, 0x45, 0x6e, 0x74, 0x69, 0x74, 0x69, 0x65, 0x73, 0x12, 0x3f, 0x0a,
+	0x0d, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
+	0x52, 0x0c, 0x72, 0x65, 0x63, 0x6f, 0x67, 0x6e, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x74, 0x12, 0x3b,
+	0x0a, 0x0b, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52,
+	0x0a, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x64, 0x41, 0x74, 0x22, 0x5f, 0x0a, 0x08, 0x43,
+	0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x75, 0x75, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x75, 0x69, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x75,
+	0x72, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x2d, 0x0a,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x53, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x5c, 0x0a, 0x12,
+	0x41, 0x64, 0x64, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x5f, 0x75,
+	0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x63, 0x61, 0x70, 0x74, 0x75,
+	0x72, 0x65, 0x72, 0x55, 0x75, 0x69, 0x64, 0x12, 0x21, 0x0a, 0x0c, 0x63, 0x61, 0x70, 0x74, 0x75,
+	0x72, 0x65, 0x72, 0x5f, 0x75, 0x72, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63,
+	0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x55, 0x72, 0x6c, 0x22, 0x3c, 0x0a, 0x15, 0x52, 0x65,
+	0x6d, 0x6f, 0x76, 0x65, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x63, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x5f,
+	0x75, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x63, 0x61, 0x70, 0x74,
+	0x75, 0x72, 0x65, 0x72, 0x55, 0x75, 0x69, 0x64, 0x22, 0x2e, 0x0a, 0x12, 0x48, 0x65, 0x61, 0x6c,
+	0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18,
+	0x0a, 0x07, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x22, 0x93, 0x01, 0x0a, 0x13, 0x48, 0x65, 0x61,
+	0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x40, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e,
+	0x32, 0x28, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x22, 0x3a, 0x0a, 0x0d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00,
+	0x12, 0x0b, 0x0a, 0x07, 0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x12, 0x0f, 0x0a,
+	0x0b, 0x4e, 0x4f, 0x54, 0x5f, 0x53, 0x45, 0x52, 0x56, 0x49, 0x4e, 0x47, 0x10, 0x02, 0x2a, 0x4e,
+	0x0a, 0x0e, 0x43, 0x61, 0x70, 0x74, 0x75, 0x72, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x12, 0x16, 0x0a, 0x12, 0x43, 0x41, 0x50, 0x54, 0x55, 0x52, 0x45, 0x52, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x55, 0x53, 0x5f, 0x4f, 0x4b, 0x10, 0x00, 0x12, 0x24, 0x0a, 0x20, 0x43, 0x41, 0x50, 0x54,
+	0x55, 0x52, 0x45, 0x52, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x4f, 0x4e, 0x4e,
+	0x45, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x52, 0x45, 0x54, 0x52, 0x59, 0x10, 0x01, 0x32, 0xd0,
+	0x02, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x46, 0x0a, 0x0e, 0x4c, 0x6f, 0x61, 0x64, 0x43,
 	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73,
 	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
@@ -745,20 +744,20 @@ var file_detector_proto_rawDesc = []byte{
 }
 
 var (
-	file_detector_proto_rawDescOnce sync.Once
-	file_detector_proto_rawDescData = file_detector_proto_rawDesc
+	file_node_proto_rawDescOnce sync.Once
+	file_node_proto_rawDescData = file_node_proto_rawDesc
 )
 
-func file_detector_proto_rawDescGZIP() []byte {
-	file_detector_proto_rawDescOnce.Do(func() {
-		file_detector_proto_rawDescData = protoimpl.X.CompressGZIP(file_detector_proto_rawDescData)
+func file_node_proto_rawDescGZIP() []byte {
+	file_node_proto_rawDescOnce.Do(func() {
+		file_node_proto_rawDescData = protoimpl.X.CompressGZIP(file_node_proto_rawDescData)
 	})
-	return file_detector_proto_rawDescData
+	return file_node_proto_rawDescData
 }
 
-var file_detector_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_detector_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
-var file_detector_proto_goTypes = []interface{}{
+var file_node_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_node_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_node_proto_goTypes = []interface{}{
 	(CapturerStatus)(0),                    // 0: proto.CapturerStatus
 	(HealthCheckResponse_ServingStatus)(0), // 1: proto.HealthCheckResponse.ServingStatus
 	(*LoadCategoriesRequest)(nil),          // 2: proto.LoadCategoriesRequest
@@ -775,7 +774,7 @@ var file_detector_proto_goTypes = []interface{}{
 	(*timestamp.Timestamp)(nil),            // 13: google.protobuf.Timestamp
 	(*empty.Empty)(nil),                    // 14: google.protobuf.Empty
 }
-var file_detector_proto_depIdxs = []int32{
+var file_node_proto_depIdxs = []int32{
 	11, // 0: proto.InformStatusRequest.interval:type_name -> google.protobuf.Duration
 	6,  // 1: proto.Status.capturers:type_name -> proto.Capturer
 	12, // 2: proto.Status.system:type_name -> proto.System
@@ -783,18 +782,18 @@ var file_detector_proto_depIdxs = []int32{
 	13, // 4: proto.Result.captured_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: proto.Capturer.status:type_name -> proto.CapturerStatus
 	1,  // 6: proto.HealthCheckResponse.status:type_name -> proto.HealthCheckResponse.ServingStatus
-	2,  // 7: proto.Detector.LoadCategories:input_type -> proto.LoadCategoriesRequest
-	3,  // 8: proto.Detector.InformStatus:input_type -> proto.InformStatusRequest
-	14, // 9: proto.Detector.ProcessResults:input_type -> google.protobuf.Empty
-	7,  // 10: proto.Detector.AddCapturer:input_type -> proto.AddCapturerRequest
-	8,  // 11: proto.Detector.RemoveCapturer:input_type -> proto.RemoveCapturerRequest
+	2,  // 7: proto.Node.LoadCategories:input_type -> proto.LoadCategoriesRequest
+	3,  // 8: proto.Node.InformStatus:input_type -> proto.InformStatusRequest
+	14, // 9: proto.Node.ProcessResults:input_type -> google.protobuf.Empty
+	7,  // 10: proto.Node.AddCapturer:input_type -> proto.AddCapturerRequest
+	8,  // 11: proto.Node.RemoveCapturer:input_type -> proto.RemoveCapturerRequest
 	9,  // 12: proto.Health.Check:input_type -> proto.HealthCheckRequest
 	9,  // 13: proto.Health.Watch:input_type -> proto.HealthCheckRequest
-	14, // 14: proto.Detector.LoadCategories:output_type -> google.protobuf.Empty
-	4,  // 15: proto.Detector.InformStatus:output_type -> proto.Status
-	5,  // 16: proto.Detector.ProcessResults:output_type -> proto.Result
-	14, // 17: proto.Detector.AddCapturer:output_type -> google.protobuf.Empty
-	14, // 18: proto.Detector.RemoveCapturer:output_type -> google.protobuf.Empty
+	14, // 14: proto.Node.LoadCategories:output_type -> google.protobuf.Empty
+	4,  // 15: proto.Node.InformStatus:output_type -> proto.Status
+	5,  // 16: proto.Node.ProcessResults:output_type -> proto.Result
+	14, // 17: proto.Node.AddCapturer:output_type -> google.protobuf.Empty
+	14, // 18: proto.Node.RemoveCapturer:output_type -> google.protobuf.Empty
 	10, // 19: proto.Health.Check:output_type -> proto.HealthCheckResponse
 	10, // 20: proto.Health.Watch:output_type -> proto.HealthCheckResponse
 	14, // [14:21] is the sub-list for method output_type
@@ -804,14 +803,14 @@ var file_detector_proto_depIdxs = []int32{
 	0,  // [0:7] is the sub-list for field type_name
 }
 
-func init() { file_detector_proto_init() }
-func file_detector_proto_init() {
-	if File_detector_proto != nil {
+func init() { file_node_proto_init() }
+func file_node_proto_init() {
+	if File_node_proto != nil {
 		return
 	}
 	file_system_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_detector_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*LoadCategoriesRequest); i {
 			case 0:
 				return &v.state
@@ -823,7 +822,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*InformStatusRequest); i {
 			case 0:
 				return &v.state
@@ -835,7 +834,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Status); i {
 			case 0:
 				return &v.state
@@ -847,7 +846,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Result); i {
 			case 0:
 				return &v.state
@@ -859,7 +858,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Capturer); i {
 			case 0:
 				return &v.state
@@ -871,7 +870,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddCapturerRequest); i {
 			case 0:
 				return &v.state
@@ -883,7 +882,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RemoveCapturerRequest); i {
 			case 0:
 				return &v.state
@@ -895,7 +894,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*HealthCheckRequest); i {
 			case 0:
 				return &v.state
@@ -907,7 +906,7 @@ func file_detector_proto_init() {
 				return nil
 			}
 		}
-		file_detector_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_node_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*HealthCheckResponse); i {
 			case 0:
 				return &v.state
@@ -924,21 +923,21 @@ func file_detector_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_detector_proto_rawDesc,
+			RawDescriptor: file_node_proto_rawDesc,
 			NumEnums:      2,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
-		GoTypes:           file_detector_proto_goTypes,
-		DependencyIndexes: file_detector_proto_depIdxs,
-		EnumInfos:         file_detector_proto_enumTypes,
-		MessageInfos:      file_detector_proto_msgTypes,
+		GoTypes:           file_node_proto_goTypes,
+		DependencyIndexes: file_node_proto_depIdxs,
+		EnumInfos:         file_node_proto_enumTypes,
+		MessageInfos:      file_node_proto_msgTypes,
 	}.Build()
-	File_detector_proto = out.File
-	file_detector_proto_rawDesc = nil
-	file_detector_proto_goTypes = nil
-	file_detector_proto_depIdxs = nil
+	File_node_proto = out.File
+	file_node_proto_rawDesc = nil
+	file_node_proto_goTypes = nil
+	file_node_proto_depIdxs = nil
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -949,40 +948,40 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// DetectorClient is the client API for Detector service.
+// NodeClient is the client API for Node service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type DetectorClient interface {
+type NodeClient interface {
 	LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Detector_InformStatusClient, error)
-	ProcessResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Detector_ProcessResultsClient, error)
+	InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Node_InformStatusClient, error)
+	ProcessResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Node_ProcessResultsClient, error)
 	AddCapturer(ctx context.Context, in *AddCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	RemoveCapturer(ctx context.Context, in *RemoveCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
-type detectorClient struct {
+type nodeClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDetectorClient(cc grpc.ClientConnInterface) DetectorClient {
-	return &detectorClient{cc}
+func NewNodeClient(cc grpc.ClientConnInterface) NodeClient {
+	return &nodeClient{cc}
 }
 
-func (c *detectorClient) LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *nodeClient) LoadCategories(ctx context.Context, in *LoadCategoriesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/proto.Detector/LoadCategories", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Node/LoadCategories", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *detectorClient) InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Detector_InformStatusClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Detector_serviceDesc.Streams[0], "/proto.Detector/InformStatus", opts...)
+func (c *nodeClient) InformStatus(ctx context.Context, in *InformStatusRequest, opts ...grpc.CallOption) (Node_InformStatusClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Node_serviceDesc.Streams[0], "/proto.Node/InformStatus", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &detectorInformStatusClient{stream}
+	x := &nodeInformStatusClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -992,16 +991,16 @@ func (c *detectorClient) InformStatus(ctx context.Context, in *InformStatusReque
 	return x, nil
 }
 
-type Detector_InformStatusClient interface {
+type Node_InformStatusClient interface {
 	Recv() (*Status, error)
 	grpc.ClientStream
 }
 
-type detectorInformStatusClient struct {
+type nodeInformStatusClient struct {
 	grpc.ClientStream
 }
 
-func (x *detectorInformStatusClient) Recv() (*Status, error) {
+func (x *nodeInformStatusClient) Recv() (*Status, error) {
 	m := new(Status)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1009,12 +1008,12 @@ func (x *detectorInformStatusClient) Recv() (*Status, error) {
 	return m, nil
 }
 
-func (c *detectorClient) ProcessResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Detector_ProcessResultsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Detector_serviceDesc.Streams[1], "/proto.Detector/ProcessResults", opts...)
+func (c *nodeClient) ProcessResults(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (Node_ProcessResultsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Node_serviceDesc.Streams[1], "/proto.Node/ProcessResults", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &detectorProcessResultsClient{stream}
+	x := &nodeProcessResultsClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -1024,16 +1023,16 @@ func (c *detectorClient) ProcessResults(ctx context.Context, in *empty.Empty, op
 	return x, nil
 }
 
-type Detector_ProcessResultsClient interface {
+type Node_ProcessResultsClient interface {
 	Recv() (*Result, error)
 	grpc.ClientStream
 }
 
-type detectorProcessResultsClient struct {
+type nodeProcessResultsClient struct {
 	grpc.ClientStream
 }
 
-func (x *detectorProcessResultsClient) Recv() (*Result, error) {
+func (x *nodeProcessResultsClient) Recv() (*Result, error) {
 	m := new(Result)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1041,183 +1040,183 @@ func (x *detectorProcessResultsClient) Recv() (*Result, error) {
 	return m, nil
 }
 
-func (c *detectorClient) AddCapturer(ctx context.Context, in *AddCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *nodeClient) AddCapturer(ctx context.Context, in *AddCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/proto.Detector/AddCapturer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Node/AddCapturer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *detectorClient) RemoveCapturer(ctx context.Context, in *RemoveCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *nodeClient) RemoveCapturer(ctx context.Context, in *RemoveCapturerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/proto.Detector/RemoveCapturer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.Node/RemoveCapturer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DetectorServer is the server API for Detector service.
-type DetectorServer interface {
+// NodeServer is the server API for Node service.
+type NodeServer interface {
 	LoadCategories(context.Context, *LoadCategoriesRequest) (*empty.Empty, error)
-	InformStatus(*InformStatusRequest, Detector_InformStatusServer) error
-	ProcessResults(*empty.Empty, Detector_ProcessResultsServer) error
+	InformStatus(*InformStatusRequest, Node_InformStatusServer) error
+	ProcessResults(*empty.Empty, Node_ProcessResultsServer) error
 	AddCapturer(context.Context, *AddCapturerRequest) (*empty.Empty, error)
 	RemoveCapturer(context.Context, *RemoveCapturerRequest) (*empty.Empty, error)
 }
 
-// UnimplementedDetectorServer can be embedded to have forward compatible implementations.
-type UnimplementedDetectorServer struct {
+// UnimplementedNodeServer can be embedded to have forward compatible implementations.
+type UnimplementedNodeServer struct {
 }
 
-func (*UnimplementedDetectorServer) LoadCategories(context.Context, *LoadCategoriesRequest) (*empty.Empty, error) {
+func (*UnimplementedNodeServer) LoadCategories(context.Context, *LoadCategoriesRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadCategories not implemented")
 }
-func (*UnimplementedDetectorServer) InformStatus(*InformStatusRequest, Detector_InformStatusServer) error {
+func (*UnimplementedNodeServer) InformStatus(*InformStatusRequest, Node_InformStatusServer) error {
 	return status.Errorf(codes.Unimplemented, "method InformStatus not implemented")
 }
-func (*UnimplementedDetectorServer) ProcessResults(*empty.Empty, Detector_ProcessResultsServer) error {
+func (*UnimplementedNodeServer) ProcessResults(*empty.Empty, Node_ProcessResultsServer) error {
 	return status.Errorf(codes.Unimplemented, "method ProcessResults not implemented")
 }
-func (*UnimplementedDetectorServer) AddCapturer(context.Context, *AddCapturerRequest) (*empty.Empty, error) {
+func (*UnimplementedNodeServer) AddCapturer(context.Context, *AddCapturerRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCapturer not implemented")
 }
-func (*UnimplementedDetectorServer) RemoveCapturer(context.Context, *RemoveCapturerRequest) (*empty.Empty, error) {
+func (*UnimplementedNodeServer) RemoveCapturer(context.Context, *RemoveCapturerRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveCapturer not implemented")
 }
 
-func RegisterDetectorServer(s *grpc.Server, srv DetectorServer) {
-	s.RegisterService(&_Detector_serviceDesc, srv)
+func RegisterNodeServer(s *grpc.Server, srv NodeServer) {
+	s.RegisterService(&_Node_serviceDesc, srv)
 }
 
-func _Detector_LoadCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Node_LoadCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoadCategoriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DetectorServer).LoadCategories(ctx, in)
+		return srv.(NodeServer).LoadCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Detector/LoadCategories",
+		FullMethod: "/proto.Node/LoadCategories",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DetectorServer).LoadCategories(ctx, req.(*LoadCategoriesRequest))
+		return srv.(NodeServer).LoadCategories(ctx, req.(*LoadCategoriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Detector_InformStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Node_InformStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(InformStatusRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(DetectorServer).InformStatus(m, &detectorInformStatusServer{stream})
+	return srv.(NodeServer).InformStatus(m, &nodeInformStatusServer{stream})
 }
 
-type Detector_InformStatusServer interface {
+type Node_InformStatusServer interface {
 	Send(*Status) error
 	grpc.ServerStream
 }
 
-type detectorInformStatusServer struct {
+type nodeInformStatusServer struct {
 	grpc.ServerStream
 }
 
-func (x *detectorInformStatusServer) Send(m *Status) error {
+func (x *nodeInformStatusServer) Send(m *Status) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Detector_ProcessResults_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Node_ProcessResults_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(empty.Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(DetectorServer).ProcessResults(m, &detectorProcessResultsServer{stream})
+	return srv.(NodeServer).ProcessResults(m, &nodeProcessResultsServer{stream})
 }
 
-type Detector_ProcessResultsServer interface {
+type Node_ProcessResultsServer interface {
 	Send(*Result) error
 	grpc.ServerStream
 }
 
-type detectorProcessResultsServer struct {
+type nodeProcessResultsServer struct {
 	grpc.ServerStream
 }
 
-func (x *detectorProcessResultsServer) Send(m *Result) error {
+func (x *nodeProcessResultsServer) Send(m *Result) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Detector_AddCapturer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Node_AddCapturer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddCapturerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DetectorServer).AddCapturer(ctx, in)
+		return srv.(NodeServer).AddCapturer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Detector/AddCapturer",
+		FullMethod: "/proto.Node/AddCapturer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DetectorServer).AddCapturer(ctx, req.(*AddCapturerRequest))
+		return srv.(NodeServer).AddCapturer(ctx, req.(*AddCapturerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Detector_RemoveCapturer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Node_RemoveCapturer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoveCapturerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DetectorServer).RemoveCapturer(ctx, in)
+		return srv.(NodeServer).RemoveCapturer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Detector/RemoveCapturer",
+		FullMethod: "/proto.Node/RemoveCapturer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DetectorServer).RemoveCapturer(ctx, req.(*RemoveCapturerRequest))
+		return srv.(NodeServer).RemoveCapturer(ctx, req.(*RemoveCapturerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Detector_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.Detector",
-	HandlerType: (*DetectorServer)(nil),
+var _Node_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.Node",
+	HandlerType: (*NodeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "LoadCategories",
-			Handler:    _Detector_LoadCategories_Handler,
+			Handler:    _Node_LoadCategories_Handler,
 		},
 		{
 			MethodName: "AddCapturer",
-			Handler:    _Detector_AddCapturer_Handler,
+			Handler:    _Node_AddCapturer_Handler,
 		},
 		{
 			MethodName: "RemoveCapturer",
-			Handler:    _Detector_RemoveCapturer_Handler,
+			Handler:    _Node_RemoveCapturer_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "InformStatus",
-			Handler:       _Detector_InformStatus_Handler,
+			Handler:       _Node_InformStatus_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "ProcessResults",
-			Handler:       _Detector_ProcessResults_Handler,
+			Handler:       _Node_ProcessResults_Handler,
 			ServerStreams: true,
 		},
 	},
-	Metadata: "detector.proto",
+	Metadata: "node.proto",
 }
 
 // HealthClient is the client API for Health service.
@@ -1353,5 +1352,5 @@ var _Health_serviceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "detector.proto",
+	Metadata: "node.proto",
 }

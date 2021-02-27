@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Detector struct {
+type Node struct {
 	UUID   string
 	Addr   string
 	Index  int
@@ -48,7 +48,7 @@ type Capturer struct {
 }
 
 type Result struct {
-	DetectorUUID  string
+	NodeUUID      string
 	Recognized    []string
 	TotalEntities int32
 	RecognizedAt  time.Time

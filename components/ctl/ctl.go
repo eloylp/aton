@@ -11,51 +11,51 @@ import (
 	"github.com/eloylp/aton/components/ctl/metrics"
 )
 
-type ClientGenerator func(addr string, l *logrus.Logger, service *metrics.Service) DetectorClient
+type ClientGenerator func(addr string, l *logrus.Logger, service *metrics.Service) NodeClient
 
 var (
-	ErrNotAvailableDetector = errors.New("ctl: cannot find suitable detector")
+	ErrNotAvailableNode = errors.New("ctl: cannot find suitable node")
 )
 
 type Ctl struct {
-	registry        *DetectorRegistry
-	detectorQueue   DetectorPriorityQueue
+	registry        *NodeRegistry
+	nodeQueue       NodePriorityQueue
 	logger          *logrus.Logger
 	metricsService  *metrics.Service
 	clientGenerator ClientGenerator
 }
 
 func NewCtl(logger *logrus.Logger, metricsService *metrics.Service, clientGen ClientGenerator) *Ctl {
-	queue := NewHeapDetectorPriorityQueue()
+	queue := NewHeapNodePriorityQueue()
 	return &Ctl{
-		registry:        NewDetectorRegistry(queue, logger),
-		detectorQueue:   queue,
+		registry:        NewNodeRegistry(queue, logger),
+		nodeQueue:       queue,
 		logger:          logger,
 		metricsService:  metricsService,
 		clientGenerator: clientGen,
 	}
 }
 
-func (c *Ctl) AddDetector(addr string) (string, error) {
+func (c *Ctl) AddNode(addr string) (string, error) {
 	client := c.clientGenerator(addr, c.logger, c.metricsService)
 	uid := uuid.New().String()
-	detector := &Detector{UUID: uid, Addr: addr}
-	detectorHandler := NewDetectorHandler(detector, client, c.logger)
-	c.registry.Add(detectorHandler)
-	if err := detectorHandler.Start(); err != nil {
-		return "", fmt.Errorf("ctl: error adding detector: %w", err)
+	node := &Node{UUID: uid, Addr: addr}
+	nodeHandler := NewNodeHandler(node, client, c.logger)
+	c.registry.Add(nodeHandler)
+	if err := nodeHandler.Start(); err != nil {
+		return "", fmt.Errorf("ctl: error adding node: %w", err)
 	}
-	c.logger.Infof("ctl: added detector at %s for %s", addr, uid)
+	c.logger.Infof("ctl: added node at %s for %s", addr, uid)
 	return uid, nil
 }
 
 func (c *Ctl) AddCapturer(ctx context.Context, uid, url string) error {
-	electedDetector := c.detectorQueue.Next()
-	if electedDetector == nil {
+	electedNode := c.nodeQueue.Next()
+	if electedNode == nil {
 		c.logger.Errorf("ctl: not suitable node for capturer %s with URL %s", uid, url)
-		return ErrNotAvailableDetector
+		return ErrNotAvailableNode
 	}
-	client, err := c.registry.Find(electedDetector.UUID)
+	client, err := c.registry.Find(electedNode.UUID)
 	if err != nil {
 		return err
 	}

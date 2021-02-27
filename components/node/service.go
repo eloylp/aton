@@ -1,4 +1,4 @@
-package detector
+package node
 
 import (
 	"context"
@@ -14,15 +14,15 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/eloylp/aton/components/detector/metrics"
-	"github.com/eloylp/aton/components/detector/system"
+	"github.com/eloylp/aton/components/node/metrics"
+	"github.com/eloylp/aton/components/node/system"
 	"github.com/eloylp/aton/components/proto"
 	"github.com/eloylp/aton/components/video"
 )
 
 type Service struct {
 	UUID            string
-	detector        Classifier
+	node            Classifier
 	capturerHandler *CapturerHandler
 	metricsService  *metrics.Service
 	logger          *logrus.Logger
@@ -39,7 +39,7 @@ func NewService(
 ) *Service {
 	return &Service{
 		UUID:            uuid,
-		detector:        d,
+		node:            d,
 		capturerHandler: capturerHandler,
 		metricsService:  metricsService,
 		logger:          logger,
@@ -48,7 +48,7 @@ func NewService(
 }
 
 func (s *Service) LoadCategories(_ context.Context, request *proto.LoadCategoriesRequest) (*empty.Empty, error) {
-	if err := s.detector.SaveCategories(request.Categories, request.Image); err != nil {
+	if err := s.node.SaveCategories(request.Categories, request.Image); err != nil {
 		msg := fmt.Sprintf("LoadCategories(): error %v loading: %q", err, strings.Join(request.Categories, ","))
 		s.logger.Error(msg)
 		return nil, status.New(codes.Internal, msg).Err()
@@ -57,7 +57,7 @@ func (s *Service) LoadCategories(_ context.Context, request *proto.LoadCategorie
 	return &empty.Empty{}, nil
 }
 
-func (s *Service) InformStatus(request *proto.InformStatusRequest, stream proto.Detector_InformStatusServer) error {
+func (s *Service) InformStatus(request *proto.InformStatusRequest, stream proto.Node_InformStatusServer) error {
 	for {
 		err := stream.Send(s.Status())
 		if err == io.EOF {
@@ -73,7 +73,7 @@ func (s *Service) InformStatus(request *proto.InformStatusRequest, stream proto.
 	return nil
 }
 
-func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessResultsServer) error {
+func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Node_ProcessResultsServer) error {
 	for {
 		capturerResult, err := s.capturerHandler.NextResult()
 		if err == io.EOF {
@@ -87,7 +87,7 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessRe
 			s.metricsService.IncFailedFramesTotal()
 			return status.New(codes.Internal, msg).Err()
 		}
-		resp, err := s.detector.FindCategories(capturerResult.Data)
+		resp, err := s.node.FindCategories(capturerResult.Data)
 		if err != nil {
 			msg := fmt.Sprintf("ProcessResults(): %v", err)
 			s.logger.Error(msg)
@@ -105,7 +105,7 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Detector_ProcessRe
 			panic(err)
 		}
 		err = stream.Send(&proto.Result{
-			DetectorUuid:  s.UUID,
+			NodeUuid:      s.UUID,
 			Recognized:    resp.Matches,
 			TotalEntities: int32(resp.TotalEntities),
 			RecognizedAt:  recognizedAtProtoTime,
@@ -167,7 +167,7 @@ func (s *Service) Status() *proto.Status {
 	network := system.Network()
 
 	return &proto.Status{
-		Description: "General status of detector",
+		Description: "General status of node",
 		Capturers:   capt,
 		System: &proto.System{
 			CpuCount: int32(system.CPUCount()),

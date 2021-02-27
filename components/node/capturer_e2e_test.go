@@ -1,6 +1,6 @@
 // +build e2e
 
-package detector_test
+package node_test
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/components/detector"
-	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/node"
+	"github.com/eloylp/aton/components/node/metrics"
 	"github.com/eloylp/aton/components/video"
 )
 
@@ -24,7 +24,7 @@ func TestShutdownWhileBackPressured(t *testing.T) {
 	m := metrics.NewService("UUID")
 
 	// Prepare the target handler
-	sut := detector.NewCapturerHandler(logger, m, 10) // Make capturer handler the back pressured part.
+	sut := node.NewCapturerHandler(logger, m, 10) // Make capturer handler the back pressured part.
 
 	// Prepare video stream
 	target := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100)

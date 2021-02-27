@@ -1,4 +1,4 @@
-package detector
+package node
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
-	"github.com/eloylp/aton/components/detector/config"
-	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/node/config"
+	"github.com/eloylp/aton/components/node/metrics"
 )
 
 func New(opts ...config.Option) (*Server, error) {
@@ -23,7 +23,7 @@ func New(opts ...config.Option) (*Server, error) {
 func NewFromEnv() (*Server, error) {
 	cfg, err := config.FromEnv()
 	if err != nil {
-		return nil, fmt.Errorf("detector: %w", err)
+		return nil, fmt.Errorf("node: %w", err)
 	}
 	return newWithConfig(cfg)
 }
@@ -42,7 +42,7 @@ func newWithConfig(cfg *config.Config) (*Server, error) {
 	logger.SetOutput(cfg.LogOutput)
 	faceDetector, err := NewGoFace(cfg.ModelDir)
 	if err != nil {
-		return nil, fmt.Errorf("detector: %w", err)
+		return nil, fmt.Errorf("node: %w", err)
 	}
 	m := metrics.NewService(cfg.UUID)
 	capturerHandler := NewCapturerHandler(logger, m, 100) // todo parametrize

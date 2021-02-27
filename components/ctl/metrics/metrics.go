@@ -9,11 +9,11 @@ const (
 	subsystem = "ctl"
 )
 
-func currentDetectors() *prometheus.GaugeVec {
+func currentNodes() *prometheus.GaugeVec {
 	return prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
-		Name:      "detector_up",
-		Help:      "Detectors that are up",
+		Name:      "node_up",
+		Help:      "Nodes that are up",
 	}, []string{"uuid"})
 }

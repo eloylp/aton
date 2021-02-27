@@ -1,6 +1,6 @@
 // +build integration
 
-package detector_test
+package node_test
 
 import (
 	"io"

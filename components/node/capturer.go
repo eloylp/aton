@@ -1,4 +1,4 @@
-package detector
+package node
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/node/metrics"
 	"github.com/eloylp/aton/components/video"
 )
 

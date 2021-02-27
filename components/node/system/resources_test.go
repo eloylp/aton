@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/components/detector/system"
+	"github.com/eloylp/aton/components/node/system"
 )
 
 func TestCPUCount(t *testing.T) {

@@ -9,7 +9,7 @@ import "system.proto";
 
 option go_package = "github.com/eloylp/aton/components/proto";
 
-service Detector {
+service Node {
   rpc LoadCategories(LoadCategoriesRequest) returns (google.protobuf.Empty);
   rpc InformStatus(InformStatusRequest) returns (stream Status);
   rpc ProcessResults(google.protobuf.Empty) returns (stream Result);
@@ -33,7 +33,7 @@ message Status {
 }
 
 message Result {
-  string detector_uuid = 1;
+  string node_uuid = 1;
   repeated string recognized = 2;
   int32  totalEntities = 3;
   google.protobuf.Timestamp recognized_at = 4;

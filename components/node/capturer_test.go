@@ -1,6 +1,6 @@
 // +build integration
 
-package detector_test
+package node_test
 
 import (
 	"bytes"
@@ -13,8 +13,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/components/detector"
-	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/node"
+	"github.com/eloylp/aton/components/node/metrics"
 	"github.com/eloylp/aton/components/video"
 )
 
@@ -26,7 +26,7 @@ func TestProcessingTargetResults(t *testing.T) {
 	m := metrics.NewService("UUID")
 
 	// Prepare the target handler
-	sut := detector.NewCapturerHandler(logger, m, 100)
+	sut := node.NewCapturerHandler(logger, m, 100)
 
 	// Prepare our test target, simulates a video capture.
 	target := NewFakeTarget(t, []string{faceBona1, faceBona1})
@@ -43,7 +43,7 @@ func TestProcessingTargetResults(t *testing.T) {
 		return sut.BackboneLen() == 2 // because we processed 2 images.
 	}, time.Second, time.Millisecond)
 
-	assert.Equal(t, []detector.CapturerStatus{
+	assert.Equal(t, []node.CapturerStatus{
 		{
 			UUID:   "TEST",
 			URL:    "http://example.com",
@@ -76,8 +76,8 @@ func TestProcessingTargetResults(t *testing.T) {
 	m.HTTPHandler().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
 
 	response := rec.Body.String()
-	assert.Contains(t, response, `aton_detector_capturer_received_frames_total{uuid="TEST"} 2`)
-	assert.Contains(t, response, `aton_detector_capturer_up{uuid="TEST"} 0`)
+	assert.Contains(t, response, `aton_node_capturer_received_frames_total{uuid="TEST"} 2`)
+	assert.Contains(t, response, `aton_node_capturer_up{uuid="TEST"} 0`)
 }
 
 func TestRemoveCapturerFromHandler(t *testing.T) {
@@ -88,7 +88,7 @@ func TestRemoveCapturerFromHandler(t *testing.T) {
 	m := metrics.NewService("UUID")
 
 	// Prepare the target handler
-	sut := detector.NewCapturerHandler(logger, m, 100)
+	sut := node.NewCapturerHandler(logger, m, 100)
 
 	// Prepare our test target, simulates a video capture.
 	target := NewFakeTarget(t, []string{faceBona1, faceBona1})

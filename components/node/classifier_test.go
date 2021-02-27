@@ -1,6 +1,6 @@
-// +build detector
+// +build node
 
-package detector_test
+package node_test
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/eloylp/aton/components/detector"
+	"github.com/eloylp/aton/components/node"
 	"github.com/eloylp/aton/pkg/test/helper"
 )
 
@@ -24,7 +24,7 @@ var (
 	groupBonaAndLuda = filepath.Join(imagesDir, "bonaAndLuda.jpg")
 )
 
-func AssertErrorIfDuplicatedNames(d detector.Classifier) func(t *testing.T) {
+func AssertErrorIfDuplicatedNames(d node.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "luda", "bona_dep2", "luda", "bona"}, helper.ReadFile(t, faceBona1))
 		fmt.Println(err)
@@ -32,14 +32,14 @@ func AssertErrorIfDuplicatedNames(d detector.Classifier) func(t *testing.T) {
 	}
 }
 
-func AssertErrorIfNotAllFacesRecognized(d detector.Classifier) func(t *testing.T) {
+func AssertErrorIfNotAllFacesRecognized(d node.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "EXTRA_NON_EXISTENT_FACE"}, helper.ReadFile(t, faceBona1))
 		assert.EqualError(t, err, "gofacedetector: passed faces number (2) not match with recognized (1)")
 	}
 }
 
-func AssertSingleFaceDetection(d detector.Classifier) func(t *testing.T) {
+func AssertSingleFaceDetection(d node.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona"}, helper.ReadFile(t, faceBona1))
 		assert.NoError(t, err)
@@ -52,7 +52,7 @@ func AssertSingleFaceDetection(d detector.Classifier) func(t *testing.T) {
 	}
 }
 
-func AssertSingleFaceDetectionInGroup(d detector.Classifier) func(t *testing.T) {
+func AssertSingleFaceDetectionInGroup(d node.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona"}, helper.ReadFile(t, faceBona1))
 		assert.NoError(t, err)
@@ -63,7 +63,7 @@ func AssertSingleFaceDetectionInGroup(d detector.Classifier) func(t *testing.T) 
 	}
 }
 
-func AssertMultipleFacesDetectionInGroup(d detector.Classifier) func(t *testing.T) {
+func AssertMultipleFacesDetectionInGroup(d node.Classifier) func(t *testing.T) {
 	return func(t *testing.T) {
 		err := d.SaveCategories([]string{"bona", "luda"}, helper.ReadFile(t, groupBonaAndLuda))
 		assert.NoError(t, err)

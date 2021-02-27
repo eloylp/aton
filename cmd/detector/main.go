@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/eloylp/aton/components/detector"
+	"github.com/eloylp/aton/components/node"
 )
 
 func main() {
-	server, err := detector.NewFromEnv()
+	server, err := node.NewFromEnv()
 	if err != nil {
 		log.Fatal(err)
 	}

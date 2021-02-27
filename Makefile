@@ -23,33 +23,33 @@ all: lint test build
 test: test-unit test-integration test-racy test-bench
 
 test-unit:
-	go test -v --tags="unit" $(shell go list ./... | grep -v detector)
+	go test -v --tags="unit" $(shell go list ./... | grep -v node)
 test-integration:
-	go test -v --tags="integration" $(shell go list ./... | grep -v detector)
-test-detector-docker:
+	go test -v --tags="integration" $(shell go list ./... | grep -v node)
+test-node-docker:
 	docker run -u $(shell id -u) --rm \
 	-v $(shell pwd):/home/$(shell id -u -n)/app \
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
 	ghcr.io/eloylp/aton-test \
-	go test -v --tags="detector" ./...
+	go test -v --tags="node" ./...
 # The CI build image must be prepared with deps apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-test-detector:
-	go test -v --tags="detector" ./...
+test-node:
+	go test -v --tags="node" ./...
 test-e2e:
-	go test -v --tags="e2e" $(shell go list ./... | grep -v detector)
+	go test -v --tags="e2e" $(shell go list ./... | grep -v node)
 proto:
-	protoc -I components/proto components/proto/detector.proto components/proto/system.proto --go_out=plugins=grpc:components/
+	protoc -I components/proto components/proto/node.proto components/proto/system.proto --go_out=plugins=grpc:components/
 	find ./components/github.com/ -type f -name "*pb.go" -exec mv {} ./components/proto \;
 	rm -rf ./components/github.com
 test-racy:
-	go test -race -v --tags="racy" $(shell go list ./... | grep -v detector)
+	go test -race -v --tags="racy" $(shell go list ./... | grep -v node)
 test-bench:
-	go test -v -bench=. $(shell go list ./... | grep -v detector)
+	go test -v -bench=. $(shell go list ./... | grep -v node)
 build: clean
 	mkdir -p $(DIST_FOLDER)
 	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/ctl ./cmd/ctl/main.go
-	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/detector ./cmd/detector/main.go
+	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/node ./cmd/node/main.go
 	@echo "Binary outputs at $(DIST_FOLDER)"
 
 #build-cuda: clean
@@ -60,13 +60,13 @@ docker-test:
 	docker build --build-arg uid=$(shell id -u) \
 	--build-arg uname=$(shell id -u -n) \
 	-t ghcr.io/eloylp/aton-test -f Dockerfile.integration-test .
-init-detector:
-	docker run --rm -e "DETECTOR_ADDR=0.0.0.0:8082" -e "DETECTOR_MODEL_DIR=./models" \
+init-node:
+	docker run --rm -e "NODE_LISTEN_ADDR=0.0.0.0:8082" -e "NODE_DETECTOR_MODEL_DIR=./models" \
 	-u $(shell id -u) \
 	-v $(shell pwd):/home/$(shell id -u -n)/app \
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
-    -p "8082:8082" -v $(shell pwd):/code ghcr.io/eloylp/aton-test go run ./cmd/detector/main.go
+    -p "8082:8082" -v $(shell pwd):/code ghcr.io/eloylp/aton-test go run ./cmd/node/main.go
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
 docker-cuda:

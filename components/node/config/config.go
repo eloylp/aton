@@ -20,7 +20,7 @@ type Config struct {
 
 func FromEnv() (*Config, error) {
 	cfg := &Config{}
-	if err := envconfig.Process("ATON_DETECTOR", cfg); err != nil {
+	if err := envconfig.Process("ATON_NODE", cfg); err != nil {
 		return nil, fmt.Errorf("config: %w", err)
 	}
 	return cfg, nil

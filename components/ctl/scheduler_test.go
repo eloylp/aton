@@ -14,45 +14,45 @@ import (
 // nolint: scopelint
 func TestUtilizationIndex(t *testing.T) {
 	cases := []struct {
-		Detector *ctl.Detector
+		Node     *ctl.Node
 		Expected float64
 	}{
 		{
-			Detector: LeastUtilizedDetector(),
+			Node:     LeastUtilizedNode(),
 			Expected: 0.1,
 		},
 		{
-			Detector: OneThirdUtilizedDetector(),
+			Node:     OneThirdUtilizedNode(),
 			Expected: 0.33,
 		},
 		{
-			Detector: MidUtilizedDetector(),
+			Node:     MidUtilizedNode(),
 			Expected: 0.5,
 		},
 		{
-			Detector: AverageUtilizedDetector(),
+			Node:     AverageUtilizedNode(),
 			Expected: 0.75,
 		},
 		{
-			Detector: FullUtilizedDetector(),
+			Node:     FullUtilizedNode(),
 			Expected: math.Inf(1),
 		},
 		{
-			Detector: FullCPUUtilizedDetector(),
+			Node:     FullCPUUtilizedNode(),
 			Expected: math.Inf(1),
 		},
 		{
-			Detector: FullMemoryUtilizedDetector(),
+			Node:     FullMemoryUtilizedNode(),
 			Expected: math.Inf(1),
 		},
 		{
-			Detector: FullNetworkUtilizedDetector(),
+			Node:     FullNetworkUtilizedNode(),
 			Expected: math.Inf(1),
 		},
 	}
 	for _, tt := range cases {
-		t.Run(tt.Detector.UUID, func(t *testing.T) {
-			result := ctl.DetectorUtilizationIndex(tt.Detector.Status)
+		t.Run(tt.Node.UUID, func(t *testing.T) {
+			result := ctl.NodeUtilizationIndex(tt.Node.Status)
 			assert.InDelta(
 				t,
 				tt.Expected,
@@ -64,63 +64,63 @@ func TestUtilizationIndex(t *testing.T) {
 }
 
 // nolint: scopelint
-func TestScoreDetector(t *testing.T) {
+func TestScoreNode(t *testing.T) {
 	cases := []struct {
-		Detector *ctl.Detector
+		Node     *ctl.Node
 		Expected float64
 	}{
 		{
-			Detector: AverageUtilizedDetector(),
+			Node:     AverageUtilizedNode(),
 			Expected: -0.75,
 		},
 		{
-			Detector: FullUtilizedDetector(),
+			Node:     FullUtilizedNode(),
 			Expected: math.Inf(-1),
 		},
 	}
 	for _, tt := range cases {
-		t.Run(tt.Detector.UUID, func(t *testing.T) {
-			ctl.ScoreDetector(tt.Detector)
+		t.Run(tt.Node.UUID, func(t *testing.T) {
+			ctl.ScoreNode(tt.Node)
 			assert.InDelta(
 				t,
 				tt.Expected,
-				tt.Detector.Score,
+				tt.Node.Score,
 				0.05,
 			)
 		})
 	}
 }
 
-func TestHeapBasedDetectorPriorityQueue(t *testing.T) {
-	q := ctl.NewHeapDetectorPriorityQueue()
+func TestHeapBasedNodePriorityQueue(t *testing.T) {
+	q := ctl.NewHeapNodePriorityQueue()
 	t.Run("Assert order of elements", AssertQueueOrdering(q))
-	q = ctl.NewHeapDetectorPriorityQueue()
+	q = ctl.NewHeapNodePriorityQueue()
 	t.Run("Assert update of existing element with score updated", AssertQueueUpdate(q))
-	q = ctl.NewHeapDetectorPriorityQueue()
+	q = ctl.NewHeapNodePriorityQueue()
 	t.Run("Assert remove of existing element", AssertQueueRemove(q))
-	q = ctl.NewHeapDetectorPriorityQueue()
+	q = ctl.NewHeapNodePriorityQueue()
 	t.Run("Assert queu returns nil with no elements", AssertQueueEmptyNil(q))
 }
 
-func AssertQueueOrdering(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+func AssertQueueOrdering(q ctl.NodePriorityQueue) func(t *testing.T) {
 	return func(t *testing.T) {
-		q.Upsert(AverageUtilizedDetector())
-		q.Upsert(FullNetworkUtilizedDetector())
+		q.Upsert(AverageUtilizedNode())
+		q.Upsert(FullNetworkUtilizedNode())
 		assert.Equal(t, AverageUtilized, q.Next().UUID)
 	}
 }
 
-func AssertQueueUpdate(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+func AssertQueueUpdate(q ctl.NodePriorityQueue) func(t *testing.T) {
 	return func(t *testing.T) {
-		d0 := AverageUtilizedDetector()
-		d1 := FullNetworkUtilizedDetector()
-		d2 := MidUtilizedDetector()
+		d0 := AverageUtilizedNode()
+		d1 := FullNetworkUtilizedNode()
+		d2 := MidUtilizedNode()
 
 		q.Upsert(d0)
 		q.Upsert(d1)
 		q.Upsert(d2)
 
-		d3 := LeastUtilizedDetector()
+		d3 := LeastUtilizedNode()
 		d3.UUID = FullNetworkUtilized
 		q.Upsert(d3)
 
@@ -129,11 +129,11 @@ func AssertQueueUpdate(q ctl.DetectorPriorityQueue) func(t *testing.T) {
 	}
 }
 
-func AssertQueueRemove(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+func AssertQueueRemove(q ctl.NodePriorityQueue) func(t *testing.T) {
 	return func(t *testing.T) {
-		d0 := AverageUtilizedDetector()
-		d1 := FullNetworkUtilizedDetector()
-		d2 := MidUtilizedDetector()
+		d0 := AverageUtilizedNode()
+		d1 := FullNetworkUtilizedNode()
+		d2 := MidUtilizedNode()
 
 		q.Upsert(d0)
 		q.Upsert(d1)
@@ -146,7 +146,7 @@ func AssertQueueRemove(q ctl.DetectorPriorityQueue) func(t *testing.T) {
 	}
 }
 
-func AssertQueueEmptyNil(q ctl.DetectorPriorityQueue) func(t *testing.T) {
+func AssertQueueEmptyNil(q ctl.NodePriorityQueue) func(t *testing.T) {
 	return func(t *testing.T) {
 		assert.Equal(t, 0, q.Len())
 		assert.Nil(t, q.Next())

@@ -5,18 +5,18 @@ import (
 )
 
 const (
-	LeastUtilized       = "LEAST_UTILIZED_DETECTOR"
-	OneThirdUtilized    = "ONE_THIRD_UTILIZED_DETECTOR"
-	MidUtilized         = "MID_UTILIZED_DETECTOR"
-	AverageUtilized     = "AVERAGE_UTILIZED_DETECTOR"
-	FullUtilized        = "FULL_UTILIZED_DETECTOR"
-	FullCPUUtilized     = "FULL_CPU_UTILIZED_DETECTOR"
-	FullMemoryUtilized  = "FULL_MEMORY_UTILIZED_DETECTOR"
-	FullNetworkUtilized = "FULL_NETWORK_UTILIZED_DETECTOR"
+	LeastUtilized       = "LEAST_UTILIZED_NODE"
+	OneThirdUtilized    = "ONE_THIRD_UTILIZED_NODE"
+	MidUtilized         = "MID_UTILIZED_NODE"
+	AverageUtilized     = "AVERAGE_UTILIZED_NODE"
+	FullUtilized        = "FULL_UTILIZED_NODE"
+	FullCPUUtilized     = "FULL_CPU_UTILIZED_NODE"
+	FullMemoryUtilized  = "FULL_MEMORY_UTILIZED_NODE"
+	FullNetworkUtilized = "FULL_NETWORK_UTILIZED_NODE"
 )
 
-func LeastUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func LeastUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: LeastUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -40,8 +40,8 @@ func LeastUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func OneThirdUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func OneThirdUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: OneThirdUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -65,8 +65,8 @@ func OneThirdUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func MidUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func MidUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: MidUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -90,8 +90,8 @@ func MidUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func AverageUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func AverageUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: AverageUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -115,8 +115,8 @@ func AverageUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func FullUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func FullUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: FullUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -140,8 +140,8 @@ func FullUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func FullCPUUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func FullCPUUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: FullCPUUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -165,8 +165,8 @@ func FullCPUUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func FullMemoryUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func FullMemoryUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: FullMemoryUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,
@@ -190,8 +190,8 @@ func FullMemoryUtilizedDetector() *ctl.Detector {
 	}
 }
 
-func FullNetworkUtilizedDetector() *ctl.Detector {
-	return &ctl.Detector{
+func FullNetworkUtilizedNode() *ctl.Node {
+	return &ctl.Node{
 		UUID: FullNetworkUtilized,
 		Status: &ctl.Status{
 			Capturers: nil,

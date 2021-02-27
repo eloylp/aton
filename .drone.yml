@@ -32,7 +32,7 @@ steps:
         include:
           - master
 
-  - name: detector-tests
+  - name: node-tests
     image: golang:1.15.6
     depends_on:
       - linter
@@ -40,7 +40,7 @@ steps:
     commands:
       - apt-get update
       - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-detector
+      - make test-node
     when:
       branch:
         include:
@@ -78,7 +78,7 @@ steps:
     image: drillster/drone-email
     depends_on:
       - integration-tests
-      - detector-tests
+      - node-tests
       - racy-tests
       - e2e-tests
     when:

@@ -8,18 +8,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type DetectorHandler struct {
-	detector       *Detector
-	client         DetectorClient
-	priorityQueue  DetectorPriorityQueue
+type NodeHandler struct {
+	node           *Node
+	client         NodeClient
+	priorityQueue  NodePriorityQueue
 	processStopper chan struct{}
 	wg             *sync.WaitGroup
 	logger         *logrus.Logger
 }
 
-func NewDetectorHandler(detector *Detector, client DetectorClient, logger *logrus.Logger) *DetectorHandler {
-	return &DetectorHandler{
-		detector:       detector,
+func NewNodeHandler(node *Node, client NodeClient, logger *logrus.Logger) *NodeHandler {
+	return &NodeHandler{
+		node:           node,
 		client:         client,
 		logger:         logger,
 		wg:             &sync.WaitGroup{},
@@ -27,9 +27,9 @@ func NewDetectorHandler(detector *Detector, client DetectorClient, logger *logru
 	}
 }
 
-func (ds *DetectorHandler) Start() error {
+func (ds *NodeHandler) Start() error {
 	if err := ds.client.Connect(); err != nil {
-		return fmt.Errorf("ctl: could not connect to detector %s: %w", ds.detector.UUID, err)
+		return fmt.Errorf("ctl: could not connect to node %s: %w", ds.node.UUID, err)
 	}
 	ds.wg.Add(2)
 	go ds.processStatus()
@@ -37,22 +37,22 @@ func (ds *DetectorHandler) Start() error {
 	return nil
 }
 
-func (ds *DetectorHandler) processResults() {
+func (ds *NodeHandler) processResults() {
 	defer ds.wg.Done()
 	for {
 		select {
 		case <-ds.processStopper:
-			ds.logger.Infof("detectorHandler: closed processing results of %s", ds.detector.UUID)
+			ds.logger.Infof("nodeHandler: closed processing results of %s", ds.node.UUID)
 			return
 		default:
 			r, err := ds.client.NextResult()
 			if err != nil {
-				ds.logger.Errorf("detectorHandler: error obtaining next result: %s", err)
+				ds.logger.Errorf("nodeHandler: error obtaining next result: %s", err)
 				return
 			}
 			resultFormat := "ctl: result: %s - %d (%s) - %d | %s | %s"
 			ds.logger.Infof(resultFormat,
-				r.DetectorUUID,
+				r.NodeUUID,
 				len(r.Recognized),
 				strings.Join(r.Recognized, ","),
 				r.TotalEntities,
@@ -62,26 +62,26 @@ func (ds *DetectorHandler) processResults() {
 	}
 }
 
-func (ds *DetectorHandler) processStatus() {
+func (ds *NodeHandler) processStatus() {
 	defer ds.wg.Done()
 	for {
 		select {
 		case <-ds.processStopper:
-			ds.logger.Infof("detectorHandler: closed processing status of %s", ds.detector.UUID)
+			ds.logger.Infof("nodeHandler: closed processing status of %s", ds.node.UUID)
 			return
 		default:
 			s, err := ds.client.NextStatus()
 			if err != nil {
-				ds.logger.Errorf("detectorHandler: error obtaining next status: %s", err)
+				ds.logger.Errorf("nodeHandler: error obtaining next status: %s", err)
 				return
 			}
-			ds.detector.Status = s
-			ds.priorityQueue.Upsert(ds.detector)
+			ds.node.Status = s
+			ds.priorityQueue.Upsert(ds.node)
 		}
 	}
 }
 
-func (ds *DetectorHandler) Shutdown() error {
+func (ds *NodeHandler) Shutdown() error {
 	close(ds.processStopper)
 	ds.wg.Wait()
 	return nil

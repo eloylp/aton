@@ -1,6 +1,6 @@
-// +build e2e detector
+// +build e2e node
 
-package detector_test
+package node_test
 
 import (
 	"bytes"
@@ -16,14 +16,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 
-	"github.com/eloylp/aton/components/detector"
-	"github.com/eloylp/aton/components/detector/config"
+	"github.com/eloylp/aton/components/node"
+	"github.com/eloylp/aton/components/node/config"
 	"github.com/eloylp/aton/components/proto"
 )
 
 func TestStartStopSequence(t *testing.T) {
 	logOutput := bytes.NewBuffer(nil)
-	d, err := detector.New(
+	d, err := node.New(
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
 		config.WithLogOutput(logOutput),
@@ -38,11 +38,11 @@ func TestStartStopSequence(t *testing.T) {
 	d.Shutdown()
 
 	logO := logOutput.String()
-	assert.Contains(t, logO, "starting detector service at 0.0.0.0:10002")
-	assert.Contains(t, logO, "starting detector metrics at 0.0.0.0:10003")
+	assert.Contains(t, logO, "starting node service at 0.0.0.0:10002")
+	assert.Contains(t, logO, "starting node metrics at 0.0.0.0:10003")
 	assert.Contains(t, logO, "gracefully shutdown started.")
-	assert.Contains(t, logO, "stopped detector service at 0.0.0.0:10002")
-	assert.Contains(t, logO, "stopped detector metrics at 0.0.0.0:10003")
+	assert.Contains(t, logO, "stopped node service at 0.0.0.0:10002")
+	assert.Contains(t, logO, "stopped node metrics at 0.0.0.0:10003")
 	assert.NotContains(t, logO, "level=error")
 
 	t.Log(logO)
@@ -53,7 +53,7 @@ func TestMatchingCapturingRound(t *testing.T) {
 	defer video.Close()
 
 	logOutput := bytes.NewBuffer(nil)
-	d, err := detector.New(
+	d, err := node.New(
 		config.WithUUID("UUID"),
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
@@ -73,7 +73,7 @@ func TestMatchingCapturingRound(t *testing.T) {
 	defer con.Close()
 
 	assert.NoError(t, err)
-	client := proto.NewDetectorClient(con)
+	client := proto.NewNodeClient(con)
 	_, err = client.LoadCategories(context.Background(), &proto.LoadCategoriesRequest{
 		Categories: []string{"bona"},
 		Image:      helper.ReadFile(t, faceBona3),
@@ -88,7 +88,7 @@ func TestMatchingCapturingRound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
-	assert.Equal(t, "UUID", recv.DetectorUuid)
+	assert.Equal(t, "UUID", recv.NodeUuid)
 	now := time.Now().Unix()
 	assert.InDelta(t, now, recv.CapturedAt.AsTime().Unix(), 5)
 	assert.InDelta(t, now, recv.RecognizedAt.AsTime().Unix(), 5)
@@ -104,13 +104,13 @@ func TestMatchingCapturingRound(t *testing.T) {
 	defer resp.Body.Close()
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
-	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_detector_entities_total{uuid="UUID"} 1`)
-	assert.Contains(t, metricsO, `aton_detector_unrecognized_entities_total{uuid="UUID"} 0`)
-	assert.Contains(t, metricsO, `aton_detector_processed_frames_total{uuid="UUID"} 2`)
-	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Detector",grpc_type="unary"} 1`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_entities_total{uuid="UUID"} 1`)
+	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total{uuid="UUID"} 0`)
+	assert.Contains(t, metricsO, `aton_node_processed_frames_total{uuid="UUID"} 2`)
+	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Node",grpc_type="unary"} 1`)
 }
 
 func TestNonMatchingCapturingRound(t *testing.T) {
@@ -118,7 +118,7 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	defer video.Close()
 
 	logOutput := bytes.NewBuffer(nil)
-	d, err := detector.New(
+	d, err := node.New(
 		config.WithUUID("UUID"),
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
@@ -138,7 +138,7 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	defer con.Close()
 
 	assert.NoError(t, err)
-	client := proto.NewDetectorClient(con)
+	client := proto.NewNodeClient(con)
 	_, err = client.AddCapturer(context.Background(), &proto.AddCapturerRequest{CapturerUuid: "UUID", CapturerUrl: video.URL})
 	assert.NoError(t, err)
 	clientProcess, err := client.ProcessResults(context.Background(), &empty.Empty{})
@@ -148,7 +148,7 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
-	assert.Equal(t, "UUID", recv.DetectorUuid)
+	assert.Equal(t, "UUID", recv.NodeUuid)
 	now := time.Now().Unix()
 	assert.InDelta(t, now, recv.CapturedAt.AsTime().Unix(), 5)
 	assert.InDelta(t, now, recv.RecognizedAt.AsTime().Unix(), 5)
@@ -162,16 +162,16 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	defer resp.Body.Close()
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
-	assert.Contains(t, metricsO, `aton_detector_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_detector_entities_total{uuid="UUID"} 1`)
-	assert.Contains(t, metricsO, `aton_detector_processed_frames_total{uuid="UUID"} 2`)
-	assert.Contains(t, metricsO, `aton_detector_unrecognized_entities_total{uuid="UUID"} 1`)
-	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Detector",grpc_type="unary"} 1`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_entities_total{uuid="UUID"} 1`)
+	assert.Contains(t, metricsO, `aton_node_processed_frames_total{uuid="UUID"} 2`)
+	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total{uuid="UUID"} 1`)
+	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Node",grpc_type="unary"} 1`)
 }
 
 func TestStatusTelemetry(t *testing.T) {
 	logOutput := bytes.NewBuffer(nil)
-	d, err := detector.New(
+	d, err := node.New(
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
 		config.WithLogOutput(logOutput),
@@ -190,7 +190,7 @@ func TestStatusTelemetry(t *testing.T) {
 	defer con.Close()
 
 	assert.NoError(t, err)
-	client := proto.NewDetectorClient(con)
+	client := proto.NewNodeClient(con)
 
 	strCli, err := client.InformStatus(context.Background(), &proto.InformStatusRequest{
 		Interval: durationpb.New(time.Second),

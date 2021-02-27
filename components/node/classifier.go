@@ -1,4 +1,4 @@
-package detector
+package node
 
 type Classifier interface {
 	SaveCategories([]string, []byte) error

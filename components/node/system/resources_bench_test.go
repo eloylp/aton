@@ -3,7 +3,7 @@ package system_test
 import (
 	"testing"
 
-	"github.com/eloylp/aton/components/detector/system"
+	"github.com/eloylp/aton/components/node/system"
 )
 
 func BenchmarkCPUCount(b *testing.B) {

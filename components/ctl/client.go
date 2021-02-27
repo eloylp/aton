@@ -21,32 +21,32 @@ import (
 )
 
 const (
-	MaxDetectorStatusQueueSize = 50
-	MaxDetectorResultQueueSize = 50
-	StreamConnectTimeout       = time.Second
+	MaxNodeStatusQueueSize = 50
+	MaxNodeResultQueueSize = 50
+	StreamConnectTimeout   = time.Second
 )
 
-type GRPCDetectorClient struct {
-	addr                 string
-	client               proto.DetectorClient
-	clientConn           *grpc.ClientConn
-	logger               *logrus.Logger
-	metricsRegistry      *metrics.Service
-	detectorStatusQueue  chan *Status
-	detectorResultsQueue chan *Result
-	shutdown             chan struct{}
-	wg                   *sync.WaitGroup
+type GRPCNodeClient struct {
+	addr            string
+	client          proto.NodeClient
+	clientConn      *grpc.ClientConn
+	logger          *logrus.Logger
+	metricsRegistry *metrics.Service
+	statusQueue     chan *Status
+	resultsQueue    chan *Result
+	shutdown        chan struct{}
+	wg              *sync.WaitGroup
 }
 
-func NewGRPCDetectorClient(addr string, logger *logrus.Logger, metricsRegistry *metrics.Service) *GRPCDetectorClient {
-	return &GRPCDetectorClient{
-		addr:                 addr,
-		logger:               logger,
-		metricsRegistry:      metricsRegistry,
-		detectorStatusQueue:  make(chan *Status, MaxDetectorStatusQueueSize),
-		detectorResultsQueue: make(chan *Result, MaxDetectorResultQueueSize),
-		shutdown:             make(chan struct{}),
-		wg:                   &sync.WaitGroup{},
+func NewGRPCNodeClient(addr string, logger *logrus.Logger, metricsRegistry *metrics.Service) *GRPCNodeClient {
+	return &GRPCNodeClient{
+		addr:            addr,
+		logger:          logger,
+		metricsRegistry: metricsRegistry,
+		statusQueue:     make(chan *Status, MaxNodeStatusQueueSize),
+		resultsQueue:    make(chan *Result, MaxNodeResultQueueSize),
+		shutdown:        make(chan struct{}),
+		wg:              &sync.WaitGroup{},
 	}
 }
 
@@ -55,7 +55,7 @@ const (
 	backOffJitter = 0.35
 )
 
-func (c *GRPCDetectorClient) Connect() error {
+func (c *GRPCNodeClient) Connect() error {
 	grpcMetrics := grpc_prometheus.NewClientMetrics()
 	grpcMetrics.EnableClientHandlingTimeHistogram()
 	c.metricsRegistry.MustRegister(grpcMetrics)
@@ -85,11 +85,11 @@ func (c *GRPCDetectorClient) Connect() error {
 	if err != nil {
 		return fmt.Errorf("dectectorclient: %w", err)
 	}
-	c.client = proto.NewDetectorClient(c.clientConn)
+	c.client = proto.NewNodeClient(c.clientConn)
 	return nil
 }
 
-func (c *GRPCDetectorClient) LoadCategories(ctx context.Context, request *LoadCategoriesRequest) error {
+func (c *GRPCNodeClient) LoadCategories(ctx context.Context, request *LoadCategoriesRequest) error {
 	if _, err := c.client.LoadCategories(ctx, &proto.LoadCategoriesRequest{
 		Categories: request.Categories,
 		Image:      request.Image,
@@ -99,7 +99,7 @@ func (c *GRPCDetectorClient) LoadCategories(ctx context.Context, request *LoadCa
 	return nil
 }
 
-func (c *GRPCDetectorClient) AddCapturer(ctx context.Context, request *AddCapturerRequest) error {
+func (c *GRPCNodeClient) AddCapturer(ctx context.Context, request *AddCapturerRequest) error {
 	if _, err := c.client.AddCapturer(ctx, &proto.AddCapturerRequest{
 		CapturerUuid: request.UUID,
 		CapturerUrl:  request.URL,
@@ -109,7 +109,7 @@ func (c *GRPCDetectorClient) AddCapturer(ctx context.Context, request *AddCaptur
 	return nil
 }
 
-func (c *GRPCDetectorClient) RemoveCapturer(ctx context.Context, request *RemoveCapturerRequest) error {
+func (c *GRPCNodeClient) RemoveCapturer(ctx context.Context, request *RemoveCapturerRequest) error {
 	if _, err := c.client.RemoveCapturer(ctx, &proto.RemoveCapturerRequest{
 		CapturerUuid: request.UUID,
 	}); err != nil {
@@ -118,7 +118,7 @@ func (c *GRPCDetectorClient) RemoveCapturer(ctx context.Context, request *Remove
 	return nil
 }
 
-func (c *GRPCDetectorClient) startStatusProc(interval time.Duration) {
+func (c *GRPCNodeClient) startStatusProc(interval time.Duration) {
 	c.wg.Add(1)
 	go func() {
 		defer c.wg.Done()
@@ -128,19 +128,19 @@ func (c *GRPCDetectorClient) startStatusProc(interval time.Duration) {
 			Interval: durationpb.New(interval),
 		})
 		if err != nil {
-			c.logger.Errorf("gRPCDetectorClient: %v", err)
+			c.logger.Errorf("gRPCNodeClient: %v", err)
 			return
 		}
 	mainLoop:
 		for {
 			status, err := stream.Recv()
 			if err == io.EOF {
-				close(c.detectorStatusQueue)
-				c.logger.Info("gRPCDetectorClient: result stream ended.")
+				close(c.statusQueue)
+				c.logger.Info("gRPCNodeClient: result stream ended.")
 				return
 			}
 			if err != nil {
-				c.logger.Errorf("gRPCDetectorClient: %v", err)
+				c.logger.Errorf("gRPCNodeClient: %v", err)
 				continue
 			}
 			select {
@@ -155,13 +155,13 @@ func (c *GRPCDetectorClient) startStatusProc(interval time.Duration) {
 						Status: c.Status.String(),
 					})
 				}
-				c.detectorStatusQueue <- c.mapStatus(status, capturers)
+				c.statusQueue <- c.mapStatus(status, capturers)
 			}
 		}
 	}()
 }
 
-func (c *GRPCDetectorClient) mapStatus(status *proto.Status, capturers []*Capturer) *Status {
+func (c *GRPCNodeClient) mapStatus(status *proto.Status, capturers []*Capturer) *Status {
 	return &Status{
 		Description: status.Description,
 		Capturers:   capturers,
@@ -184,15 +184,15 @@ func (c *GRPCDetectorClient) mapStatus(status *proto.Status, capturers []*Captur
 	}
 }
 
-func (c *GRPCDetectorClient) NextStatus() (*Status, error) {
-	status, ok := <-c.detectorStatusQueue
+func (c *GRPCNodeClient) NextStatus() (*Status, error) {
+	status, ok := <-c.statusQueue
 	if !ok {
 		return nil, io.EOF
 	}
 	return status, nil
 }
 
-func (c *GRPCDetectorClient) startResultsProc() {
+func (c *GRPCNodeClient) startResultsProc() {
 	c.wg.Add(1)
 	go func() {
 		defer c.wg.Done()
@@ -200,27 +200,27 @@ func (c *GRPCDetectorClient) startResultsProc() {
 		defer cancl()
 		stream, err := c.client.ProcessResults(ctx, &empty.Empty{})
 		if err != nil {
-			c.logger.Errorf("gRPCDetectorClient: %v", err)
+			c.logger.Errorf("gRPCNodeClient: %v", err)
 			return
 		}
 	mainLoop:
 		for {
 			result, err := stream.Recv()
 			if err != io.EOF {
-				close(c.detectorResultsQueue)
-				c.logger.Info("gRPCDetectorClient: result stream ended.")
+				close(c.resultsQueue)
+				c.logger.Info("gRPCNodeClient: result stream ended.")
 				return
 			}
 			if err != nil {
-				c.logger.Errorf("gRPCDetectorClient: %v", err)
+				c.logger.Errorf("gRPCNodeClient: %v", err)
 				continue
 			}
 			select {
 			case <-c.shutdown:
 				break mainLoop
 			default:
-				c.detectorResultsQueue <- &Result{
-					DetectorUUID:  result.DetectorUuid,
+				c.resultsQueue <- &Result{
+					NodeUUID:      result.NodeUuid,
 					Recognized:    result.Recognized,
 					TotalEntities: result.TotalEntities,
 					RecognizedAt:  result.RecognizedAt.AsTime(),
@@ -231,19 +231,19 @@ func (c *GRPCDetectorClient) startResultsProc() {
 	}()
 }
 
-func (c *GRPCDetectorClient) NextResult() (*Result, error) {
-	result, ok := <-c.detectorResultsQueue
+func (c *GRPCNodeClient) NextResult() (*Result, error) {
+	result, ok := <-c.resultsQueue
 	if !ok {
 		return nil, io.EOF
 	}
 	return result, nil
 }
 
-func (c *GRPCDetectorClient) Shutdown() error {
+func (c *GRPCNodeClient) Shutdown() error {
 	close(c.shutdown)
 	c.wg.Wait()
 	if err := c.clientConn.Close(); err != nil {
-		return fmt.Errorf("detectorclient: shutdown: %w", err)
+		return fmt.Errorf("nodeclient: shutdown: %w", err)
 	}
 	return nil
 }

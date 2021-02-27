@@ -30,9 +30,9 @@ func TestHandlers(t *testing.T) {
 		},
 	}
 	t.Run("Running handler tests ...", handler.Tester(cases, www.Router(NewFakeCtl(), metricsService.HTTPHandler()), func(t *testing.T) {
-		metricsService.DetectorUP("A1234")
+		metricsService.NodeUP("A1234")
 	}, func(t *testing.T) {
-		metricsService.DetectorDown("A1234")
+		metricsService.NodeDown("A1234")
 	}))
 }
 
@@ -47,7 +47,7 @@ func NewFakeCtl() *FakeCtl {
 	return &FakeCtl{}
 }
 
-func (f *FakeCtl) AddDetector(addr string) (string, error) {
+func (f *FakeCtl) AddNode(addr string) (string, error) {
 	panic("implement me")
 }
 

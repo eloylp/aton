@@ -1,4 +1,4 @@
-package detector
+package node
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/eloylp/aton/components/detector/metrics"
+	"github.com/eloylp/aton/components/node/metrics"
 	"github.com/eloylp/aton/components/proto"
 )
 
@@ -31,7 +31,7 @@ type Server struct {
 }
 
 type service interface {
-	proto.DetectorServer
+	proto.NodeServer
 	Shutdown()
 }
 
@@ -69,18 +69,18 @@ func NewServer(listenAddr string, service service, metricsAddr string, m *metric
 		metricsServer: &http.Server{Addr: metricsAddr, Handler: metricsMux},
 		s:             grpcServer,
 	}
-	proto.RegisterDetectorServer(grpcServer, service)
+	proto.RegisterNodeServer(grpcServer, service)
 	return s
 }
 
 func (gs *Server) Start() error {
-	gs.logger.Infof("starting detector service at %s", gs.listenAddr)
+	gs.logger.Infof("starting node service at %s", gs.listenAddr)
 	lis, err := net.Listen("tcp", gs.listenAddr)
 	if err != nil {
 		return err
 	}
 	go gs.watchForOSSignals()
-	gs.logger.Infof("starting detector metrics at %s", gs.metricsAddr)
+	gs.logger.Infof("starting node metrics at %s", gs.metricsAddr)
 	go func() {
 		if err := gs.metricsServer.ListenAndServe(); err != http.ErrServerClosed {
 			gs.logger.Errorf("metrics-server: %v", err)
@@ -107,6 +107,6 @@ func (gs *Server) Shutdown() {
 	}
 	gs.service.Shutdown()
 	gs.s.GracefulStop()
-	gs.logger.Infof("stopped detector service at %s", gs.listenAddr)
-	gs.logger.Infof("stopped detector metrics at %s", gs.metricsAddr)
+	gs.logger.Infof("stopped node service at %s", gs.listenAddr)
+	gs.logger.Infof("stopped node metrics at %s", gs.metricsAddr)
 }
