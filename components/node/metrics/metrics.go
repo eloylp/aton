@@ -20,8 +20,8 @@ func capturerReceivedFramesTotal() *prometheus.CounterVec {
 	}, []string{"uuid", "capturer_uuid", "capturer_url"})
 }
 
-func capturerReceivedFramesBytes() *prometheus.SummaryVec {
-	return prometheus.NewSummaryVec(prometheus.SummaryOpts{
+func capturerReceivedFramesBytes() *prometheus.HistogramVec {
+	return prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_bytes",

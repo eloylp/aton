@@ -11,7 +11,7 @@ type Service struct {
 	UUID                        string
 	registry                    *prometheus.Registry
 	capturerReceivedFramesTotal *prometheus.CounterVec
-	capturerReceivedFramesBytes *prometheus.SummaryVec
+	capturerReceivedFramesBytes *prometheus.HistogramVec
 	capturerFailedFramesTotal   *prometheus.CounterVec
 	processedFramesTotal        *prometheus.CounterVec
 	failedFramesTotal           *prometheus.CounterVec
