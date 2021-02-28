@@ -20,7 +20,7 @@ lint-fix:
 
 all: lint test build
 
-test: test-unit test-integration test-racy test-bench
+test: test-unit test-node-docker test-integration test-racy test-bench
 
 test-unit:
 	go test -v --tags="unit" $(shell go list ./... | grep -v node)
@@ -32,7 +32,7 @@ test-node-docker:
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
 	ghcr.io/eloylp/aton-test \
-	go test -v --tags="node" ./...
+	go test -v --tags="e2e node" ./...
 # The CI build image must be prepared with deps apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
 test-node:
 	go test -v --tags="node" ./...
