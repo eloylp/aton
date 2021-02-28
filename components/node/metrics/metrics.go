@@ -40,6 +40,15 @@ func capturerFailedFramesTotal() *prometheus.CounterVec {
 
 // Responses of nodes metrics
 
+func processingFramesDurationSeconds() *prometheus.HistogramVec {
+	return prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      "frame_processing_time_seconds",
+		Help:      "The time a node spends processing frames",
+	}, []string{"uuid"})
+}
+
 func processedFramesTotal() *prometheus.CounterVec {
 	return prometheus.NewCounterVec(prometheus.CounterOpts{
 		Namespace: namespace,

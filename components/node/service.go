@@ -87,6 +87,7 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Node_ProcessResult
 			s.metricsService.IncFailedFramesTotal()
 			return status.New(codes.Internal, msg).Err()
 		}
+		now := s.timeNow()
 		resp, err := s.node.FindCategories(capturerResult.Data)
 		if err != nil {
 			msg := fmt.Sprintf("ProcessResults(): %v", err)
@@ -94,6 +95,8 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Node_ProcessResult
 			s.metricsService.IncFailedFramesTotal()
 			return status.New(codes.Internal, msg).Err()
 		}
+		elapsed := time.Since(now)
+		s.metricsService.IncProcessedTimeFramesSeconds(elapsed.Seconds())
 		s.metricsService.AddEntitiesTotal(resp.TotalEntities)
 		s.metricsService.AddUnrecognizedEntitiesTotal(resp.TotalEntities - len(resp.Matches))
 		recognizedAtProtoTime, err := ptypes.TimestampProto(s.timeNow())

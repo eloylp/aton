@@ -13,6 +13,7 @@ type Service struct {
 	capturerReceivedFramesTotal *prometheus.CounterVec
 	capturerReceivedFramesBytes *prometheus.HistogramVec
 	capturerFailedFramesTotal   *prometheus.CounterVec
+	processingFrameTimeSeconds  *prometheus.HistogramVec
 	processedFramesTotal        *prometheus.CounterVec
 	failedFramesTotal           *prometheus.CounterVec
 	unrecognizedEntitiesTotal   *prometheus.CounterVec
@@ -28,6 +29,7 @@ func NewService(nodeUUID string) *Service {
 		capturerReceivedFramesTotal: capturerReceivedFramesTotal(),
 		capturerReceivedFramesBytes: capturerReceivedFramesBytes(),
 		capturerFailedFramesTotal:   capturerFailedFramesTotal(),
+		processingFrameTimeSeconds:  processingFramesDurationSeconds(),
 		processedFramesTotal:        processedFramesTotal(),
 		failedFramesTotal:           failedFramesTotal(),
 		entitiesTotal:               entitiesTotal(),
@@ -43,6 +45,7 @@ func (s *Service) registerMetrics(reg *prometheus.Registry) {
 	reg.MustRegister(s.capturerReceivedFramesTotal)
 	reg.MustRegister(s.capturerReceivedFramesBytes)
 	reg.MustRegister(s.capturerFailedFramesTotal)
+	reg.MustRegister(s.processingFrameTimeSeconds)
 	reg.MustRegister(s.processedFramesTotal)
 	reg.MustRegister(s.failedFramesTotal)
 	reg.MustRegister(s.entitiesTotal)
@@ -60,6 +63,10 @@ func (s *Service) IncCapturerReceivedFramesBytes(uuid, url string, bytes int) {
 
 func (s *Service) IncCapturerFailedFramesTotal(uuid, url string) {
 	s.capturerFailedFramesTotal.WithLabelValues(s.UUID, uuid, url).Inc()
+}
+
+func (s *Service) IncProcessedTimeFramesSeconds(seconds float64) {
+	s.processingFrameTimeSeconds.WithLabelValues(s.UUID).Observe(seconds)
 }
 
 func (s *Service) IncProcessedFramesTotal() {
