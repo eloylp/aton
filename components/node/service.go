@@ -21,7 +21,6 @@ import (
 )
 
 type Service struct {
-	UUID            string
 	node            Classifier
 	capturerHandler *CapturerHandler
 	metricsService  *metrics.Service
@@ -31,14 +30,13 @@ type Service struct {
 }
 
 func NewService(
-	uuid string, d Classifier,
+	d Classifier,
 	capturerHandler *CapturerHandler,
 	metricsService *metrics.Service,
 	logger *logrus.Logger,
 	timeNow func() time.Time,
 ) *Service {
 	return &Service{
-		UUID:            uuid,
 		node:            d,
 		capturerHandler: capturerHandler,
 		metricsService:  metricsService,
@@ -108,7 +106,6 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Node_ProcessResult
 			panic(err)
 		}
 		err = stream.Send(&proto.Result{
-			NodeUuid:      s.UUID,
 			Recognized:    resp.Matches,
 			TotalEntities: int32(resp.TotalEntities),
 			RecognizedAt:  recognizedAtProtoTime,

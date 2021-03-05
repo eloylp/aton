@@ -17,7 +17,7 @@ func capturerReceivedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_total",
 		Help:      "The total frames obtained by a capturer",
-	}, []string{"uuid", "capturer_uuid", "capturer_url"})
+	}, []string{"capturer_uuid", "capturer_url"})
 }
 
 func capturerReceivedFramesBytes() *prometheus.HistogramVec {
@@ -26,7 +26,7 @@ func capturerReceivedFramesBytes() *prometheus.HistogramVec {
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_bytes",
 		Help:      "The size of frames obtained by a capturer",
-	}, []string{"uuid", "capturer_uuid", "capturer_url"})
+	}, []string{"capturer_uuid", "capturer_url"})
 }
 
 func capturerFailedFramesTotal() *prometheus.CounterVec {
@@ -35,7 +35,7 @@ func capturerFailedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_failed_frames_total",
 		Help:      "The failed frames returned by capturers",
-	}, []string{"uuid", "capturer_uuid", "capturer_url"})
+	}, []string{"capturer_uuid", "capturer_url"})
 }
 
 // Responses of nodes metrics
@@ -46,7 +46,7 @@ func processingFramesDurationSeconds() *prometheus.HistogramVec {
 		Subsystem: subsystem,
 		Name:      "frame_processing_time_seconds",
 		Help:      "The time a node spends processing frames",
-	}, []string{"uuid"})
+	}, []string{})
 }
 
 func processedFramesTotal() *prometheus.CounterVec {
@@ -55,7 +55,7 @@ func processedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "processed_frames_total",
 		Help:      "The total frame processed by this node",
-	}, []string{"uuid"})
+	}, []string{})
 }
 
 func failedFramesTotal() *prometheus.CounterVec {
@@ -64,7 +64,7 @@ func failedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "error_frames_total",
 		Help:      "The failed, not processed, frames on this node",
-	}, []string{"uuid"})
+	}, []string{})
 }
 
 func entitiesTotal() *prometheus.CounterVec {
@@ -73,7 +73,7 @@ func entitiesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "entities_total",
 		Help:      "The total entities in frames processed by nodes",
-	}, []string{"uuid"})
+	}, []string{})
 }
 
 func unrecognizedEntitiesTotal() *prometheus.CounterVec {
@@ -82,7 +82,7 @@ func unrecognizedEntitiesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "unrecognized_entities_total",
 		Help:      "Entities in frames that are not classified by ML models",
-	}, []string{"uuid"})
+	}, []string{})
 }
 
 // Status gauges metrics. Provides information about running systems
@@ -93,5 +93,5 @@ func currentCapturers() *prometheus.GaugeVec {
 		Subsystem: subsystem,
 		Name:      "capturer_up",
 		Help:      "Capturers that are up on this node",
-	}, []string{"uuid", "capturer_uuid", "capturer_url"})
+	}, []string{"capturer_uuid", "capturer_url"})
 }

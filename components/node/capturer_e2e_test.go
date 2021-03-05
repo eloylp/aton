@@ -21,7 +21,7 @@ func TestShutdownWhileBackPressured(t *testing.T) {
 	loggerOutput := bytes.NewBuffer(nil)
 	logger := logrus.New()
 	logger.SetOutput(loggerOutput)
-	m := metrics.NewService("UUID")
+	m := metrics.NewService()
 
 	// Prepare the target handler
 	sut := node.NewCapturerHandler(logger, m, 10) // Make capturer handler the back pressured part.

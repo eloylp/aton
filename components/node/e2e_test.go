@@ -54,7 +54,6 @@ func TestMatchingCapturingRound(t *testing.T) {
 
 	logOutput := bytes.NewBuffer(nil)
 	d, err := node.New(
-		config.WithUUID("UUID"),
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
 		config.WithLogOutput(logOutput),
@@ -88,7 +87,6 @@ func TestMatchingCapturingRound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
-	assert.Equal(t, "UUID", recv.NodeUuid)
 	now := time.Now().Unix()
 	assert.InDelta(t, now, recv.CapturedAt.AsTime().Unix(), 5)
 	assert.InDelta(t, now, recv.RecognizedAt.AsTime().Unix(), 5)
@@ -105,19 +103,19 @@ func TestMatchingCapturingRound(t *testing.T) {
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
 
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
 
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_bucket{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"`)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_bucket{capturer_url="`+video.URL+`",capturer_uuid="UUID"`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
 
-	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_sum{uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_bucket{uuid="UUID"`)
-	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_count{uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_sum`)
+	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_bucket`)
+	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_count`)
 
-	assert.Contains(t, metricsO, `aton_node_entities_total{uuid="UUID"} 1`)
-	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total{uuid="UUID"} 0`)
-	assert.Contains(t, metricsO, `aton_node_processed_frames_total{uuid="UUID"} 2`)
+	assert.Contains(t, metricsO, `aton_node_entities_total 1`)
+	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total 0`)
+	assert.Contains(t, metricsO, `aton_node_processed_frames_total 2`)
 
 	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Node",grpc_type="unary"} 1`)
 }
@@ -128,7 +126,6 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 
 	logOutput := bytes.NewBuffer(nil)
 	d, err := node.New(
-		config.WithUUID("UUID"),
 		config.WithListenAddress("0.0.0.0:10002"),
 		config.WithMetricsAddress("0.0.0.0:10003"),
 		config.WithLogOutput(logOutput),
@@ -157,7 +154,6 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
-	assert.Equal(t, "UUID", recv.NodeUuid)
 	now := time.Now().Unix()
 	assert.InDelta(t, now, recv.CapturedAt.AsTime().Unix(), 5)
 	assert.InDelta(t, now, recv.RecognizedAt.AsTime().Unix(), 5)
@@ -171,10 +167,10 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	defer resp.Body.Close()
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID",uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_node_entities_total{uuid="UUID"} 1`)
-	assert.Contains(t, metricsO, `aton_node_processed_frames_total{uuid="UUID"} 2`)
-	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total{uuid="UUID"} 1`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_entities_total 1`)
+	assert.Contains(t, metricsO, `aton_node_processed_frames_total 2`)
+	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total 1`)
 	assert.Contains(t, metricsO, `grpc_server_msg_sent_total{grpc_method="AddCapturer",grpc_service="proto.Node",grpc_type="unary"} 1`)
 }
 

@@ -10,7 +10,6 @@ import (
 type Option func(cfg *Config)
 
 type Config struct {
-	UUID              string `split_words:"true" ,required:"true"`
 	ListenAddr        string `split_words:"true" ,default:"0.0.0.0:8080"`
 	MetricsListenAddr string `split_words:"true" ,default:"0.0.0.0:8081"`
 	ModelDir          string `split_words:"true" ,required:"true"`
@@ -24,12 +23,6 @@ func FromEnv() (*Config, error) {
 		return nil, fmt.Errorf("config: %w", err)
 	}
 	return cfg, nil
-}
-
-func WithUUID(uuid string) Option {
-	return func(cfg *Config) {
-		cfg.UUID = uuid
-	}
 }
 
 func WithListenAddress(addr string) Option {

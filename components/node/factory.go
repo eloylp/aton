@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"github.com/eloylp/aton/components/node/config"
@@ -36,17 +35,14 @@ func newWithConfig(cfg *config.Config) (*Server, error) {
 	if cfg.LogOutput == nil {
 		cfg.LogOutput = os.Stdout
 	}
-	if cfg.UUID == "" {
-		cfg.UUID = uuid.New().String()
-	}
 	logger.SetOutput(cfg.LogOutput)
 	faceDetector, err := NewGoFace(cfg.ModelDir)
 	if err != nil {
 		return nil, fmt.Errorf("node: %w", err)
 	}
-	m := metrics.NewService(cfg.UUID)
+	m := metrics.NewService()
 	capturerHandler := NewCapturerHandler(logger, m, 100) // todo parametrize
-	service := NewService(cfg.UUID, faceDetector, capturerHandler, m, logger, time.Now)
+	service := NewService(faceDetector, capturerHandler, m, logger, time.Now)
 	server := NewServer(cfg.ListenAddr, service, cfg.MetricsListenAddr, m, logger)
 	return server, nil
 }
