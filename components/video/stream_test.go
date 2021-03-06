@@ -50,6 +50,7 @@ func TestCapture(t *testing.T) {
 		}
 		expected := helper.ReadFile(t, pictures[i])
 		got := k.Data
+		assert.Equal(t, "uuid", k.CapturerUUID)
 		assert.Equal(t, expected, got, "Image no %v does not match", i)
 		i++
 	}

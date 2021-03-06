@@ -23,8 +23,9 @@ const (
 )
 
 type Capture struct {
-	Data      []byte
-	Timestamp time.Time
+	CapturerUUID string
+	Data         []byte
+	Timestamp    time.Time
 }
 
 type MJPEGCapturer struct {
@@ -143,7 +144,11 @@ func (m *MJPEGCapturer) processNextPart(mr *multipart.Reader) error {
 		return fmt.Errorf("capturer: %w", err)
 	}
 	select {
-	case m.output <- &Capture{data, time.Now()}:
+	case m.output <- &Capture{
+		CapturerUUID: m.UUID(),
+		Data:         data,
+		Timestamp:    time.Now(),
+	}:
 	case <-m.close:
 	}
 	return nil

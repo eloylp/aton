@@ -48,7 +48,7 @@ type Capturer struct {
 }
 
 type Result struct {
-	NodeUUID      string
+	CapturerUUID  string
 	Recognized    []string
 	TotalEntities int32
 	RecognizedAt  time.Time

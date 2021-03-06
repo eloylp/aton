@@ -52,7 +52,7 @@ func (ds *NodeHandler) processResults() {
 			}
 			resultFormat := "ctl: result: %s - %d (%s) - %d | %s | %s"
 			ds.logger.Infof(resultFormat,
-				r.NodeUUID,
+				r.CapturerUUID,
 				len(r.Recognized),
 				strings.Join(r.Recognized, ","),
 				r.TotalEntities,

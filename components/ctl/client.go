@@ -220,7 +220,7 @@ func (c *GRPCNodeClient) startResultsProc() {
 				break mainLoop
 			default:
 				c.resultsQueue <- &Result{
-					NodeUUID:      result.NodeUuid,
+					CapturerUUID:  result.CapturerUuid,
 					Recognized:    result.Recognized,
 					TotalEntities: result.TotalEntities,
 					RecognizedAt:  result.RecognizedAt.AsTime(),

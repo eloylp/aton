@@ -42,7 +42,7 @@ func TestCtl_ExecutionAndShutdown(t *testing.T) {
 	dc.On("NextStatus").Return(LeastUtilizedNode().Status, nil)
 	fixeNow, _ := time.Parse("2006", "2021")
 	dc.On("NextResult").Return(&ctl.Result{
-		NodeUUID:      "UUID",
+		CapturerUUID:  "UUID",
 		Recognized:    []string{"alice", "bob"},
 		TotalEntities: 15,
 		RecognizedAt:  fixeNow.Add(time.Second),

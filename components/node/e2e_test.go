@@ -85,6 +85,7 @@ func TestMatchingCapturingRound(t *testing.T) {
 
 	recv, err := clientProcess.Recv()
 	assert.NoError(t, err)
+	assert.Equal(t, "UUID", recv.CapturerUuid)
 	assert.Equal(t, 1, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
 	now := time.Now().Unix()
@@ -152,6 +153,7 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 
 	recv, err := clientProcess.Recv()
 	assert.NoError(t, err)
+	assert.Equal(t, "UUID", recv.CapturerUuid)
 	assert.Equal(t, 0, len(recv.Recognized))
 	assert.Equal(t, int32(1), recv.TotalEntities)
 	now := time.Now().Unix()

@@ -106,6 +106,7 @@ func (s *Service) ProcessResults(_ *empty.Empty, stream proto.Node_ProcessResult
 			panic(err)
 		}
 		err = stream.Send(&proto.Result{
+			CapturerUuid:  capturerResult.CapturerUUID,
 			Recognized:    resp.Matches,
 			TotalEntities: int32(resp.TotalEntities),
 			RecognizedAt:  recognizedAtProtoTime,
