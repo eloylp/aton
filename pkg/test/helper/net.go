@@ -16,7 +16,7 @@ mainLoop:
 	for {
 		select {
 		case <-ctx.Done():
-			t.Errorf("TryConnectTo(): %s:%s", ctx.Err(), conErr)
+			t.Fatalf("TryConnectTo(): %v", ctx.Err())
 		default:
 			con, conErr = net.Dial("tcp", addr)
 			if conErr == nil {
