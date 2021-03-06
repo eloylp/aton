@@ -1,4 +1,4 @@
-// +build node
+// +build integration
 
 package node_test
 

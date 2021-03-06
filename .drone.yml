@@ -32,20 +32,6 @@ steps:
         include:
           - master
 
-  - name: node-tests
-    image: golang:1.15.6
-    depends_on:
-      - linter
-      - unit-tests
-    commands:
-      - apt-get update
-      - apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-      - make test-node
-    when:
-      branch:
-        include:
-          - master
-
   - name: racy-tests
     image: golang:1.15.6
     depends_on:

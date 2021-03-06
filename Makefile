@@ -20,28 +20,28 @@ lint-fix:
 
 all: lint test build
 
-test: test-unit test-node-docker test-integration test-racy test-bench
+test: test-unit test-with-docker
 
-test-unit:
-	go test -v --tags="unit" $(shell go list ./... | grep -v node)
-test-integration:
-	go test -v --tags="integration" $(shell go list ./... | grep -v node)
-test-node-docker:
+## As integration tests and e2e need libs: libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+## We simply execute them on a docker container with them.
+## IMPORTANT: you will need target "build-docker-test" executed first.
+test-with-docker:
 	docker run -u $(shell id -u) --rm \
 	-v $(shell pwd):/home/$(shell id -u -n)/app \
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
 	ghcr.io/eloylp/aton-test \
-	go test -v --tags="e2e node" ./...
-# The CI build image must be prepared with deps apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
-test-node:
-	go test -v --tags="node" ./...
+	go test -v --tags="integration e2e" ./...
+
+test-unit:
+	go test -v --tags="unit" $(shell go list ./... | grep -v node)
+
+# The following steps are normally executed by the CI pipeline,
+# that have the following needed deps: apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
+test-integration:
+	go test -v --tags="integration" $(shell go list ./... | grep -v node)
 test-e2e:
 	go test -v --tags="e2e" $(shell go list ./... | grep -v node)
-proto:
-	protoc -I components/proto components/proto/node.proto components/proto/system.proto --go_out=plugins=grpc:components/
-	find ./components/github.com/ -type f -name "*pb.go" -exec mv {} ./components/proto \;
-	rm -rf ./components/github.com
 test-racy:
 	go test -race -v --tags="racy" $(shell go list ./... | grep -v node)
 test-bench:
@@ -52,11 +52,16 @@ build: clean
 	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/node ./cmd/node/main.go
 	@echo "Binary outputs at $(DIST_FOLDER)"
 
+proto:
+	protoc -I components/proto components/proto/node.proto components/proto/system.proto --go_out=plugins=grpc:components/
+	find ./components/github.com/ -type f -name "*pb.go" -exec mv {} ./components/proto \;
+	rm -rf ./components/github.com
+
 #build-cuda: clean
 #	mkdir -p $(DIST_FOLDER)
 #	CGO_LDFLAGS="-L/usr/local/cuda/lib64 -lcudnn -lpthread -lcuda -lcudart -lcublas -lcurand -lcusolver" go build $(FLAGS) $(LD_FLAGS) -o $(BINARY_OUTPUT)
 #	@echo "Binary output at $(BINARY_OUTPUT)"
-docker-test:
+build-docker-test:
 	docker build --build-arg uid=$(shell id -u) \
 	--build-arg uname=$(shell id -u -n) \
 	-t ghcr.io/eloylp/aton-test -f Dockerfile.integration-test .
@@ -67,6 +72,7 @@ init-node:
 	-v $(shell go env GOCACHE):$(shell go env GOCACHE) \
 	-v $(shell go env GOMODCACHE):$(shell go env GOMODCACHE) \
     -p "8082:8082" -v $(shell pwd):/code ghcr.io/eloylp/aton-test go run ./cmd/node/main.go
+
 docker:
 	docker build -t ghcr.io/eloylp/aton:$(BUILD) .
 docker-cuda:

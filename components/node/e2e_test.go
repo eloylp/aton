@@ -1,4 +1,4 @@
-// +build e2e node
+// +build e2e
 
 package node_test
 
