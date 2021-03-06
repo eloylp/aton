@@ -17,7 +17,7 @@ func capturerReceivedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_total",
 		Help:      "The total frames obtained by a capturer",
-	}, []string{"capturer_uuid", "capturer_url"})
+	}, []string{"uuid", "url"})
 }
 
 func capturerReceivedFramesBytes() *prometheus.HistogramVec {
@@ -26,7 +26,7 @@ func capturerReceivedFramesBytes() *prometheus.HistogramVec {
 		Subsystem: subsystem,
 		Name:      "capturer_received_frames_bytes",
 		Help:      "The size of frames obtained by a capturer",
-	}, []string{"capturer_uuid", "capturer_url"})
+	}, []string{"uuid", "url"})
 }
 
 func capturerFailedFramesTotal() *prometheus.CounterVec {
@@ -35,7 +35,7 @@ func capturerFailedFramesTotal() *prometheus.CounterVec {
 		Subsystem: subsystem,
 		Name:      "capturer_failed_frames_total",
 		Help:      "The failed frames returned by capturers",
-	}, []string{"capturer_uuid", "capturer_url"})
+	}, []string{"uuid", "url"})
 }
 
 // Responses of nodes metrics
@@ -93,5 +93,5 @@ func currentCapturers() *prometheus.GaugeVec {
 		Subsystem: subsystem,
 		Name:      "capturer_up",
 		Help:      "Capturers that are up on this node",
-	}, []string{"capturer_uuid", "capturer_url"})
+	}, []string{"uuid", "url"})
 }

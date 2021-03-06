@@ -76,8 +76,8 @@ func TestProcessingTargetResults(t *testing.T) {
 	m.HTTPHandler().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
 
 	response := rec.Body.String()
-	assert.Contains(t, response, `aton_node_capturer_received_frames_total{uuid="TEST"} 2`)
-	assert.Contains(t, response, `aton_node_capturer_up{uuid="TEST"} 0`)
+	assert.Contains(t, response, `aton_node_capturer_received_frames_total{url="http://example.com",uuid="TEST"} 2`)
+	assert.Contains(t, response, `aton_node_capturer_up{url="http://example.com",uuid="TEST"} 0`)
 }
 
 func TestRemoveCapturerFromHandler(t *testing.T) {

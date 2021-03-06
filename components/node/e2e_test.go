@@ -104,11 +104,11 @@ func TestMatchingCapturingRound(t *testing.T) {
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
 
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{url="`+video.URL+`",uuid="UUID"}`)
 
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_sum{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_bucket{capturer_url="`+video.URL+`",capturer_uuid="UUID"`)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_count{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_sum{url="`+video.URL+`",uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_bucket{url="`+video.URL+`",uuid="UUID"`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_bytes_count{url="`+video.URL+`",uuid="UUID"}`)
 
 	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_sum`)
 	assert.Contains(t, metricsO, `aton_node_frame_processing_time_seconds_bucket`)
@@ -169,7 +169,7 @@ func TestNonMatchingCapturingRound(t *testing.T) {
 	defer resp.Body.Close()
 	metricsData, err := ioutil.ReadAll(resp.Body)
 	metricsO := string(metricsData)
-	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{capturer_url="`+video.URL+`",capturer_uuid="UUID"}`)
+	assert.Contains(t, metricsO, `aton_node_capturer_received_frames_total{url="`+video.URL+`",uuid="UUID"}`)
 	assert.Contains(t, metricsO, `aton_node_entities_total 1`)
 	assert.Contains(t, metricsO, `aton_node_processed_frames_total 2`)
 	assert.Contains(t, metricsO, `aton_node_unrecognized_entities_total 1`)
