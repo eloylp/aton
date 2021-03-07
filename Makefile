@@ -34,18 +34,18 @@ test-with-docker:
 	go test -v --tags="integration e2e" ./...
 
 test-unit:
-	go test -v --tags="unit" $(shell go list ./... | grep -v node)
+	go test -v --tags="unit" ./...
 
 # The following steps are normally executed by the CI pipeline,
 # that have the following needed deps: apt-get install -y libdlib-dev libblas-dev liblapack-dev libjpeg62-turbo-dev
 test-integration:
-	go test -v --tags="integration" $(shell go list ./... | grep -v node)
+	go test -v --tags="integration" ./...
 test-e2e:
-	go test -v --tags="e2e" $(shell go list ./... | grep -v node)
+	go test -v --tags="e2e" ./...
 test-racy:
-	go test -race -v --tags="racy" $(shell go list ./... | grep -v node)
+	go test -race -v --tags="racy" ./...
 test-bench:
-	go test -v -bench=. $(shell go list ./... | grep -v node)
+	go test -v -bench=. ./...
 build: clean
 	mkdir -p $(DIST_FOLDER)
 	go build $(FLAGS) $(LD_FLAGS) -o $(DIST_FOLDER)/ctl ./cmd/ctl/main.go
