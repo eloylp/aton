@@ -27,7 +27,7 @@ func TestShutdownWhileBackPressured(t *testing.T) {
 	sut := node.NewCapturerHandler(logger, m, 10) // Make capturer handler the back pressured part.
 
 	// Prepare video stream
-	target := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100)
+	target := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100, 25)
 	defer target.Close()
 
 	capturer, err := video.NewMJPEGCapturer("UUID", target.URL, 50, logger)

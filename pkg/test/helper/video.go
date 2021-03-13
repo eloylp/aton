@@ -8,6 +8,7 @@ import (
 	"net/textproto"
 	"strconv"
 	"testing"
+	"time"
 )
 
 type frameGenerator func() ([]byte, error)
@@ -26,11 +27,11 @@ func VideoStream(t *testing.T, picturesPaths []string, servingPath string) *http
 			return nil, io.EOF
 		}
 		return frame, nil
-	}))
+	}, 25))
 	return httptest.NewServer(mux)
 }
 
-func streamHandler(t *testing.T, fg frameGenerator) http.HandlerFunc {
+func streamHandler(t *testing.T, fg frameGenerator, fps int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mp := multipart.NewWriter(w)
 		defer mp.Close()
@@ -38,6 +39,7 @@ func streamHandler(t *testing.T, fg frameGenerator) http.HandlerFunc {
 			t.Fatal(err)
 		}
 		w.Header().Add("Content-Type", "multipart/x-mixed-replace;boundary="+mp.Boundary())
+		timePerFrame := time.Duration(float64(1) / float64(fps) * 1e9) // nanoseconds per frame
 		for {
 			frame, err := fg()
 			if err == io.EOF {
@@ -53,15 +55,19 @@ func streamHandler(t *testing.T, fg frameGenerator) http.HandlerFunc {
 			if err != nil {
 				t.Fatal(err)
 			}
+			now := time.Now()
 			if _, err := mw.Write(frame); err != nil {
 				t.Log(err)
 				return
 			}
+			elapsed := time.Since(now)
+			duration := timePerFrame - elapsed
+			time.Sleep(duration)
 		}
 	}
 }
 
-func ReplayedVideoStream(t *testing.T, picturesPaths []string, servingPath string, times int) *httptest.Server {
+func ReplayedVideoStream(t *testing.T, picturesPaths []string, servingPath string, times, fps int) *httptest.Server {
 	t.Helper()
 	frames := make([][]byte, len(picturesPaths))
 	for i := 0; i < len(picturesPaths); i++ {
@@ -81,6 +87,6 @@ func ReplayedVideoStream(t *testing.T, picturesPaths []string, servingPath strin
 			return nil, io.EOF
 		}
 		return frame, nil
-	}))
+	}, fps))
 	return httptest.NewServer(mux)
 }

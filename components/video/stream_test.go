@@ -176,7 +176,7 @@ func TestExpBackoffReconnectPeriods(t *testing.T) {
 
 func TestShutdownWhileBackPressured(t *testing.T) {
 	pictures := []string{faceBona1, faceBona2, faceBona3, faceBona4}
-	vs := helper.ReplayedVideoStream(t, pictures, "/", 100)
+	vs := helper.ReplayedVideoStream(t, pictures, "/", 100, 25)
 	defer vs.Close()
 	w := bytes.NewBuffer(nil)
 	logger := testLogger(w)

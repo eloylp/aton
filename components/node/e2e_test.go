@@ -49,7 +49,7 @@ func TestStartStopSequence(t *testing.T) {
 }
 
 func TestMatchingCapturingRound(t *testing.T) {
-	video := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100)
+	video := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100, 25)
 	defer video.Close()
 
 	logOutput := bytes.NewBuffer(nil)
@@ -122,7 +122,7 @@ func TestMatchingCapturingRound(t *testing.T) {
 }
 
 func TestNonMatchingCapturingRound(t *testing.T) {
-	video := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100)
+	video := helper.ReplayedVideoStream(t, []string{faceBona1, faceBona2}, "/", 100, 25)
 	defer video.Close()
 
 	logOutput := bytes.NewBuffer(nil)
