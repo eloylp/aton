@@ -68,6 +68,13 @@ func (c *Ctl) AddCapturer(ctx context.Context, uid, url string) error {
 	return nil
 }
 
+func (c *Ctl) LoadCategories(ctx context.Context, categories []string, image []byte) error {
+	if err := c.registry.LoadCategories(ctx, categories, image); err != nil {
+		return fmt.Errorf("ctl: error programming categories: %w", err)
+	}
+	return nil
+}
+
 func (c *Ctl) Shutdown(ctx context.Context) error {
 	if err := c.registry.ShutdownAll(ctx); err != nil {
 		return fmt.Errorf("ctl: error shutting down: %w", err)

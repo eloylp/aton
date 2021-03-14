@@ -1,6 +1,7 @@
 package ctl
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -34,6 +35,16 @@ func (ds *NodeHandler) Start() error {
 	ds.wg.Add(2)
 	go ds.processStatus()
 	go ds.processResults()
+	return nil
+}
+
+func (ds *NodeHandler) LoadCategories(ctx context.Context, categories []string, image []byte) error {
+	if err := ds.client.LoadCategories(ctx, &LoadCategoriesRequest{
+		Categories: categories,
+		Image:      image,
+	}); err != nil {
+		return fmt.Errorf("ctl: could not load categories in node %s: %w", ds.node.UUID, err)
+	}
 	return nil
 }
 

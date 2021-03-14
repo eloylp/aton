@@ -41,6 +41,10 @@ func TestHandlers(t *testing.T) {
 type FakeCtl struct {
 }
 
+func (f *FakeCtl) LoadCategories(ctx context.Context, categories []string, image []byte) error {
+	panic("implement me")
+}
+
 func (f *FakeCtl) Shutdown(ctx context.Context) error {
 	panic("implement me")
 }
